@@ -23,8 +23,8 @@ h2+div {
         $err = "<h2 class='error'>$err</h2><h1>Ok <a href='{$_SERVER['SCRIPT_NAME']}'>Continue</a></h1>";
         die($err);
     }
-    $toVersion = 0.57;
-    $fromVersion = 0.56;
+    $toVersion = 0.61;
+    $fromVersion = 0.57;
     
     $classFile = "class.uFlex.php";
     $template = "class.uFlex.update.tpl";
@@ -84,7 +84,7 @@ h2+div {
         if(!copy($classFile,$backupFile)) error("Could not backed up old $classFile");
 		
         $master = array(
-            "{{::debug}}"                   => "true",
+            "{{::debug}}"                   => uFlex::debug,
             "{{::salt}}"                    => uFlex::salt,
             "{{_table_name}}"               => $u->opt['table_name'],
             "{{_cookie_time}}"              => $u->opt['cookie_time'],

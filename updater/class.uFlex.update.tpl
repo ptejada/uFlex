@@ -72,26 +72,34 @@ class uFlex {
     
     //Array of errors
     var $errorList = array(
-            1   => "{{_1}}", //Database Error while caling register functions
-            2   => "{{_2}}", //Database Error while calling update functions
-            3   => "{{_3}}", //Database Error while calling activate function
-            4   => "{{_4}}", //When calling pass_reset and the given email doesn't exist in database
-            5   => "{{_5}}", //When calling new_pass and the confirmation hash did not matched the one in database
+				//Database Error while caling register functions
+            1   => "{{_1}}", 
+				//Database Error while calling update functions
+            2   => "{{_2}}", 
+				//Database Error while calling activate function
+            3   => "{{_3}}", 
+				//When calling pass_reset and the given email doesn't exist in database
+            4   => "{{_4}}", 
+				//When calling new_pass, the confirmation hash did not match the one in database
+            5   => "{{_5}}", 
             6   => "{{_6}}",
             7   => "{{_7}}",
             8   => "{{_8}}",
             9   => "{{_9}}",
             10  => "{{_10}}",
-            11  => "{{_11}}", //When calling check_hash with invalid hash
-            12  => "{{_12}}", //Calling check_hash hash failed database match test
-            13  => "{{_13}}", //When saving hash to database fails
+				//When calling check_hash with invalid hash
+            11  => "{{_11}}", 
+				//Calling check_hash hash failed database match test
+            12  => "{{_12}}", 
+				//When saving hash to database fails
+            13  => "{{_13}}", 
             14 	=> "{{_14}}"
         );
         
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 Register A New User
--Takes two parameter the firs been required
+-Takes two parameters, the first being required
 	@info = array object (takes an associatve array, 
 				the index being the fieldname(column in database) 
 				and the value its content(value)
@@ -236,11 +244,11 @@ On Failure return false
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-Adds validation to quene list for either the Registration or Update Method
+Adds validation to queue for either the Registration or Update Method
 Single Entry:
 	Requires the first two parameters
-		@name = string (name of the field to be validated)
-		@limit    = string (range in the format of "5-10")
+		@name  = string (name of the field to be validated)
+		@limit = string (range in the format of "5-10")
 			*to make a field optional start with 0 (Ex. "0-10")
 	Optional third paramenter
 		@regEx = string (Regular Expresion to test the field)
@@ -386,7 +394,7 @@ Returns false on error
         if($result == false){
             $_SESSION[$this->opt['user_session']] = $this->opt['default_user'];
             $this->update_from_session();
-            $this->report("User is Guess");
+            $this->report("User is " + $this->username);
         }else{
             if(!$auto and isset($_SESSION['uFlex']['remember'])){
                 unset($_SESSION['uFlex']['remember']);
@@ -434,14 +442,14 @@ Returns false on error
                     
                 }
                 $this->hash_pass($pass);
-                $this->report("Creadentials recieved");
+                $this->report("Credentials received");
             }else{
                 $this->error(7);
                 return false;
             }
         }
 
-        $this->report("Quering Database to autenticate user");
+        $this->report("Querying Database to authenticate user");
         //Query Database and check login
         $sql = "SELECT * FROM {$this->opt['table_name']} WHERE {$cond} AND password='{$this->pass}'";
         $userFile = $this->getRow($sql);
@@ -527,7 +535,7 @@ Returns false on error
 
             $this->report("Cookies have been updated for auto login");
         }else{
-            $this->error("Info requiered to set the cookie {$this->opt['cookie_name']} is not available");
+            $this->error("Info required to set the cookie {$this->opt['cookie_name']} is not available");
         }
     }
 
@@ -681,7 +689,7 @@ Returns false on error
         $result = $this->getRow($sql);
 
         if(!$result){
-            $this->report("The user ID and the comfirmation hash did no matched");
+            $this->report("The user ID and the confirmation hash did not match");
             $this->error(12);
             return false;
         }
@@ -695,7 +703,7 @@ Returns false on error
         $this->username = $result['username'];
         $this->pass = $result['password'];
 
-        $this->report("Hash successfuly validated");
+        $this->report("Hash successfully validated");
         return true;
     }
 

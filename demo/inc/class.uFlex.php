@@ -38,10 +38,10 @@ class uFlex {
     var $opt = array( //Array of Internal options
         "table_name" => "users",
         "cookie_time" => "+30 days",
-        "cookie_name" => "auto",
+        "cookie_name" => "demo_auto",
         "cookie_path" => "/",
         "cookie_host" => false,
-        "user_session" => "userData",
+        "user_session" => "demo",
         "default_user" => array(
                 "username" => "Guest",
                 "user_id" => 0,
@@ -72,27 +72,19 @@ class uFlex {
     
     //Array of errors
     var $errorList = array(
-				//Database Error while caling register functions
-            1   => "New User Registration Failed",
-				//Database Error while calling update functions
-            2   => "The Changes Could not be made", 
-				//Database Error while calling activate function
-            3   => "Account could not be activated", 
-				//When calling pass_reset and the given email doesn't exist in database
-            4   => "We don't have an account with this email", 
-				//When calling new_pass, the confirmation hash did not match the one in database
-            5   => "Password could not be changed. The request can't be validated", 
+            1   => "New User Registration Failed", //Database Error while caling register functions
+            2   => "The Changes Could not be made", //Database Error while calling update functions
+            3   => "Account could not be activated", //Database Error while calling activate function
+            4   => "We don't have an account with this email", //When calling pass_reset and the given email doesn't exist in database
+            5   => "Password could not be changed. The request can't be validated", //When calling new_pass, the confirmation hash did not match the one in database
             6   => "Logging with cookies failed",
             7   => "No Username or Password provided",
             8   => "Your Account has not been Activated. Check your Email for instructions",
             9   => "Your account has been deactivated. Please contact Administrator",
             10  => "Wrong Username or Password",
-				//When calling check_hash with invalid hash
-            11  => "Confirmation hash is invalid", 
-				//Calling check_hash hash failed database match test
-            12  => "Your identification could not be confirmed", 
-				//When saving hash to database fails
-            13  => "Failed to save confirmation request", 
+            11  => "Confirmation hash is invalid", //When calling check_hash with invalid hash
+            12  => "Your identification could not be confirmed", //Calling check_hash hash failed database match test
+            13  => "Failed to save confirmation request", //When saving hash to database fails
             14 	=> "You need to reset your password to login"
         );
         
