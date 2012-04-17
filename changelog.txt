@@ -1,5 +1,10 @@
 Changelog
 
+v0.31     9/1/10
+uFlex 0.31
+  • Changed the Registration sample form Group Select element name from "group" to "group_id".
+  • Eliminated a Warning that came up while registering a new user and the username was already registered.
+  
 v0.30     6/16/10
 
 uFlex 0.30

@@ -583,7 +583,7 @@ Returns false on error
 	function has_error($index = false){
 		//Check for errors
 		$index = $index ? $index : $this->log;
-		$count = count($this->console['errors'][$index]);
+		$count = @count($this->console['errors'][$index]);
 		if($count){
 			$this->report("$count Error(s) Found!");
 			return true;
