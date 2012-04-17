@@ -1,0 +1,103 @@
+input {
+	display:block;
+}
+a {
+	display: inline-block;
+}
+body {
+	margin: 0;
+}
+form, form input {
+	font-size: 1.1em;
+}
+form label, form input {
+	background: #eee;
+	border: solid 1px #ccc;
+}
+form label {
+	padding: 0.2em;
+	padding-bottom: 0;
+	border-top-left-radius: 0.3em; 
+	border-top-right-radius: 0.3em;
+	
+}
+form input {
+	padding: 0.2em 0.5em;
+	border-radius: 0.3em;
+	border-top-left-radius: 0;
+	margin-bottom: 0.7em;
+	
+}
+.report ul {
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	background: #555;
+	color: #fff;
+	font-size: 1.1em;
+}
+#banner {
+	background: #eee;
+	padding: 0.3em;
+}
+#banner > h1 {
+	float: left;
+	margin: 0;
+}
+a.lg_bnt {
+	display: block;
+	padding: 0.3em 0.5em;
+	text-decoration: none;
+	width: 300px;
+	color: #00529B;
+	background: #cdc;
+	clear: both;
+	font-size: 1.5em;
+	border: solid #ccc 2px;
+	text-align: center;
+	margin: 0.25em auto;
+}
+a.lg_bnt:hover {
+	background: #ded;
+	color: #00516E;
+}
+a.md_bnt {
+	display: inline-block;
+	padding: 0.2em 0.4em;
+	text-decoration: none;
+	width: 200px;
+	color: #00529B;
+	background: #cdc;
+	font-size: 1em;
+	border: solid #ccc 2px;
+	text-align: center;
+	margin: 0.25em auto;
+}
+a.md_bnt:hover {
+	background: #ded;
+	color: #00516E;
+}
+
+#nav {
+	text-align: right;
+}
+#nav > a {
+	font-size: 2em;
+}
+#nav > span {
+	margin: 2em;
+}
+.required {
+	color: #f00;
+	font-weight: bold;
+}
+
+#wrapper {
+	width: 800px;
+	margin: 0px auto;
+}
+#content {
+	padding-left: 5em;
+}
+#footer {
+	text-align: center;
+}
