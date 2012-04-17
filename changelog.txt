@@ -1,41 +1,58 @@
 Changelog
 
-v0.31     9/1/10
+v0.41		11/12/10
+	• Add ->encode and ->decode functions
+	• Add the $encoder array variable to class
+	• Update ->uCofirm to create universal common hash
+	• Create function to sanitize the confirmation hash ->check_hash
+	• Update ->setCookie to use new hash
+	• Update ->login to use new hash for cookie login
+	• Update ->activate to use new hash
+	• Update ->register to use the new hash
+	• Update ->new_pass to use new hash
+	• Update ->pass_reset to use new hash
+	• update ->pass_reset to return an associative array with the user_id, username, email and the hash.
+	• update ->setCookie to use JS if headers are sent
+	• The ->uConfirm was renamed to ->make_hash
+	• Update ->validateAll to handle the the field matching 
+	• Added option for custom users table
+	
+v0.31		9/1/10
 uFlex 0.31
-  • Changed the Registration sample form Group Select element name from "group" to "group_id".
-  • Eliminated a Warning that came up while registering a new user and the username was already registered.
+	• Changed the Registration sample form Group Select element name from "group" to "group_id".
+	• Eliminated a Warning that came up while registering a new user and the username was already registered.
   
-v0.30     6/16/10
+v0.30		6/16/10
 
 uFlex 0.30
-  • Optimize the Console form entries( FieldName => Error)
-  • The field mathing now returns only the second field on error Since it is the second field that needs to match the first.
-  • on ->register() success the new user id can imidiatly be access by ->id
-  • By default ->has_error() looks for errors in the last method, Now it takes one optional parameter indicating the method. Ex ->has_error("login")
-  • new ->getQuery() method
-  • Global class optimization with the new ->getQuery() method.
-  • updated ->pass_reset()
-  • fix ->pass_reset() bug where the confirmation code was not stored in database.
-  • ->new_pass() parameter and validation update
-  • Globalized the built-in fields validations
-  • New private ->validateAll()
-  • Enhanced the feature to update user from database
-  • new Session $_SESSION['userData'] and $_SESSION['uFlex'];
-  • new opts array for global configurations
-  • Clears erros  and form on methods recall
-  • Made ->setCookie() public method
+	• Optimize the Console form entries( FieldName => Error)
+	• The field mathing now returns only the second field on error Since it is the second field that needs to match the first.
+	• on ->register() success the new user id can imidiatly be access by ->id
+	• By default ->has_error() looks for errors in the last method, Now it takes one optional parameter indicating the method. Ex ->has_error("login")
+	• new ->getQuery() method
+	• Global class optimization with the new ->getQuery() method.
+	• updated ->pass_reset()
+	• fix ->pass_reset() bug where the confirmation code was not stored in database.
+	• ->new_pass() parameter and validation update
+	• Globalized the built-in fields validations
+	• New private ->validateAll()
+	• Enhanced the feature to update user from database
+	• new Session $_SESSION['userData'] and $_SESSION['uFlex'];
+	• new opts array for global configurations
+	• Clears erros  and form on methods recall
+	• Made ->setCookie() public method
 
 
-v0.22     6/01/10
-  • Replaced the Object starter function (uFlex) with a PHP Object Constructor
-  • added the sid(Session ID) variable:
-  • Added Form error reporting when matching fields on 'register' and 'update' methods
+	v0.22     6/01/10
+	• Replaced the Object starter function (uFlex) with a PHP Object Constructor
+	• added the sid(Session ID) variable:
+	• Added Form error reporting when matching fields on 'register' and 'update' methods
 
 v0.20     5/16/10
-  • Added the activation method to the console log
-  • Added an md5 email hash to the end of the ativation hash
-  • Trim All fields on registration and update methods
-  • Fixed some grammar and spelling typos
+	• Added the activation method to the console log
+	• Added an md5 email hash to the end of the ativation hash
+	• Trim All fields on registration and update methods
+	• Fixed some grammar and spelling typos
   
 v0.15     4/15/10
   First Public Relase
