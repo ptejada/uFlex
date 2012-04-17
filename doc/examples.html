@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Documentation | uFlex</title>
+<script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" ></script>
+<script language="javascript" src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js"></script>
+
+<script>
+$(document).ready(function(){
+	$(".sample-form").each(function(){
+		html = $(this).html();
+		$(this).parent().find("pre:first").text(html);
+	})
+	$("form").submit(function(){ 
+		alert("There is not database to Proccess this request.\nThis is just an example.")
+		return false
+	});
+	$(".tray a").click(function(){ 
+		alert("There is not database to Proccess this request.\nThis is just an example.")
+		return false
+	});
+	
+	$("#wrapper > h1").click(function(){
+		obj = $(this).next(".tray");
+		$(".tray:visible").slideUp("fast");
+		$(".tray h3[class]").removeClass("selected");
+		
+		if($(this).next(".tray:visible").length == 0){
+			$(obj).slideToggle();
+		}
+	})
+	$(".tray > h3").click(function(){
+		class = $(this).text();
+		parent = $(this).parent();
+		
+		$(parent).find("h3").removeClass("selected");
+		
+		obj = $(parent).find("." + class +":hidden");
+		$(".tray > .tray:visible").slideUp("fast");
+		
+		if(obj.length == 1){
+			$(this).addClass("selected")
+			$(obj).slideToggle();
+		}else{
+			$(this).removeClass("selected");
+		}
+	})
+});
+</script>
+<link href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css" type="text/css" rel="stylesheet" />
+<style>
+pre {
+	min-width:400px;
+	width:auto;
+	max-width: 800px;
+	overflow:auto;
+	background:#FFF;
+}
+#wrapper {
+	margin: 0 auto;
+	width:800px;
+}
+#wrapper > h1 {
+	cursor: pointer;
+}
+#wrapper > h1:hover {
+	text-decoration:underline;
+}
+#wrapper > .tray {
+	background:#FFC;
+	padding: 20px;
+}
+.tray {
+	display: none;
+	margin-left: 25px;
+}
+.tray .tray {
+}
+.tray h3 {
+	display: inline-block;
+	margin: 5px;
+	margin-top: 20px;
+	cursor: pointer;
+}
+.tray h3:hover {
+	text-decoration: underline;
+}
+.selected {
+	color:#009;
+	text-decoration: underline;
+}
+center h1 {
+	font-size: 30pt;
+	color:#00F;
+}
+#footer {
+	bottom: 0;
+	font-size: 14pt;
+}
+</style>
+</head>
+<body onload="prettyPrint()">
+
+<center><h1>Some Examples to get Started with the uFlex Class</h1></center>
+<div id="wrapper">
+    <h1>Starting the uFlex object</h1>
+    <div class="tray">
+    <p>
+        The uFlex object needs to be started on every page you want to authenticate
+    </p>
+    <pre class="prettyprint lang-php">
+    
+        //This start the object and Resume the users current session
+        $user = new uFlex();
+        
+    </pre>
+    </div>
+    
+    <hr />
+    
+    <h1>Sample Login form</h1>
+    <div class="tray">
+    
+    <div class="sample-form lang-html">
+        <form method="post" action="../your_login_process_page.php">
+            <label>Username:</label>
+            <input type="text" name="username" />
+            <br />
+            
+            <label>Password:</label>
+            <input type="password" name="password" />
+            <br />
+            
+            <label>Remember me?:</label>
+            <input type="checkbox" name="auto" />
+            <br />
+            
+            <input type="submit" value="login" />
+        </form>
+    </div>
+    
+    <h3>HTML</h3>
+    <h3>PHP</h3>
+    
+    <div class="HTML tray">    
+        <pre class="prettyprint"></pre>
+    </div>
+    
+    
+    <div class="PHP tray">
+    
+        <p>
+            This would be included in your_login_process_page.php file which will proccess the login request.
+        </p>
+        <pre class="prettyprint">
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            $auto = $_POST['auto'];  //To remember user with a cookie for autologin
+            
+            $user = new uFlex($username,$password,$auto);
+            
+            //not required, just an example usage of the built-in error reporting system
+            if($user->signed){
+                echo "User Successfully Logged in";
+            }else{
+                //Display Errors
+                foreach($user->error() as $err){
+                        echo "&lt;b&gt;Error:&lt;/b&gt; {$err} &lt;br/ &gt;";
+                }
+            }
+        
+        </pre>
+    </div>
+    
+    </div>
+    <hr />
+    
+    <h1>Sample Registration form</h1>
+    <div class="tray">
+    
+    <div class="sample-form lang-html">
+        <form method="post" action="../your_registration_process_page.php">
+            <label>Username:</label>
+            <input type="text" name="username" />
+            <br />
+            
+            <label>Password:</label>
+            <input type="password" name="password" />
+            <br />
+            
+            <label>Re-enter Password:</label>
+            <input type="password" name="password2" />
+            <br />
+            
+            <label>Email: </label>
+            <input type="text" name="email" />
+            <br />
+            
+            <label>Group: </label>
+            <select name="group">
+                <option value="1">User</option>
+                <option value="2">Developer</option>
+                <option value="3">Designer</option>
+            </select>
+            <br />
+            
+            <input type="submit" value="Register" />
+        </form>
+    </div>
+    
+    <h3>HTML</h3>
+    <h3>PHP</h3>
+    
+    <div class="HTML tray" >
+        <p>
+            Remember that you can add as many fields  as you want to your forms as long as the field is
+            validated with in the class and that the field or input name matches a column in the database.
+        </p>
+	       
+        <pre class="prettyprint"></pre>
+     </div>   
+	<div class="PHP tray" >        
+        <p>
+            This would be included in "your_registration_process_page.php" file which will proccess the registration request.
+            Because the $_POST array we are going to get will match the object for the register method we will pass the whole $_POST
+            array to the register method.
+        </p>
+        <pre class="prettyprint">
+        
+            $user = new uFlex();
+            
+            $user->register($_POST,false);
+            
+            //OR fancier
+            
+            if($user->register($_POST,false)){
+                echo "User Registered";
+            }else{
+                //Display Errors
+                foreach($user->error() as $err){
+                        echo "&lt;b&gt;Error:&lt;/b&gt; {$err} &lt;br/ &gt;";
+                }
+            }
+        </pre>
+    </div>
+    </div>
+    
+    <hr />
+    
+    <h1>Sample Logout link</h1>
+    <div class="tray">
+    
+    <div class="sample-form" >
+        <a href="../Your_logout_proccess_page.php">Logout</a>
+    </div>
+    <h3>HTML</h3>
+    <h3>PHP</h3>
+    
+    <div class="HTML tray" >
+	    <pre class="prettyprint"></pre>
+	</div>
+    <div class="PHP tray" >
+    
+        <p>
+            This would be included in "your_logout_process_page.php" file which will proccess the logout request.
+        </p>
+        <pre class="prettyprint">
+        
+            $user = new uFlex();
+            
+            //Logouts user and clears any auto login cookie
+            $user->logout();
+        
+        </pre>
+	</div>      
+    </div>
+    
+    <hr  />
+    
+    <h1>Overall Conclusion</h1>
+    <div class="tray">
+    
+    <p>
+    	If you've gone throught all the PHP code in this examples above you can see how simple an easy it is and
+        how you can fit every proccess in a single page like the one below        
+    </p>
+    
+    <pre class="prettyprint">
+        &lt;?php
+        	$user = new uFlex();
+            
+        	switch($_GET['mode']){
+            	case "login":
+                    //Code Here
+                    
+                    break;
+                    
+            	case "register":
+                    //Code Here
+                    
+                    break;
+                  
+            	case "logout":
+                    //Code Here
+                    
+                    break;
+            }
+        ?&gt;
+    </pre>
+    </div>
+<div id="footer">
+	<hr />    
+    uFlex <strong>Version 0.15</strong>  Copyright (C) 2010  Pablo Tejada
+    <strong><a style="color:#F00"; href="https://sourceforge.net/projects/uflex/support">Get Help</a></strong>
+</div>
+</div>
+</body>
+</html>

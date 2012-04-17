@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Class Refference | uFlex</title>
+<script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" ></script>
+<script language="javascript" src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js"></script>
+
+<script>
+$(document).ready(function(){
+	$(".title").each(function(){
+		txt = $(this).text();
+		$(this).append("<a name='"+txt+"' ></a>");
+	})
+	$("#legend a").click(function(){
+		txt = $(this).text();
+		$("#wrapper > table td[style]").removeAttr("style");
+		$("a[name='"+txt+"']").parent().parent().find("td").css({background: "#ffc"});
+	})
+	$("#wrapper > table td").click(function(){
+		if(!$(this).attr('style')){
+			$("#wrapper > table td[style]").removeAttr("style");
+			$(this).parent().find("td").css({background: "#ffc"})
+		}else{			
+			$("#wrapper > table td[style]").removeAttr("style");
+		}
+	})
+});
+</script>
+<link href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css" type="text/css" rel="stylesheet" />
+<style>
+#wrapper {
+	margin: 0 auto;
+	min-width:800px;
+	max-width: 1000px;
+}
+
+.tray {
+	display: none;
+	margin-left: 25px;
+}
+#wrapper > table {
+	font-size: 16pt;
+}
+#wrapper > table td {
+	padding: 2px 10px;
+}
+th {
+	font-size: 18pt;
+}
+td {
+	vertical-align: top;
+}
+.param td {
+	padding-bottom: 15px !important;
+}
+.title {
+	text-align: center;
+}
+.selected {
+	color:#009;
+	text-decoration: underline;
+}
+#legend {
+	font-size: 16pt;
+}
+#legend br {
+	margin: 5px;
+	display: block;
+}
+#footer {
+	bottom: 0;
+	font-size: 14pt;
+}
+</style>
+</head>
+<body onload="prettyPrint()">
+
+<div id="wrapper">
+	<h2>Public Functions Documentations</h2>
+    <h3 style="float:right; background:#0F6; border:2px outset #0f7; padding:5px 10px;">
+    	<a href="examples.html">Examples</a>
+	</h3>
+    <div id="legend">
+        <a href="#uFlex">uFlex</a> - <span>Use to resume session, login user and handles auto login</span><br />
+        <a href="#register">register</a> - <span>Use to register new user</span><br />
+        <a href="#update">update</a> - <span>Use to update any field on the database</span><br />
+        <a href="#addValidation">addValidation</a> - <span>Use to valiate fields when using <em>register</em> or <em>update</em></span><br />
+        <a href="#activate">activate</a> - <span>Use to activate unactive accounts</span><br />
+        <a href="#pass_reset">pass_reset</a> - <span>Use to generate a hash to reset a forgotten password</span><br />
+        <a href="#new_pass">new_pass</a> - <span>Use to set a new password with the hash generated from <em>pass_reset</em></span><br />
+        <a href="#logout">logout</a> - <span>Use to logout user and destroy any autologin cookie</span><br />
+     </div>
+     
+     <hr />
+     
+    <table border="1">
+    	<tr>
+        	<th width="140">Functions</th>
+            <th>Parameters</th>
+            <th>Returns</th>
+		</tr>
+    	<tr>
+        	<td class="title">uFlex</td>
+            <td>
+            	<table class="param">
+                	<tr>
+                    	<td>$user</td>
+                        <td>=</td>
+                        <td>
+                        	(string) Username<br />
+							→<em>default</em> is <strong>false</strong>                     
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td>$pass</td>
+                        <td>=</td>
+                        <td>
+                        	(string) Plain Password<br />
+							→<em>default</em> is <strong>false</strong>  
+						</td>
+                    </tr>
+                    <tr>
+                    	<td>$auto</td>
+                        <td>=</td>
+                        <td>
+                        	(bool) Autologin<br />
+							→<em>default</em> is <strong>false</strong>  
+						</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+            	Returns <strong>true</strong>
+            </td>
+		</tr>
+        <tr>
+        	<td class="title">register</td>
+            <td>
+            	<table class="param">
+                	<tr>
+                    	<td>$info</td>
+                        <td>=</td>
+                        <td>
+                        	(array) Associatve array<br />
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td>$activation</td>
+                        <td>=</td>
+                        <td>
+                        	(bool) if true requires activation<br />
+							→<em>default</em> is <strong>false</strong>  
+						</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+            	Returns <strong>true</strong> if registration succeed and <em>$activation</em> is false.
+                <br /><br />
+				Returns a confirmation hash if registration succeed and <em>$activation</em> is true.
+                <br /><br />
+                Returns <strong>false</strong> on error or failure;
+		</tr>
+        <tr>
+        	<td class="title">update</td>
+            <td>
+            	<table class="param">
+                	<tr>
+                    	<td>$info</td>
+                        <td>=</td>
+                        <td>
+                        	(array) Associatve array<br />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+            	Returns <strong>true</strong> on Success.
+                <br /><br />
+                Returns <strong>false</strong> on error or failure.
+            </td>
+		</tr>
+        <tr>
+        	<td class="title">addValidation</td>
+            <td>
+            	<u>For Single Entry:</u>
+            	<table class="param">
+                	<tr>
+                    	<td>$name</td>
+                        <td>=</td>
+                        <td>
+                        	(string) Field name<br />
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td>$limit</td>
+                        <td>=</td>
+                        <td>
+                        	(string) Range. Ex. "2-10"<br />
+                            Defines Min and Max value length of <em>$name</em><br />
+							→<em>default</em> is <strong>false</strong>  
+						</td>
+                    </tr>
+                    <tr>
+                    	<td>$regEx</td>
+                        <td>=</td>
+                        <td>
+                        	(string) Regular Expresion to validate the value of <em>$name</em><br />
+							→<em>default</em> is <strong>false</strong>  
+						</td>
+                    </tr>
+                </table>
+                <u>For Multiple Entries:</u>
+            	<table class="param">
+                	<tr>
+                    	<td>$name</td>
+                        <td>=</td>
+                        <td>
+                        	(array) takes an object in following format:<br />
+<pre>
+array(
+"username" => array(
+    "limit" => "3-15",
+    "regEx" => "/^([a-z])+$/"
+    ),
+"password" => array(
+    "limit" => "3-15",
+    "regEx" => false
+    )
+);
+</pre>
+                            
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+            	<strong>N/A</strong>
+            </td>
+		</tr>
+        <tr>
+        	<td class="title">activate</td>
+            <td>
+            	<table class="param">
+                	<tr>
+                    	<td>$hash</td>
+                        <td>=</td>
+                        <td>
+                        	(string) Hash returned by the <em>register</em> function
+                            with activation enabled<br />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+            	Returns <strong>true</strong> on successfull activation.
+                <br /><br />
+                Returns <strong>false</strong> on error or failure.
+            </td>
+		</tr>
+        <tr>
+        	<td class="title">pass_reset</td>
+            <td>
+            	<table class="param">
+                	<tr>
+                    	<td>$email</td>
+                        <td>=</td>
+                        <td>
+                        	(string) user email to reset password<br />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+            	Returns a comfimation hash on success.
+                <br /><br />
+                Returns <strong>false</strong> on error or failure.
+            </td>
+		</tr>
+        <tr>
+        	<td class="title">new_pass</td>
+            <td>
+            	<table class="param">
+                	<tr>
+                    	<td>$hash</td>
+                        <td>=</td>
+                        <td>
+                        	(string) hash returned by the <em>pass_reset</em> function
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td>$new</td>
+                        <td>=</td>
+                        <td>
+                        	(string) new plain text Password
+						</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+            	Returns <strong>true</strong> on success.
+                <br /><br />
+                Returns <strong>false</strong> on error or failure.
+            </td>
+		</tr>
+        <tr>
+        	<td class="title">logout</td>
+            <td>
+            	<strong>N/A</strong>
+            </td>
+            <td>
+            	<strong>N/A</strong>
+            </td>
+		</tr>
+        
+    </table>
+    <div id="footer">
+        <hr />    
+        uFlex <strong>Version 0.15</strong>  Copyright (C) 2010  Pablo Tejada
+        <strong><a style="color:#F00"; href="https://sourceforge.net/projects/uflex/support">Get Help</a></strong>
+    </div>
+</div>    
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Class Refference | uFlex</title>
+<script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" ></script>
+<script language="javascript" src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js"></script>
+
+<script>
+$(document).ready(function(){
+	$(".title").each(function(){
+		txt = $(this).text();
+		$(this).append("<a name='"+txt+"' ></a>");
+	})
+	$("#legend a").click(function(){
+		txt = $(this).text();
+		$("#wrapper > table td[style]").removeAttr("style");
+		$("a[name='"+txt+"']").parent().parent().find("td").css({background: "#ffc"});
+	})
+	$("#wrapper > table td").click(function(){
+		if(!$(this).attr('style')){
+			$("#wrapper > table td[style]").removeAttr("style");
+			$(this).parent().find("td").css({background: "#ffc"})
+		}else{			
+			$("#wrapper > table td[style]").removeAttr("style");
+		}
+	})
+	$("#triggerAll").toggle(
+		function(){ 
+			$(this).html("Hide all Code");
+			$(".trigger+pre:hidden").prev(".trigger").click();
+		},
+		function(){ 
+			$(this).html("Show all Codes");
+			$(".trigger+pre:visible").prev(".trigger").click();
+		}		
+	)
+	$(".trigger").toggle(
+		function(){ 
+			$(this).html("<img src='images/minus_sign.gif' />Hide Code");
+			$(this).next("pre").slideToggle();
+		},
+		function(){ 
+			$(this).html("<img src='images/plus_sign.gif' />Show Code");
+			$(this).next("pre").slideToggle();
+		}		
+	)
+});
+</script>
+<link href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css" type="text/css" rel="stylesheet" />
+<style>
+#wrapper {
+	margin: 0 auto;
+	min-width:800px;
+	max-width: 1000px;
+	font-size: 16pt;
+}
+
+.tray {
+	display: none;
+	margin-left: 25px;
+}
+.selected {
+	color:#009;
+	text-decoration: underline;
+}
+p {
+	margin-bottom: 10px;	
+}
+a+pre {
+	margin-left: 50px;
+	margin-top: 0px;
+	display: none;
+}
+.trigger {
+	margin-left: 50px;
+	font-size: 12pt;
+	position: relative;
+}
+.trigger img {
+	margin-right: 5px;
+	float: left;
+	position: absolute;
+	left: -20px;
+	bottom: 2px;
+	border: none;
+}
+#triggerAll {
+	float: right;
+}
+#footer {
+	bottom: 0;
+	font-size: 14pt;
+}
+</style>
+</head>
+<body onload="prettyPrint()">
+
+<div id="wrapper">
+	<a href="#" id="triggerAll">Show all codes</a>
+	<h1>Understanding the Built-in Console</h1>
+    
+    <p>
+    	Inside the uFlex there is an object called <em>console</em>. The <em>console</em> tracks
+         and logs proccess, steps and errors inside the class object. There are three main sections
+         inside the console: <em>report, error, form</em>.
+    </p>
+    <p><em><strong>report</strong></em> - It holds every proccess and steps inside the class including the <em>error</em> and
+     	<em>form</em>.
+	</p>
+    <a href="#" class="trigger"><img src='images/plus_sign.gif' />View Code</a>        
+    <pre class="prettyprint">
+    Array
+    (
+        [0] => Passwords matched
+        [1] => No Error Found!
+        [2] => New Validation Object added
+        [3] => The username is Valid
+        [4] => The password is Valid
+        [5] => The email is Valid
+        [6] => No Error Found!
+        [7] => Error: This Email is Already in Use
+        [8] => Error: This Username is not available
+        [9] => 2 Error(s) Found!
+    )
+    </pre>
+    
+    <p><em><strong>error</strong></em> - It store the errors that makes a proccess fail or return false. If an inside function
+    	 returns false the detailed error will be here so be sure to check it out.
+	</p>
+    <a href="#" class="trigger"><img src='images/plus_sign.gif' />View Code</a>        
+    <pre class="prettyprint">
+    Array
+        (
+            [0] => This Email is Already in Use
+            [1] => This Username is not available
+        )
+    </pre>
+    
+	<p><em><strong>form</strong></em> - It holds the name of invalid fields, fields that did match 
+    	with the regular expression or are not within the range limit in length. This comes very handy
+        to notify users of invalid specially if using AJAX with a javscript framework like jQuery.
+	</p>
+    <a href="#" class="trigger"><img src='images/plus_sign.gif' />View Code</a>        
+    <pre class="prettyprint">
+    Array
+    (
+        [0] => email
+        [1] => username
+    )
+    </pre>
+    
+    <p>
+    	The prints from above are not directly from the console object itselft as the console is a
+        little more complex. Pretending the <em>$user</em> is the uFlex object this is how the clean 
+        prints from above are gotten:
+    </p>
+    <a href="#" class="trigger"><img src='images/plus_sign.gif' />View Code</a>        
+    <pre class="prettyprint">
+    	//Reports
+        $user->report();
+        
+        //Erros
+        $user->error();
+        
+        //Form
+        $user->form_error();
+    </pre>
+    
+    <p>Here is how a full console print looks like:</p>
+    <a href="#" class="trigger"><img src='images/plus_sign.gif' />View Code</a>        
+    <pre class="prettyprint">
+Array
+(
+    [errors] => Array
+        (
+            [login] => Array
+                (
+                    [0] => No Username or Password provided
+                )
+
+            [registration] => Array
+                (
+                    [0] => This Email is Already in Use
+                    [1] => This Username is not available
+                )
+
+        )
+
+    [reports] => Array
+        (
+            [login] => Array
+                (
+                    [0] => Error: No Username or Password provided
+                    [1] => User is Guess
+                )
+
+            [registration] => Array
+                (
+                    [0] => Passwords matched
+                    [1] => No Error Found!
+                    [2] => New Validation Object added
+                    [3] => The username is Valid
+                    [4] => The password is Valid
+                    [5] => The email is Valid
+                    [6] => No Error Found!
+                    [7] => Error: This Email is Already in Use
+                    [8] => Error: This Username is not available
+                    [9] => 2 Error(s) Found!
+                )
+
+        )
+
+    [form] => Array
+        (
+            [registration] => Array
+                (
+                    [0] => email
+                    [1] => username
+                )
+
+        )
+
+)
+
+    </pre>
+    
+    <p>
+    	Above you can clearly see the three mayor sections <em>report, error</em> and 
+        <em>form</em>, you can also notice that all have common sub-sections. 
+        This sub-sections simply indicate the proccess in which the  the step or error was 
+        caughted. There are currently three possible sub-sections or proccess: 
+        <em>login</em>, <em>registration</em> and <em>update</em>.        
+    </p>
+    
+    <p>
+    	Going back to the clean prints all the way to begining, they look clearer because using
+        such method only gets the last proccess logged, in this case the <em>registration</em>.
+        Here is how you can get a clean print for <em>report, error</em> and <em>form</em>
+        in a single object: 
+    </p>
+    <a href="#" class="trigger"><img src='images/plus_sign.gif' />View Code</a>        
+    <pre class="prettyprint">
+        $data['report'] = $user->report();	
+        $data['error'] = $user->error();
+        $data['form'] = $user->form_error();
+    </pre>
+    
+    <p>If you print the $data array you will get this:</p>
+    <a href="#" class="trigger"><img src='images/plus_sign.gif' />View Code</a>        
+    <pre class="prettyprint">
+Array
+(
+    [report] => Array
+        (
+            [0] => Passwords matched
+            [1] => No Error Found!
+            [2] => New Validation Object added
+            [3] => The username is Valid
+            [4] => The password is Valid
+            [5] => The email is Valid
+            [6] => No Error Found!
+            [7] => Error: This Email is Already in Use
+            [8] => Error: This Username is not available
+            [9] => 2 Error(s) Found!
+        )
+
+    [error] => Array
+        (
+            [0] => This Email is Already in Use
+            [1] => This Username is not available
+        )
+
+    [form] => Array
+        (
+            [0] => email
+            [1] => username
+        )
+
+)
+
+    </pre>
+    
+    <div id="footer">
+        <hr />    
+        uFlex <strong>Version 0.15</strong>  Copyright (C) 2010  Pablo Tejada
+        <strong><a style="color:#F00"; href="https://sourceforge.net/projects/uflex/support">Get Help</a></strong>
+    </div>
+</div>    
+</body>
+</html>
