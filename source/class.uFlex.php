@@ -1,4 +1,5 @@
 <?php
+// For Support visit http://sourceforge.net/projects/uflex/support
 // ---------------------------------------------------------------------------
 // 	  uFlex - An all in one authentication system PHP class
 //    Copyright (C) 2010  Pablo Tejada
@@ -15,8 +16,8 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.html.
-// --------------------------------------------------------------------------- 
-// V 0.20 - Last modified 5/13/2010
+// ---------------------------------------------------------------------------
+// V 0.22 - Last modified 6/01/2010
 //  +Registration Method
 //  	-Custome and Built-in fields validation
 //  	-Extendable: add as many fields and validation as required
@@ -37,19 +38,20 @@
 /*Thought the Class Official name is userFlex the object is simply named uFlex*/
 class uFlex{
 	//Constants
-	const version = 0.20;	
+	const version = 0.22;	
 	const salt = "sd5a4"; //IMPORTANT: Please change this value as it will make this copy unique and secured
 	//End of constants\\\\
-	var $id;
-	var $username;
-	var $pass;
-	var $signed;
-	var $data;
-	var $console;
-	var $log;
-	var $confirm;	
-	var $tmp_data;	
-	var $validations;
+	var $id;       //Signed user ID
+	var $sid;      //Current User Session ID
+	var $username; //Signed username
+	var $pass;     //Holds the user password hash
+	var $signed;   //Boolean, true = user is loggend-in
+	var $data;     //Holds entire user database row
+	var $console;  //Cotainer for errors and reports
+	var $log;      //Used for traking errors and reports
+	var $confirm;	 //Holds the hash for any type of comfirmation
+	var $tmp_data; //Holds the temporary user information during registration
+	var $validations; //Array for field validations
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -74,6 +76,8 @@ Returns false on Error
 			if(isset($info[$index.(2)])){
 				if($info[$index] != $info[$index.(2)]){
 					$this->error("{$index}s did not matched");
+					$this->form_error($index);
+					$this->form_error($index.(2));
 					return false;
 				}else{
 					$this->report("{$index}s matched");
@@ -206,6 +210,8 @@ On Failure return false
 				//Check for equal fields
 				if($info[$index] != $info[$index.(2)]){
 					$this->error("{$index}s did not matched");
+					$this->form_error($index);
+					$this->form_error($index.(2));
 					return false;
 				}else{
 					$this->report("{$index}s match");
@@ -409,10 +415,11 @@ Returns false on error
  /*////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\
 ////////Private and Secondary Methods below this line\\\\\\\\\\\\\
  \*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////////////////*/
-/*Star up function*/
-	function uFlex($user=false,$pass=false,$auto=false){
+/*Object Constructure*/
+	function __construct($user=false,$pass=false,$auto=false){
 		$this->log = "login";  //Index for Reports and Errors;
-		session_start();	
+		session_start();
+		$this->sid = session_id();
 		//$this->username = $user;
 		//$this->pass = $pass;
 		
@@ -719,7 +726,5 @@ Returns false on error
 		return true;
 	}
 }
-	
-
 
 ?>
