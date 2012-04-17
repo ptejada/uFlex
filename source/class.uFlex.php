@@ -16,7 +16,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.html.
 // --------------------------------------------------------------------------- 
-// V 0.15 - Last modified 4/27/2010
+// V 0.17 - Last modified 5/06/2010
 //  +Registration Method
 //  	-Custome and Built-in fields validation
 //  	-Extendable: add as many fields and validation as required
@@ -37,7 +37,7 @@
 /*Thought the Class Official name is userFlex the object is simply named uFlex*/
 class uFlex{
 	//Constants
-	const version = 0.15;	
+	const version = 0.17;	
 	const salt = "sd5a4"; //IMPORTANT: Please change this value as it will make this copy unique and secured
 	//End of constants\\\\
 	var $id;
@@ -135,17 +135,18 @@ Returns false on Error
 		//Check for errors
 		if($this->has_error()) return false;
 		
-		//Updates $Info, add defaults, and clean left overs
-		$info['password'] = $this->pass;
-		$info['confirmation'] = $this->confirm;
+		//Set Registration Date
 		$info['reg_date'] = time();
 		
-		//Generates the Confirmation Code
-		$this->uConfirm();
 		
-		//Activates user upon registration if there is not an activation method
-		if(!$activation){
-			$info['activated'] = 1;
+		
+		
+		//User Activation
+		if(!$activation){//Activates user upon registration
+			$info['activated'] = 1;			
+		}else{//Activates user with comfirmation
+			$this->uConfirm();//Generates the Confirmation Code
+			$info['confirmation'] = $this->confirm;
 		}
 		
 		//Prepare Info for SQL Insertion
@@ -449,12 +450,14 @@ Returns false on error
 			$this->pass = $c[0];
 			$auto = true;
 			$this->report("Attemping Login with cookies");
+			$clause = "user_id='{$this->id}' ";
 		}else{
-		//Credetials Login
-			if(!$user == false && !$pass == false){
+		//Credentials Login
+			if($user && $pass){
 				$this->username = $user;
 				$this->hash_pass($pass);
 				$this->report("Creadentials recieved");
+				$clause = "username='{$this->username}' ";
 			}else{
 				$this->error("No Username or Password provided");
 				return false;
@@ -463,12 +466,12 @@ Returns false on error
 
 		$this->report("I got info Quering Database to autenticate user");
 		//Query Database and check login
-		$query = mysql_query("SELECT * FROM users WHERE user_id='{$this->id}' OR username='{$this->username}' AND password='{$this->pass}'");
+		$query = mysql_query("SELECT * FROM users WHERE {$clause} AND password='{$this->pass}'");
 		if(mysql_num_rows($query) == 1){
 			$this->data = mysql_fetch_assoc($query);
 			$d = $this->data;
 			//If Account is not Activated
-			if($d['activated'] != 1){
+			if($d['activated'] == 0){
 				if($d['last_login'] == 0){
 					//Account has not been activated
 					$this->error("Your Account has not been Activated. Check your Email for instructions");
@@ -493,6 +496,9 @@ Returns false on error
 			$this->report("User Logged in Successfully");
 			return true;
 		}else{
+			if(isset($_COOKIE['auto'])){
+				$this->logout();
+			}
 			$this->error("Wrong Username or Password");
 			return false;
 		}
