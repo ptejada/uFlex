@@ -16,7 +16,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.html.
 // --------------------------------------------------------------------------- 
-// V 0.17 - Last modified 5/06/2010
+// V 0.20 - Last modified 5/13/2010
 //  +Registration Method
 //  	-Custome and Built-in fields validation
 //  	-Extendable: add as many fields and validation as required
@@ -37,7 +37,7 @@
 /*Thought the Class Official name is userFlex the object is simply named uFlex*/
 class uFlex{
 	//Constants
-	const version = 0.17;	
+	const version = 0.20;	
 	const salt = "sd5a4"; //IMPORTANT: Please change this value as it will make this copy unique and secured
 	//End of constants\\\\
 	var $id;
@@ -69,20 +69,22 @@ Returns false on Error
 	function register($info,$activation=false){
 		$this->log = "registration";  //Index for Errors and Reports
 		
-		//Saves Registration Data in Class
-		$this->tmp_data = $info;
-		
-		//Match fields
+		//Match fields and Trim white spaces
 		foreach($info as $index=>$val){
 			if(isset($info[$index.(2)])){
 				if($info[$index] != $info[$index.(2)]){
-					$this->error("{$index}s did not match");
+					$this->error("{$index}s did not matched");
 					return false;
 				}else{
 					$this->report("{$index}s matched");
 				}
 			}
+			$info[$index] = trim($val); //Trim white spaces at end and start
 		}
+		
+		//Saves Registration Data in Class
+		$this->tmp_data = $info;
+
 		
 		//Check for errors
 		if($this->has_error()) return false;
@@ -168,7 +170,7 @@ Returns false on Error
 		//Enter New user to Database
 		if($this->check_sql($sql,true) ){
 			$this->report("New User \"{$info['username']}\" has been registered");
-			if($activation) return "{$this->confirm}:{$this->tmp_data['username']}";
+			if($activation) return "{$this->confirm}:{$this->tmp_data['username']}:".md5($this->tmp_data['email']);
 			return true;
 		}else{
 			$this->error("New User Registration Failed");
@@ -196,19 +198,23 @@ On Failure return false
 		
 		//Check if there have being Changes
 		foreach($info as $index=>$val){
+			
 			if($this->data[$index] == $val){
 				$this->error("{$index} is the same. no changes were made");
 				return false;
 			}elseif(isset($info[$index.(2)])){
 				//Check for equal fields
 				if($info[$index] != $info[$index.(2)]){
-					$this->error("{$index}s did not match");
+					$this->error("{$index}s did not matched");
 					return false;
 				}else{
 					$this->report("{$index}s match");
 				}
 			}
+			$info[$index] = trim($val); //Trim white spaces at end and start
 		}
+		// Updates temp Data in Class
+		$this->tmp_data = $info;
 		
 		//Defaults or Built in Validations
 		$validation = array(
@@ -328,10 +334,11 @@ Returns true on account activation and false on failure
 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	function activate($hash){
+		$this->log = "activation";
 		$d = explode(":",$hash);
 		$this->confirm = $d[0];
 		$this->username = $d[1];		
-		$sql = "UPDATE users SET activated=1 WHERE confirmation='{$d[0]}' AND username='{$d[1]}'";
+		$sql = "UPDATE users SET activated=1, confirmation=0 WHERE confirmation='{$d[0]}' AND username='{$d[1]}'";
 		
 		if($this->check_sql_change($sql,true)){
 			$this->report("Account has been Activated");

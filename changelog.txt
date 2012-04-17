@@ -1,0 +1,30 @@
+Changelog
+
+v0.22     6/01/10
+  • Replaced the Object starter function (uFlex) with a PHP Object Constructor
+  • added the sid(Session ID) variable:
+  • Added Form error reporting when matching fields on 'register' and 'update' methods
+
+v0.20     5/16/10
+  • Added the activation method to the console log
+  • Added an md5 email hash to the end of the ativation hash
+  • Trim All fields on registration and update methods
+  • Fixed some grammar and spelling typos
+  
+v0.15     4/15/10
+  First Public Relase
+  +Registration Method
+  	-Custome and Built-in fields validation
+  	-Extendable: add as many fields and validation as required
+  	-Built-in Redundancy check for email and username
+  	-Built-in account activation by email
+  +Update Method to update anyfield on database
+  	-Built-in Redundancy check for email
+  	-Custome and Built-in fields validation
+  +Automatic user session handler
+  	-Remember user with cookies
+  	-Handles sessions on new object
+  +Class wide console
+  	-track and log Errors
+  	-Report every steps for each method
+  	-log validations, connection, SQL queries etc...
