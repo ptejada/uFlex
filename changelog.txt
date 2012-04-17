@@ -1,73 +1,82 @@
-Changelog
+ï»¿uFlex Changelog
+
+v0.51		2/3/11
+	â€¢ Add ->opt['user_session'] to hold a custom userData session variable 
+	â€¢ Update the reference of ->opt['cookie_path'] on ->setcookie()
+	â€¢ Added ->opt['default_user'] to hold the default user info. It was posible before, is easier now
+	â€¢ Auto detect an email while logging-in and use email and pass instead of username and pass 
+	â€¢ Create ::debug boolean constant to globaly enable and disable the extra data loging for devs
+	â€¢ Merged ->check_sql and with ->check_sql_change function
+	â€¢ Created ->errorList to hold some errors strings for easier customization	
 
 v0.41		11/12/10
-	• Add ->encode and ->decode functions
-	• Add the $encoder array variable to class
-	• Update ->uCofirm to create universal common hash
-	• Create function to sanitize the confirmation hash ->check_hash
-	• Update ->setCookie to use new hash
-	• Update ->login to use new hash for cookie login
-	• Update ->activate to use new hash
-	• Update ->register to use the new hash
-	• Update ->new_pass to use new hash
-	• Update ->pass_reset to use new hash
-	• update ->pass_reset to return an associative array with the user_id, username, email and the hash.
-	• update ->setCookie to use JS if headers are sent
-	• The ->uConfirm was renamed to ->make_hash
-	• Update ->validateAll to handle the the field matching 
-	• Added option for custom users table
+	â€¢ Add ->encode and ->decode functions
+	â€¢ Add the $encoder array variable to class
+	â€¢ Update ->uCofirm to create universal common hash
+	â€¢ Create function to sanitize the confirmation hash ->check_hash
+	â€¢ Update ->setCookie to use new hash
+	â€¢ Update ->login to use new hash for cookie login
+	â€¢ Update ->activate to use new hash
+	â€¢ Update ->register to use the new hash
+	â€¢ Update ->new_pass to use new hash
+	â€¢ Update ->pass_reset to use new hash
+	â€¢ update ->pass_reset to return an associative array with the user_id, username, email and the hash.
+	â€¢ update ->setCookie to use JS if headers are sent
+	â€¢ The ->uConfirm was renamed to ->make_hash
+	â€¢ Update ->validateAll to handle the the field matching 
+	â€¢ Added option for custom users table
 	
 v0.31		9/1/10
 uFlex 0.31
-	• Changed the Registration sample form Group Select element name from "group" to "group_id".
-	• Eliminated a Warning that came up while registering a new user and the username was already registered.
+	â€¢ Changed the Registration sample form Group Select element name from "group" to "group_id".
+	â€¢ Eliminated a Warning that came up while registering a new user and the username was already registered.
   
 v0.30		6/16/10
 
 uFlex 0.30
-	• Optimize the Console form entries( FieldName => Error)
-	• The field mathing now returns only the second field on error Since it is the second field that needs to match the first.
-	• on ->register() success the new user id can imidiatly be access by ->id
-	• By default ->has_error() looks for errors in the last method, Now it takes one optional parameter indicating the method. Ex ->has_error("login")
-	• new ->getQuery() method
-	• Global class optimization with the new ->getQuery() method.
-	• updated ->pass_reset()
-	• fix ->pass_reset() bug where the confirmation code was not stored in database.
-	• ->new_pass() parameter and validation update
-	• Globalized the built-in fields validations
-	• New private ->validateAll()
-	• Enhanced the feature to update user from database
-	• new Session $_SESSION['userData'] and $_SESSION['uFlex'];
-	• new opts array for global configurations
-	• Clears erros  and form on methods recall
-	• Made ->setCookie() public method
+	â€¢ Optimize the Console form entries( FieldName => Error)
+	â€¢ The field mathing now returns only the second field on error Since it is the second field that needs to match the first.
+	â€¢ on ->register() success the new user id can imidiatly be access by ->id
+	â€¢ By default ->has_error() looks for errors in the last method, Now it takes one optional parameter indicating the method. Ex ->has_error("login")
+	â€¢ new ->getQuery() method
+	â€¢ Global class optimization with the new ->getQuery() method.
+	â€¢ updated ->pass_reset()
+	â€¢ fix ->pass_reset() bug where the confirmation code was not stored in database.
+	â€¢ ->new_pass() parameter and validation update
+	â€¢ Globalized the built-in fields validations
+	â€¢ New private ->validateAll()
+	â€¢ Enhanced the feature to update user from database
+	â€¢ new Session $_SESSION['userData'] and $_SESSION['uFlex'];
+	â€¢ new opts array for global configurations
+	â€¢ Clears erros  and form on methods recall
+	â€¢ Made ->setCookie() public method
 
 
-	v0.22     6/01/10
-	• Replaced the Object starter function (uFlex) with a PHP Object Constructor
-	• added the sid(Session ID) variable:
-	• Added Form error reporting when matching fields on 'register' and 'update' methods
+v0.22     6/01/10
+	â€¢ Replaced the Object starter function (uFlex) with a PHP Object Constructor
+	â€¢ added the sid(Session ID) variable:
+	â€¢ Added Form error reporting when matching fields on 'register' and 'update' methods
 
 v0.20     5/16/10
-	• Added the activation method to the console log
-	• Added an md5 email hash to the end of the ativation hash
-	• Trim All fields on registration and update methods
-	• Fixed some grammar and spelling typos
+	â€¢ Added the activation method to the console log
+	â€¢ Added an md5 email hash to the end of the ativation hash
+	â€¢ Trim All fields on registration and update methods
+	â€¢ Fixed some grammar and spelling typos
   
 v0.15     4/15/10
   First Public Relase
   +Registration Method
-  	-Custome and Built-in fields validation
-  	-Extendable: add as many fields and validation as required
-  	-Built-in Redundancy check for email and username
-  	-Built-in account activation by email
+  	- Custome and Built-in fields validation
+  	- Extendable: add as many fields and validation as required
+  	- Built-in Redundancy check for email and username
+  	- Built-in account activation by email
   +Update Method to update anyfield on database
-  	-Built-in Redundancy check for email
-  	-Custome and Built-in fields validation
+  	- Built-in Redundancy check for email
+  	- Custome and Built-in fields validation
   +Automatic user session handler
-  	-Remember user with cookies
-  	-Handles sessions on new object
+  	- Remember user with cookies
+  	- Handles sessions on new object
   +Class wide console
-  	-track and log Errors
-  	-Report every steps for each method
-  	-log validations, connection, SQL queries etc...
+  	- track and log Errors
+  	- Report every steps for each method
+  	- log validations, connection, SQL queries etc...
