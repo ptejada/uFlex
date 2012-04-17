@@ -23,8 +23,8 @@ h2+div {
         $err = "<h2 class='error'>$err</h2><h1>Ok <a href='{$_SERVER['SCRIPT_NAME']}'>Continue</a></h1>";
         die($err);
     }
-    $toVersion = 0.61;
-    $fromVersion = 0.57;
+    $toVersion = 0.75;
+    $fromVersion = 0.61;
     
     $classFile = "class.uFlex.php";
     $template = "class.uFlex.update.tpl";
@@ -40,13 +40,13 @@ h2+div {
     }
 ?>
 
-    <h1>PHP uFlex class updater - v<?=$fromVersion?> to v<?=$toVersion?></h1>
+    <h1>PHP uFlex class updater - v<?php echo $fromVersion?> to v<?php echo $toVersion?></h1>
     <hr>
     <p>
         This script will
-        <strong>Update</strong> <span><?=$classFile?></span> From <strong>Version</strong> <span><?=$fromVersion?></span> <strong>To</strong> <span><?=$toVersion?></span>
-        using the <strong>Template</strong> <span><?=$template?></span> <br><br>
-        Your old version will be backedUp as <span><?=$backupFile?></span>
+        <strong>Update</strong> <span><?php echo $classFile?></span> From <strong>Version</strong> <span><?php echo $fromVersion?></span> <strong>To</strong> <span><?php echo $toVersion?></span>
+        using the <strong>Template</strong> <span><?php echo $template?></span> <br><br>
+        Your old version will be backedUp as <span><?php echo $backupFile?></span>
     </p>
     <hr>
     
@@ -147,15 +147,15 @@ h2+div {
             exit();
         }
     ?>
-    <h2>Success! You have upgraded to version <?=$toVersion?></h2>
+    <h2>Success! You have upgraded to version <?php echo $toVersion?></h2>
     <p>
         Even thoug this script did not detected any errors with the upgrade PLEASE manually test your application 
         and check that everthing is working corrently. Also refer to the changelog and check what is NEW and what has change
         ( Rarely changes will affect the way you use the class)
     </p>
     <p>
-        You may delete the extra files <span><?=$template?></span> and <span>uFlex.updater.php</span>.
-        You may want to keep the backup file <span><?=$backupFile?></span> until you test that everything is working as it should. 
+        You may delete the extra files <span><?php echo $template?></span> and <span>uFlex.updater.php</span>.
+        You may want to keep the backup file <span><?php echo $backupFile?></span> until you test that everything is working as it should. 
     </p>
     
 </body>

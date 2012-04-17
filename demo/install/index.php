@@ -53,7 +53,7 @@
 					$config = str_replace("#!".$tag,$val,$config);
 				}
 				
-				$file = fopen("../inc/config.php","w+");
+				$file = fopen("../core/config.php","w+");
 				
 				if(fwrite($file,$config) == false){
 					$R["config"] = "Could not generate <b>config.php</b>";
@@ -124,19 +124,19 @@
 	</div>
 	<form method="post" action="">
 		<label>Database Host:</label>
-		<input type="text" name="db_host" value="<?=@$_POST['db_host']?>" />
+		<input type="text" name="db_host" value="<?php echo @$_POST['db_host']?>" />
 		<hr />
 		
 		<label>Database User:</label>
-		<input type="text" name="db_user" value="<?=@$_POST['db_user']?>" />
+		<input type="text" name="db_user" value="<?php echo @$_POST['db_user']?>" />
 		<hr />
 		
 		<label>Database Password:</label>
-		<input type="password" name="db_pass" value="<?=@$_POST['db_pass']?>" />
+		<input type="password" name="db_pass" value="<?php echo @$_POST['db_pass']?>" />
 		<hr />
 		
 		<label>Database Name:</label>
-		<input type="text" name="db_name" value="<?=@$_POST['db_name']?>" />
+		<input type="text" name="db_name" value="<?php echo @$_POST['db_name']?>" />
 		<hr />
 		
 		<input type="submit" value="Generate Configuration" />		
