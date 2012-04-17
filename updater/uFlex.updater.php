@@ -23,8 +23,8 @@ h2+div {
         $err = "<h2 class='error'>$err</h2><h1>Ok <a href='{$_SERVER['SCRIPT_NAME']}'>Continue</a></h1>";
         die($err);
     }
-    $toVersion = 0.56;
-    $fromVersion = 0.51;
+    $toVersion = 0.57;
+    $fromVersion = 0.56;
     
     $classFile = "class.uFlex.php";
     $template = "class.uFlex.update.tpl";
@@ -91,11 +91,11 @@ h2+div {
             "{{_cookie_name}}"              => $u->opt['cookie_name'],
             "{{_cookie_path}}"              => $u->opt['cookie_path'],
             "{{_cookie_host}}"              => $u->opt['cookie_host'],
-            "{{_user_session}}"             => "userData", //$u->opt['user_session'],
-            "{{_default_user-_username}}"   => "Guess",  //$u->opt['default_user']['username'],
-            "{{_default_user-_user_id}}"    => "0", //$u->opt['default_user']['user_id'],
-            "{{_default_user-_password}}"   => "0", //$u->opt['default_user']['password'],
-            "{{_default_user-_signed}}"     => "false", //$u->opt['default_user']['signed'],
+            "{{_user_session}}"             => $u->opt['user_session'],
+            "{{_default_user-_username}}"   => $u->opt['default_user']['username'],
+            "{{_default_user-_user_id}}"    => $u->opt['default_user']['user_id'],
+            "{{_default_user-_password}}"   => $u->opt['default_user']['password'],
+            "{{_default_user-_signed}}"     => $u->opt['default_user']['signed'],
             
             "{{_username-_limit}}"          => $u->validations['username']['limit'],
             "{{_username-_regEx}}"          => $u->validations['username']['regEx'],
@@ -117,6 +117,7 @@ h2+div {
             "{{_11}}"		=> $u->errorList[11],
             "{{_12}}"		=> $u->errorList[12],
             "{{_13}}"		=> $u->errorList[13],
+            "{{_14}}"		=> $u->errorList[14],
             
             //Special replacements
             ' => "false"'                   => ' => false',

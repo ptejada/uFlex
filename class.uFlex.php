@@ -22,7 +22,7 @@
 class uFlex {
     //Constants
     const debug = true;   //Logs extra bits of errors for developers
-    const version = 0.56;
+    const version = 0.57;
     const salt = "sd5a4"; //IMPORTANT: Please change this value as it will make this copy unique and secured
     //End of constants\\\\
     var $id;        //Signed user ID
@@ -85,8 +85,9 @@ class uFlex {
             11  => "Confirmation hash is invalid", //When calling check_hash with invalid hash
             12  => "Your identification could not be confirmed", //Calling check_hash hash failed database match test
             13  => "Failed to save confirmation request", //When saving hash to database fails
-            14	=> "You need to reset your password to login"
+            14 	=> "You need to reset your password to login"
         );
+        
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 Register A New User
@@ -260,7 +261,7 @@ Multiple Entry:
 				);
 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    function addValidation($name,$limit = false,$regEx = false){
+    function addValidation($name,$limit = "0-1",$regEx = false){
         $this->logger("registration");
         if(is_array($name)){
             if(!is_array($this->validations))
@@ -805,7 +806,7 @@ Returns false on error
         $l = explode("-",$limit);
         $min = intval($l[0]);
         $max = intval($l[1]);
-        if(!$max || !$min){
+        if(!$max and !$min){
             $this->error("Invalid second paramater for the $name validation");
             return false;
         }
