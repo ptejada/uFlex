@@ -1,5 +1,14 @@
 ﻿uFlex Changelog
 
+v0.56		3/11/11
+	• Import default profile Guess when user is logout
+	• Add $Name to hold ucfirst() version of $name in private ->validate()
+	• Updated ->pass_reset() to avoid manually deactivated users to reset their password
+	• Added error [14]
+	• Added extra level error to ->login() error [14]
+	• Update the ->log_login() SQL query to use the global user defined users_table
+	• Replace all the remaining static reference to the database table name in the SQL queries.
+	
 v0.51		2/3/11
 	• Add ->opt['user_session'] to hold a custom userData session variable 
 	• Update the reference of ->opt['cookie_path'] on ->setcookie()

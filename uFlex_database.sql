@@ -1,3 +1,4 @@
+-- v1.0
 CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int(7) NOT NULL AUTO_INCREMENT,
   `username` varchar(15) NOT NULL,
