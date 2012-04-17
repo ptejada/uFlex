@@ -1,5 +1,26 @@
 Changelog
 
+v0.30     6/16/10
+
+uFlex 0.30
+  • Optimize the Console form entries( FieldName => Error)
+  • The field mathing now returns only the second field on error Since it is the second field that needs to match the first.
+  • on ->register() success the new user id can imidiatly be access by ->id
+  • By default ->has_error() looks for errors in the last method, Now it takes one optional parameter indicating the method. Ex ->has_error("login")
+  • new ->getQuery() method
+  • Global class optimization with the new ->getQuery() method.
+  • updated ->pass_reset()
+  • fix ->pass_reset() bug where the confirmation code was not stored in database.
+  • ->new_pass() parameter and validation update
+  • Globalized the built-in fields validations
+  • New private ->validateAll()
+  • Enhanced the feature to update user from database
+  • new Session $_SESSION['userData'] and $_SESSION['uFlex'];
+  • new opts array for global configurations
+  • Clears erros  and form on methods recall
+  • Made ->setCookie() public method
+
+
 v0.22     6/01/10
   • Replaced the Object starter function (uFlex) with a PHP Object Constructor
   • added the sid(Session ID) variable:
