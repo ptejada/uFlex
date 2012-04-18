@@ -1,0 +1,6 @@
+/.settings/
+/.project
+/demo/core/config.php
+*.class
+*.pyc
+*.pyo
