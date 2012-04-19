@@ -2,7 +2,7 @@
 	include("class.uFlex.php");
 	
 	$user = new uFlex();
-	//echo 1;
+	
 	$user->login();
 ?>
 
