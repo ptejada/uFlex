@@ -41,12 +41,13 @@ class uFlex {
         "cookie_name" => "auto",
         "cookie_path" => "/",
         "cookie_host" => false,
-        "user_session" => "userData",
+        "user_session" => "iD",
         "default_user" => array(
-                "username" => "Guest",
+                "username" => "Guess",
                 "user_id" => 0,
                 "password" => 0,
-                "signed" => false
+                "signed" => false,
+                "avatar_url" => "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm"
                 )
         );
     var $validations = array( //Array for default field validations
@@ -56,10 +57,10 @@ class uFlex {
                     ),
             "password" => array(
                     "limit" => "3-15",
-                    "regEx" => false
+                    "regEx" => ''
                     ),
             "email" => array(
-                    "limit" => "4-35",
+                    "limit" => "4-45",
                     "regEx" => '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/'
                     )
         );
@@ -73,7 +74,7 @@ class uFlex {
     //Array of errors
     var $errorList = array(
 				//Database Error while caling register functions
-            1   => "New User Registration Failed",
+            1   => "New User Registration Failed", 
 				//Database Error while calling update functions
             2   => "The Changes Could not be made", 
 				//Database Error while calling activate function
@@ -96,7 +97,7 @@ class uFlex {
             14 	=> "You need to reset your password to login"
         );
         
-		
+        
 /** EDITS BELOW THIS LINE WILL NOT BE KEPT WHEN UPDATING CLASS USING THE UPDATER SCRIPT **/
 	
 	/**
@@ -630,7 +631,9 @@ Returns false on error
     function report($str = false){
         $index = $this->log;
         if($str){
-            $str = ucfirst($str);
+        	if(is_string($str))
+            	$str = ucfirst($str);
+			
             $this->console['reports'][$index][] = $str; //Strore Report
         }else{
             if($index){
@@ -747,7 +750,7 @@ Returns false on error
             return false;
         }
         if($this->signed and $this->id == $result['user_id']){
-            $this->logout();
+            $this->logout(); //FLAGGED
         }
 
         //Hash is valid import user's info to object
@@ -837,7 +840,7 @@ Returns false on error
 
 
     //Validates All fields in ->tmp_data array
-    private function validateAll(){
+    function validateAll(){
         $info = $this->tmp_data;
         foreach($info as $field => $val){
             //Match double fields
