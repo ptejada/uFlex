@@ -1,4 +1,13 @@
-Updating your curent uFlex file
+Getting Started
+=========================
+
+* Check the examples here <http://crusthq.com/projects/uFlex/examples/>
+* Try the demo in this package and view its source
+* See the methods documention here <http://crusthq.com/projects/uFlex/documentation/>
+
+Please note you should have stablish an sql connection before starting a uFlex object
+
+Updating your curent uFlex version
 ===================================
 
 ## If you have edited/modify the class options...
