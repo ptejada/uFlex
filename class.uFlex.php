@@ -424,17 +424,18 @@ Returns false on error
 
 		$result = $this->loginUser($user,$pass,$auto);
 		
-		if($result == false){
+		//echo "<{$result}>";
+		
+		if(!$result){
 			$this->session($this->opt['default_user']);
 			$this->update_from_session();
-			$this->report("User is " + $this->username);
+			$this->report("User is {$this->username}");
 		}else{
 			if(!$auto and isset($_SESSION['uFlex']['remember'])){
 				unset($_SESSION['uFlex']['remember']);
 				$this->setCookie();
 			}
 		}
-		return true;
 	}
 	
 	/**
@@ -449,7 +450,7 @@ Returns false on error
 			if(isset($_SESSION['uFlex']['update'])){
 				$this->report("Updating Session from database");
 				//Get User From database because its info has change during current session
-				$update = $this->getRow("SELECT * FROM {$this->opt['table_name']} WHERE user_id='{$this->id}'");
+				$update = $this->getRow(Array("user_id" => "$this->id"));
 				$this->update_session($update);
 				$this->log_login(); //Update last_login
 			}
@@ -472,13 +473,12 @@ Returns false on error
 			if($user && $pass){
 				if(preg_match($this->validations['email']['regEx'],$user)){
 					//Login using email
-					$cond = "email='{$user}'";
+					$getBy = "email";
 				}else{
 					//Login using username
-					$cond = "username='{$user}'";
-					
+					$getBy = "username";
 				}
-				$this->hash_pass($pass);
+				
 				$this->report("Credentials received");
 			}else{
 				$this->error(7);
@@ -487,10 +487,22 @@ Returns false on error
 		}
 
 		$this->report("Querying Database to authenticate user");
-		//Query Database and check login
-		$sql = "SELECT * FROM {$this->opt['table_name']} WHERE {$cond} AND password='{$this->pass}'";
-		$userFile = $this->getRow($sql);
+		//Query Database for user
+		$userFile = $this->getRow(Array($getBy => $user));
+		
 		if($userFile){
+			$this->tmp_data = $userFile;
+			$this->hash_pass($pass);
+			$this->signed = $this->pass == $userFile["password"] ? true : false;
+		}else{
+			$this->error(10);
+			return false;
+			//die("NO");
+		}
+		
+		//die($this->pass . " " . $userFile["password"]);
+		
+		if($this->signed){
 			//If Account is not Activated
 			if($userFile['activated'] == 0){
 				if($userFile['last_login'] == 0){
@@ -505,6 +517,7 @@ Returns false on error
 				}
 				return false;
 			}
+			
 			//Account is Activated and user is logged in
 			$this->update_session($userFile);
 
@@ -512,7 +525,10 @@ Returns false on error
 			if($auto){
 				$this->setCookie();
 			}
-			$this->log_login(); //Update last_login
+			
+			//Update last_login
+			$this->log_login();
+			
 			//Done
 			$this->report("User Logged in Successfully");
 			return true;
@@ -616,9 +632,18 @@ Returns false on error
 		$this->report("Session has been imported to the object");
 	}
 
-	function hash_pass($pass){
+	function legacy_hash_pass($pass){
 		$salt = uFlex::salt;
 		$this->pass = md5($salt.$pass.$salt);
+		return $this->pass;
+	}
+	
+	function hash_pass($pass){
+		$regdate = $this->tmp_data['reg_date'];
+		$pre = $this->encode($regdate);
+		$pos = substr($regdate, 5, 1);
+		$post = $this->encode($regdate * (substr($regdate, $pos, 1)));
+		$this->pass = md5($pre.$pass.$post);
 		return $this->pass;
 	}
 
@@ -636,6 +661,7 @@ Returns false on error
 				$str = ucfirst($str);
 			
 			$this->console['reports'][$index][] = $str; //Strore Report
+			return true;
 		}else{
 			if($index){
 				return $this->console['reports'][$index]; //Return the $index Reports Array
@@ -823,6 +849,13 @@ Returns false on error
 	
 	//Test field in database for a value
 	function check_field($field,$val,$err = false){
+		$sql = "SELECT {$field} FROM {$this->opt['table_name']} WHERE {$field}='{$val}' ";
+		
+		//$res = 
+		
+		$res = $this->getStatement($sql);
+		
+		if(!$res) return false;
 		$query = mysql_query("SELECT {$field} FROM {$this->opt['table_name']} WHERE {$field}='{$val}' ");
 		if(mysql_num_rows($query) >= 1){
 			if($err){
@@ -839,50 +872,82 @@ Returns false on error
 	}
 
 	//Executes SQL query and checks for success
-	function check_sql($sql,$debug = false){
-		$this->report("SQL: {$sql}"); //Log the SQL Query
-		if(!mysql_query($sql)){
-			if(self::debug){
-				$this->error(mysql_error());
-			}
-			return false;			
+	function check_sql($sql, $args=false){
+		$st = $this->getStatement($sql, $args);
+		
+		if(!$st) return false;
+		
+		$rows = $st->rowCount();
+		
+		if($rows > 0){
+			//Good, Rows where affected
+			$this->report("$rows row(s) where Affected");
+			return true;
 		}else{
-			$rows = mysql_affected_rows();
-			if($rows > 0){
-				//Good, Rows where affected
-				$this->report("$rows row(s) where Affected");
-				return true;
-			}else{
-				//Bad, No Rows where Affected
-				$this->report("No rows were Affected");
-				return false;
-			}
+			//Bad, No Rows where Affected
+			$this->report("No rows were Affected");
+			return false;
 		}
 	}
 
 	//Executes SQL query and returns an associate array of results
-	function getRow($sql){
+	function getRow($args){
+		$sql = "SELECT * FROM :table WHERE";
+				
+		$st = $this->getStatement($sql, $args);
+		
+		if(!$st) return false;
+		
+		if(!$st->rowCount()){
+			$this->report("Query returned empty");
+			return false;
+		}
+		//echo "<pre>";
+		//print_r($res->fetchObject());
+		return $st->fetch(PDO::FETCH_ASSOC);
+	}
+	
+	/*
+	 * Get the PDO statment
+	 */
+	function getStatement($sql, $args=false){
 		if(!$this->connect()) return false;
 		
-		$db =& $this->db;
+		if($args){
+			foreach($args as $field => $val){
+				$finalArgs[] = " {$field}=:{$field}";
+			}
+			
+			$finalArgs = implode(" AND", $finalArgs);
+			
+			if(strpos($sql, " :args")){
+				$sql = str_replace(" :args", $finalArgs, $sql);
+			}else{
+				$sql .= $finalArgs;
+			}
+		}
 		
-		$this->report("SQL: {$sql}"); //Log the SQL Query first
-
-		$rows = $this->db->query($sql);
+		//Replace the :table placeholder
+		$sql = str_replace(" :table ", " {$this->opt["table_name"]} ", $sql);
 		
-		if($db->errorCode() and self::debug){
-			$this->error($db->errorCode());
+		$this->report("SQL Statement: {$sql}"); //Log the SQL Query first
+		
+		if($args) $this->report("SQL Data Sent: [" . implode(', ',$args) . "]"); //Log the SQL Query first		
+		
+		//Prepare the statement
+		$res = $this->db->prepare($sql);
+		
+		if($args) $res->execute($args);
+		
+		//die($res->errorCode());
+		if($res->errorCode() > 0 and self::debug){
+			$error = $res->errorInfo();
+			$this->error("PDO({$error[0]})[{$error[1]}] {$error[2]}");
 			return false;
 		}
 		
-		if(!$rows){
-			$this->report("Query returned empty");
-			return false;			
-		}
-		
-		return $rows[0];
+		return $res;
 	}
-
 
 	//Validates All fields in ->tmp_data array
 	function validateAll(){
