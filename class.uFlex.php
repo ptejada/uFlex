@@ -42,6 +42,7 @@ class uFlex{
 		"cookie_path" => "/",
 		"cookie_host" => false,
 		"user_session" => "userData",
+		"legacyAuth"	=> false,
 		"default_user" => array(
 				"username" => "Guess",
 				"user_id" => 0,
@@ -137,7 +138,10 @@ Returns false on Error
 		//Validate All Fields
 		if(!$this->validateAll()) return false; //There are validations error
 
-		//Built in actions for special fields
+		//Set Registration Date
+		$info['reg_date'] = $this->tmp_data['reg_date'] = time();
+		
+		//Built in actions for special fields		
 		//Hash Password
 		if(isset($info['password'])){
 			$this->hash_pass($info['password']);
@@ -156,9 +160,6 @@ Returns false on Error
 		//Check for errors
 		if($this->has_error()) return false;
 
-		//Set Registration Date
-		$info['reg_date'] = time();
-
 		//User Activation
 		if(!$activation){ //Activates user upon registration
 			$info['activated'] = 1;
@@ -168,22 +169,24 @@ Returns false on Error
 		foreach($info as $index => $val){
 			if(!preg_match("/2$/",$index)){ //Skips double fields
 				$into[] = $index;
-				$values[] = "'".mysql_real_escape_string($val)."'";
+				//For the statement
+				$data[$index] = $val;
 			}
 		}
-
-		$into = implode(", ",$into);
-		$values = implode(",",$values);
+		
+		$intoStr = implode(", ",$into);
+		$values = ":" . implode(", :",$into);
 
 		//Prepare New User	Query
-		$sql = "INSERT INTO {$this->opt['table_name']} ($into) 
-					VALUES($values)";
+		$sql = "INSERT INTO :table ({$intoStr})
+				VALUES({$values})";
+		
 		//exit($sql);
 
 		//Enter New user to Database
-		if($this->check_sql($sql)){
+		if($this->check_sql($sql, $data)){
 			$this->report("New User \"{$info['username']}\" has been registered");
-			$this->id = mysql_insert_id();
+			$this->id = $this->db->lastInsertId();
 			if($activation){
 				//Insert Validation Hash
 				$this->make_hash($this->id);
@@ -222,8 +225,7 @@ On Failure return false
 		//Built in actions for special fields
 		//Hash Password
 		if(isset($info['password'])){
-			$this->hash_pass($info['password']);
-			$info['password'] = $this->pass;
+			$info['password'] = $this->hash_pass($info['password']);
 		}
 		//Check for Email in database
 		if(isset($info['email']))
@@ -236,20 +238,20 @@ On Failure return false
 		//Prepare Info for SQL Insertion
 		foreach($info as $index => $val){
 			if(!preg_match("/2$/",$index)){ //Skips double fields
-				$value = "'".mysql_real_escape_string($val)."'";
-				$set[] = "{$index}={$value}";
+				$set[] = "{$index}=:{$index}";
+				//For the statement
+				$data[$index] = $val;
 			}
 		}
-
+		
 		$set = implode(", ",$set);
 
 		//Prepare User Update	Query
-		$sql = "UPDATE {$this->opt['table_name']} SET $set 
-					WHERE user_id='{$this->id}'";
-		//exit($sql);
-
+		$sql = "UPDATE :table SET $set 
+				WHERE user_id={$this->id}";		
+		
 		//Check for Changes
-		if($this->check_sql($sql)){
+		if($this->check_sql($sql, $data)){
 			$this->report("Information Updated");
 			$_SESSION['uFlex']['update'] = true;
 			return true;
@@ -314,7 +316,7 @@ Returns true on account activation and false on failure
 
 		if(!$this->check_hash($hash)) return false;
 
-		$sql = "UPDATE {$this->opt['table_name']} SET activated=1, confirmation='' WHERE confirmation='{$hash}' AND user_id='{$this->id}'";
+		$sql = "UPDATE :table SET activated=1, confirmation='' WHERE confirmation='{$hash}' AND user_id='{$this->id}'";
 
 		if($this->check_sql($sql)){
 			$this->report("Account has been Activated");
@@ -392,8 +394,8 @@ Returns false on error
 
 		$pass = $this->hash_pass($newPass['password']);
 
-		$sql = "UPDATE {$this->opt['table_name']} SET password='{$pass}', confirmation='', activated=1 WHERE confirmation='{$hash}' AND user_id='{$this->id}'";
-		if($this->check_sql($sql)){
+		$sql = "UPDATE :table SET password=:pass, confirmation='', activated=1 WHERE confirmation=:hash AND user_id={$this->id}";
+		if($this->check_sql($sql, Array("pass" => $pass, "hash" => $hash))){
 			$this->report("Password has been changed");
 			return true;
 		}else{
@@ -493,6 +495,7 @@ Returns false on error
 		if($userFile){
 			$this->tmp_data = $userFile;
 			$this->hash_pass($pass);
+			//echo "{$this->pass} == {$userFile["password"]}";
 			$this->signed = $this->pass == $userFile["password"] ? true : false;
 		}else{
 			$this->error(10);
@@ -556,8 +559,8 @@ Returns false on error
 	private function log_login(){
 		//Update last_login
 		$time = time();
-		$sql = "UPDATE {$this->opt['table_name']} SET last_login='{$time}' WHERE user_id='{$this->id}'";
-		if($this->check_sql($sql))
+		$sql = "UPDATE :table SET last_login=:time WHERE user_id='{$this->id}'";
+		if($this->check_sql($sql, Array("time" => $time)))
 			$this->report("Last Login updated");
 	}
 
@@ -639,7 +642,12 @@ Returns false on error
 	}
 	
 	function hash_pass($pass){
-		$regdate = $this->tmp_data['reg_date'];
+		if($this->opt['legacyAuth']) return $this->legacy_hash_pass($pass);
+		
+		$regdate = !isset($this->data['reg_date']) ? $this->tmp_data['reg_date'] : $this->data['reg_date'];
+		
+		//$this->report("Using reg_date '{$regdate}' to hash password");
+		
 		$pre = $this->encode($regdate);
 		$pos = substr($regdate, 5, 1);
 		$post = $this->encode($regdate * (substr($regdate, $pos, 1)));
@@ -793,7 +801,7 @@ Returns false on error
 	//Saves the confirmation hash in the database
 	function save_hash(){
 		if($this->confirm and $this->id){
-			$sql = "UPDATE {$this->opt['table_name']} SET confirmation='{$this->confirm}', activated=0 WHERE user_id='{$this->id}'";
+			$sql = "UPDATE :table SET confirmation='{$this->confirm}', activated=0 WHERE user_id='{$this->id}'";
 			if(!$this->check_sql($sql)){
 				$this->error(13);
 				return false;
@@ -849,15 +857,9 @@ Returns false on error
 	
 	//Test field in database for a value
 	function check_field($field,$val,$err = false){
-		$sql = "SELECT {$field} FROM {$this->opt['table_name']} WHERE {$field}='{$val}' ";
+		$res = $this->getRow(Array($field => $val));
 		
-		//$res = 
-		
-		$res = $this->getStatement($sql);
-		
-		if(!$res) return false;
-		$query = mysql_query("SELECT {$field} FROM {$this->opt['table_name']} WHERE {$field}='{$val}' ");
-		if(mysql_num_rows($query) >= 1){
+		if($res){
 			if($err){
 				$this->form_error($field,$err);
 			}else{
@@ -873,9 +875,15 @@ Returns false on error
 
 	//Executes SQL query and checks for success
 	function check_sql($sql, $args=false){
-		$st = $this->getStatement($sql, $args);
+		$st = $this->getStatement($sql);
 		
 		if(!$st) return false;
+		
+		if($args){
+			$st->execute($args);
+		}else{
+			$st->execute();
+		}
 		
 		$rows = $st->rowCount();
 		
@@ -893,7 +901,7 @@ Returns false on error
 	//Executes SQL query and returns an associate array of results
 	function getRow($args){
 		$sql = "SELECT * FROM :table WHERE";
-				
+		
 		$st = $this->getStatement($sql, $args);
 		
 		if(!$st) return false;
