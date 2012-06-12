@@ -185,7 +185,7 @@ Returns false on Error
 
 		//Enter New user to Database
 		if($this->check_sql($sql, $data)){
-			$this->report("New User \"{$info['username']}\" has been registered");
+			$this->report("New User has been registered");
 			$this->id = $this->db->lastInsertId();
 			if($activation){
 				//Insert Validation Hash
