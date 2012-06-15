@@ -48,7 +48,7 @@ class uFlex{
 				"user_id" => 0,
 				"password" => 0,
 				"signed" => false,
-				"avatar_url" => "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm"
+				//"avatar_url" => "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm"
 				)
 		);
 	var $validations = array( //Array for default field validations
@@ -180,8 +180,6 @@ Returns false on Error
 		//Prepare New User	Query
 		$sql = "INSERT INTO :table ({$intoStr})
 				VALUES({$values})";
-		
-		//exit($sql);
 
 		//Enter New user to Database
 		if($this->check_sql($sql, $data)){
@@ -316,9 +314,12 @@ Returns true on account activation and false on failure
 
 		if(!$this->check_hash($hash)) return false;
 
-		$sql = "UPDATE :table SET activated=1, confirmation='' WHERE confirmation='{$hash}' AND user_id='{$this->id}'";
-
-		if($this->check_sql($sql)){
+		$sql = "UPDATE :table SET activated=1, confirmation='' WHERE user_id=:id AND confirmation=:hash";
+		$data = Array(
+			"hash"	=> $hash,
+			"id"	=> $this->id
+		);
+		if($this->check_sql($sql, $data)){
 			$this->report("Account has been Activated");
 			return true;
 		}else{
@@ -339,9 +340,8 @@ On Failure it returns false
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	function pass_reset($email){
 		$this->logger("pass_reset");
-		$sql = "SELECT * FROM {$this->opt['table_name']} WHERE email='{$email}'";
 
-		$user = $this->getRow($sql);
+		$user = $this->getRow(Array("email" => $email));
 
 		if($user){
 			if(!$user['activated'] and !$user['confirmation']){
@@ -355,7 +355,7 @@ On Failure it returns false
 			$this->save_hash();
 
 			$data = array(
-				"email" => $email,
+				"email" => $email, 
 				"username" => $user['username'],
 				"user_id" => $user['user_id'],
 				"hash" => $this->confirm
@@ -394,8 +394,13 @@ Returns false on error
 
 		$pass = $this->hash_pass($newPass['password']);
 
-		$sql = "UPDATE :table SET password=:pass, confirmation='', activated=1 WHERE confirmation=:hash AND user_id={$this->id}";
-		if($this->check_sql($sql, Array("pass" => $pass, "hash" => $hash))){
+		$sql = "UPDATE :table SET password=:pass, confirmation='', activated=1 WHERE confirmation=:hash AND user_id=:id";
+		$data = Array(
+			"id"	=> $this->id,
+			"pass" 	=> $pass,
+			"hash" 	=> $hash
+		);
+		if($this->check_sql($sql, $data)){
 			$this->report("Password has been changed");
 			return true;
 		}else{
@@ -425,8 +430,6 @@ Returns false on error
 		$this->sid = session_id();
 
 		$result = $this->loginUser($user,$pass,$auto);
-		
-		//echo "<{$result}>";
 		
 		if(!$result){
 			$this->session($this->opt['default_user']);
@@ -495,15 +498,11 @@ Returns false on error
 		if($userFile){
 			$this->tmp_data = $userFile;
 			$this->hash_pass($pass);
-			//echo "{$this->pass} == {$userFile["password"]}";
 			$this->signed = $this->pass == $userFile["password"] ? true : false;
 		}else{
 			$this->error(10);
 			return false;
-			//die("NO");
 		}
-		
-		//die($this->pass . " " . $userFile["password"]);
 		
 		if($this->signed){
 			//If Account is not Activated
@@ -559,8 +558,8 @@ Returns false on error
 	private function log_login(){
 		//Update last_login
 		$time = time();
-		$sql = "UPDATE :table SET last_login=:time WHERE user_id='{$this->id}'";
-		if($this->check_sql($sql, Array("time" => $time)))
+		$sql = "UPDATE :table SET last_login=:time WHERE user_id=:id";
+		if($this->check_sql($sql, Array("time" => $time, "id" => $this->id)))
 			$this->report("Last Login updated");
 	}
 
@@ -645,8 +644,6 @@ Returns false on error
 		if($this->opt['legacyAuth']) return $this->legacy_hash_pass($pass);
 		
 		$regdate = !isset($this->data['reg_date']) ? $this->tmp_data['reg_date'] : $this->data['reg_date'];
-		
-		//$this->report("Using reg_date '{$regdate}' to hash password");
 		
 		$pre = $this->encode($regdate);
 		$pos = substr($regdate, 5, 1);
@@ -768,31 +765,37 @@ Returns false on error
 
 		$uid = $this->decode($e_uid);
 
-		$sql = "SELECT * FROM {$this->opt['table_name']} WHERE user_id={$uid} AND confirmation='{$hash}'";
+		$args = Array(
+			"user_id" => $uid
+		);
+		
+		//return false;
+		$user = $this->getRow($args);
 
 		//Bypass hash confirmation and get the user by partially matching its password
 		if($bypass){
 			preg_match("/^([0-9]{4})(.{2,".($e_uid_pos - 4)."})(".$e_uid.")/",$hash,$exerpt);
 			$pass = $exerpt[2];
-			$sql = "SELECT * FROM {$this->opt['table_name']} WHERE user_id={$uid} AND password LIKE '{$pass}%'";
-		}
-
-		$result = $this->getRow($sql);
-
-		if(!$result){
+			
+			if(!strpos($user['password'], $pass)){
+				$this->error(12);
+				return false;
+			}
+		}else if($user['confirmation'] != $hash){
 			$this->report("The user ID and the confirmation hash did not match");
 			$this->error(12);
 			return false;
 		}
-		if($this->signed and $this->id == $result['user_id']){
+		
+		if($this->signed and $this->id == $user['user_id']){
 			$this->logout(); //FLAGGED
 		}
 
 		//Hash is valid import user's info to object
-		$this->data = $result;
-		$this->id = $result['user_id'];
-		$this->username = $result['username'];
-		$this->pass = $result['password'];
+		$this->data = $user;
+		$this->id = $user['user_id'];
+		$this->username = $user['username'];
+		$this->pass = $user['password'];
 
 		$this->report("Hash successfully validated");
 		return true;
@@ -801,8 +804,13 @@ Returns false on error
 	//Saves the confirmation hash in the database
 	function save_hash(){
 		if($this->confirm and $this->id){
-			$sql = "UPDATE :table SET confirmation='{$this->confirm}', activated=0 WHERE user_id='{$this->id}'";
-			if(!$this->check_sql($sql)){
+			$sql = "UPDATE :table SET confirmation=:hash, activated=0 WHERE user_id=:id";
+			$data = Array(
+				"id"	=> $this->id,
+				"hash"	=> $this->confirm
+			);
+			
+			if(!$this->check_sql($sql, $data)){
 				$this->error(13);
 				return false;
 			}else{
@@ -881,6 +889,7 @@ Returns false on error
 		
 		if($args){
 			$st->execute($args);
+			$this->report("SQL Data Sent: [" . implode(', ',$args) . "]"); //Log the SQL Query first		
 		}else{
 			$st->execute();
 		}
@@ -898,9 +907,9 @@ Returns false on error
 		}
 	}
 
-	//Executes SQL query and returns an associate array of results
+	//Get a single user row depending on arguments
 	function getRow($args){
-		$sql = "SELECT * FROM :table WHERE";
+		$sql = "SELECT * FROM :table WHERE :args LIMIT 1";
 		
 		$st = $this->getStatement($sql, $args);
 		
@@ -910,8 +919,7 @@ Returns false on error
 			$this->report("Query returned empty");
 			return false;
 		}
-		//echo "<pre>";
-		//print_r($res->fetchObject());
+		
 		return $st->fetch(PDO::FETCH_ASSOC);
 	}
 	
@@ -947,7 +955,6 @@ Returns false on error
 		
 		if($args) $res->execute($args);
 		
-		//die($res->errorCode());
 		if($res->errorCode() > 0 and self::debug){
 			$error = $res->errorInfo();
 			$this->error("PDO({$error[0]})[{$error[1]}] {$error[2]}");
@@ -965,7 +972,6 @@ Returns false on error
 			if(isset($info[$field.(2)])){
 				if($val != $info[$field.(2)]){
 					$this->form_error($field, ucfirst($field) . "s did not match");
-					//return false;
 				}else{
 					$this->report(ucfirst($field) . "s matched");
 				}
