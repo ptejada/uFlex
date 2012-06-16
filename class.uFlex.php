@@ -1,40 +1,52 @@
 <?php
-// For Support visit http://crusthq.com/projects/uFlex/
-// ---------------------------------------------------------------------------
-// 	  uFlex - An all in one authentication system PHP class
-//	Copyright (C) 2012  Pablo Tejada
-//
-//	This program is free software: you can redistribute it and/or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.html.
-// ---------------------------------------------------------------------------
+/*
+	Copyright (c) 2012 Pablo Tejada, http://crusthq.com/projects/uFlex/
 
-/*Thought the Class Official name is userFlex the object is simply named uFlex*/
+	Permission is hereby granted, free of charge, to any person obtaining
+	a copy of this software and associated documentation files (the
+	"Software"), to deal in the Software without restriction, including
+	without limitation the rights to use, copy, modify, merge, publish,
+	distribute, sublicense, and/or sell copies of the Software, and to
+	permit persons to whom the Software is furnished to do so, subject to
+	the following conditions:
+	
+	The above copyright notice and this permission notice shall be
+	included in all copies or substantial portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+	LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+	OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 class uFlex{
 	//Constants
-	const debug = true;   //Logs extra bits of errors for developers
-	const version = 0.75;
-	const salt = "sd5a4"; //IMPORTANT: Please change this value as it will make this copy unique and secured
+	const version = 0.86;
+	const salt = "sd5a4"; //IMPORTANT: This constant is deprecated, useless you are upgrading class
 	//End of constants\\\\
-	var $id;		//Signed user ID
-	var $sid;	   //Current User Session ID
-	var $username;  //Signed username
-	var $pass;	  //Holds the user password hash
+	/**
+	 * PDO / database credentials
+	 */
+	var $db = array(
+		"host" => "",
+		"user" => "",
+		"pass" => "",
+		"name" => "",	//Database name
+		"dsn" => ""		//Alterntive PDO DSN string
+	);
+	var $id;		//Current user ID
+	var $sid;		//Current User Session ID
+	var $username;	//Signed username
+	var $pass;		//Holds the user password hash
 	var $signed;	//Boolean, true = user is signed-in
-	var $data;	  //Holds entire user database row
-	var $console;   //Cotainer for errors and reports
-	var $log;	   //Used for traking errors and reports
-	var $confirm;   //Holds the hash for any type of comfirmation
-	var $tmp_data;  //Holds the temporary user information during registration
+	var $data;		//Holds entire user database row
+	var $console;	//Cotainer for errors and reports
+	var $log;		//Used for traking errors and reports
+	var $confirm;	//Holds the hash for any type of comfirmation
+	var $tmp_data;	//Holds the temporary user information during registration and other methods
 	var $opt = array( //Array of Internal options
 		"table_name" => "users",
 		"cookie_time" => "+30 days",
@@ -42,13 +54,11 @@ class uFlex{
 		"cookie_path" => "/",
 		"cookie_host" => false,
 		"user_session" => "userData",
-		"legacyAuth"	=> false,
 		"default_user" => array(
 				"username" => "Guess",
 				"user_id" => 0,
 				"password" => 0,
-				"signed" => false,
-				//"avatar_url" => "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm"
+				"signed" => false
 				)
 		);
 	var $validations = array( //Array for default field validations
@@ -410,11 +420,20 @@ Returns false on error
 		}
 	}
 
+	/*
+	 *  Public function to start a delayed constructor
+	 */
+	 function start(){
+	 	$this->__construct();
+	 }
+	
  /*////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\
 ////////Private and Secondary Methods below this line\\\\\\\\\\\\\
  \*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////////////////*/
 /*Object Constructor*/
-	function __construct($user = false,$pass = false,$auto = false){
+	function __construct($name='', $pass=false, $auto=false){
+		if($name === false) return;
+		
 		$this->logger("login"); //Index for Reports and Errors;
 		
 		if(!isset($_SESSION) and !headers_sent()){
@@ -429,7 +448,7 @@ Returns false on error
 		
 		$this->sid = session_id();
 
-		$result = $this->loginUser($user,$pass,$auto);
+		$result = $this->loginUser($name, $pass, $auto);
 		
 		if(!$result){
 			$this->session($this->opt['default_user']);
@@ -499,6 +518,20 @@ Returns false on error
 			$this->tmp_data = $userFile;
 			$this->hash_pass($pass);
 			$this->signed = $this->pass == $userFile["password"] ? true : false;
+			
+			//Try legacy hash
+			if(!$this->signed){
+				$this->legacy_hash_pass($pass);
+				$this->signed = $this->pass == $userFile["password"] ? true : false;
+				
+				//Update password hash in database
+				if($this->signed){
+					$this->data = $userFile;
+					$this->id = $userFile['user_id'];
+					$this->update(Array("password" => $pass));
+					$this->log = "login";
+				}
+			}
 		}else{
 			$this->error(10);
 			return false;
@@ -641,9 +674,18 @@ Returns false on error
 	}
 	
 	function hash_pass($pass){
-		if($this->opt['legacyAuth']) return $this->legacy_hash_pass($pass);
 		
-		$regdate = !isset($this->data['reg_date']) ? $this->tmp_data['reg_date'] : $this->data['reg_date'];
+		$regdate = false;
+		
+		if(isset($this->data['reg_date']))
+			$regdate = $this->data['reg_date'];
+		
+		if(!$regdate and isset($this->tmp_data['reg_date']))
+			$regdate = $this->tmp_data['reg_date'];
+		
+		if(!$regdate){
+			return $this->legacy_hash_pass($pass);
+		}
 		
 		$pre = $this->encode($regdate);
 		$pos = substr($regdate, 5, 1);
@@ -823,27 +865,15 @@ Returns false on error
 		return true;
 	}
 	
-	/**
-	 * Start PDO integration
-	 */
-		
-	static $db = array(
-		"host" => "localhost",
-		"user" => "",
-		"pass" => "",
-		"name" => "",
-		"dsn" => false
-	);
-	
 	function connect(){
-		if(@$this->db) return true;
+		if(is_object($this->db)) return true;
 		
 		/* Connect to an ODBC database using driver invocation */
-		$user = self::$db['user'];
-		$pass = self::$db['pass'];
-		$host = self::$db['host'];
-		$name = self::$db['name'];
-		$dsn = self::$db['dsn'];
+		$user = $this->db['user'];
+		$pass = $this->db['pass'];
+		$host = $this->db['host'];
+		$name = $this->db['name'];
+		$dsn = $this->db['dsn'];
 		
 		if(!$dsn){
 			$dsn = "mysql:dbname={$name};host={$host}";
@@ -855,11 +885,11 @@ Returns false on error
 			$this->db = new PDO($dsn, $user, $pass);
 			$this->report("Connected to database.");
 		}catch(PDOException $e){
-			$this->db = false;
+			print_r($this->db);
 			$this->error("Failed to connect to database because " . $e->getMessage());
 		}
 		
-		if($this->db) return true;
+		if(is_object($this->db)) return true;
 		return false;
 	}
 	
@@ -955,7 +985,7 @@ Returns false on error
 		
 		if($args) $res->execute($args);
 		
-		if($res->errorCode() > 0 and self::debug){
+		if($res->errorCode() > 0 ){
 			$error = $res->errorInfo();
 			$this->error("PDO({$error[0]})[{$error[1]}] {$error[2]}");
 			return false;
