@@ -94,6 +94,12 @@ h2+div {
 			"{{_db_name}}"					=> $u->db['name'],
 			"{{_db_dsn}}"					=> $u->db['dsn'],
 			 */
+			"{{_db_host}}"					=> "",
+			"{{_db_user}}"					=> "",
+			"{{_db_pass}}"					=> "",
+			"{{_db_name}}"					=> "",
+			"{{_db_dsn}}"					=> "",
+			
 			"{{_table_name}}"			   => $u->opt['table_name'],
 			"{{_cookie_time}}"			  => $u->opt['cookie_time'],
 			"{{_cookie_name}}"			  => $u->opt['cookie_name'],
@@ -138,6 +144,9 @@ h2+div {
 		
 		//Replace integer enclosed in quotes Ex. "0"
 		$new = preg_replace("%=>\s?\"(\d)\"%","=> $1",$new);
+		
+		//Clean empty holders
+		//$new = preg_replace("/\{\{\_[0-9a-zA-Z_-]+\}\}/","", $new);
 		
 		//Save new file
 		if(!file_put_contents($classFile,$new)) error("New file could not be saved");
