@@ -3,14 +3,14 @@
 	
 	//Proccess Login
 	if(count($_POST)){
-	  @$username = $_POST['username'];
-	  @$password = $_POST['password'];
-	  @$auto = $_POST['auto'];
-	  
-	  @$user = new uFlex($username,$password,$auto);
-	  if($user->has_error()){
-		  $_SESSION['NoteMsgs'] = $user->error();	  	
-	  }
+		$username = isset($_POST['username']) ? $_POST['username'] : false;
+		$password = isset($_POST['password']) ? $_POST['password'] : false;
+		$auto = isset($_POST['auto']) ? $_POST['auto'] : false;
+		
+		$user->login($username,$password,$auto);
+		if($user->has_error()){
+			$_SESSION['NoteMsgs'] = $user->error();
+		}
 	}
 	
 	redirect();
