@@ -22,7 +22,7 @@
 ?>
 <pre>
 
-<?php 
+<?php
 	//print_r($data);
 	print_r($user->console);
 	print_r($_SESSION);
