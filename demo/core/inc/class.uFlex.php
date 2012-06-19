@@ -486,7 +486,9 @@ Returns false on error
 			$this->report("Attemping Login with cookies");
 			if($this->check_hash($c,true)){
 				$auto = true;
-				$cond = "username='{$this->username}'";
+				$getBy = "user_id";
+				$user = $this->id;
+				$this->signed = true;
 			}else{
 				$this->error(6);
 				$this->logout();
@@ -514,7 +516,7 @@ Returns false on error
 		//Query Database for user
 		$userFile = $this->getRow(Array($getBy => $user));
 		
-		if($userFile){
+		if($userFile and !$this->signed){
 			$this->tmp_data = $userFile;
 			$this->hash_pass($pass);
 			$this->signed = $this->pass == $userFile["password"] ? true : false;
@@ -532,6 +534,8 @@ Returns false on error
 					$this->log = "login";
 				}
 			}
+		}else if($this->signed){
+			//Continue login from cookie
 		}else{
 			$this->error(10);
 			return false;
@@ -819,7 +823,7 @@ Returns false on error
 			preg_match("/^([0-9]{4})(.{2,".($e_uid_pos - 4)."})(".$e_uid.")/",$hash,$exerpt);
 			$pass = $exerpt[2];
 			
-			if(!strpos($user['password'], $pass)){
+			if(strpos($user['password'], $pass) === false){
 				$this->error(12);
 				return false;
 			}
