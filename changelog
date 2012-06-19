@@ -1,5 +1,16 @@
 uFlex Changelog
 
+
+v0.86	6/15/2012
+	- Constant ::debug deprecated, not really needed
+	- Implemented a stronger and more complex user authentication algorithm. It is fully backwards compatible, users will be migrated to the new algorithm as they login.
+	- Ported the class to use PDO instead of the outdated mysql_* lib.
+	- The class now handles its own database link so a connection is stablished only when needed.
+	- Addded the $db variable to hold the database credentials.
+	- Added the ability to delay/stop object construction so that options could be configured outside the class file before it starts.
+	- new ->start() method allows you to start a delayed object construction so that you can customize any class option without having to edit the class file itselft.
+	- MIT lincense upgrade, is more flexible so it should not be a problem with existing applications
+
 v0.75	11/26/2011
 	- Revamped Demo, new look and best PHP practices
 	- New ->login() method to initiate a login request anytime
@@ -9,7 +20,7 @@ v0.75	11/26/2011
 	
 v0.61	5/18/2011
 	- Fixed inline Grammar thoughtout the class.uFlex.php file
-	- Included an installable 'demo'	
+	- Included an installable 'demo'
 	
 v0.57	5/5/2011
 	- Fixed fields not been able to be optional
@@ -75,18 +86,18 @@ uFlex 0.30
 	- Made ->setCookie() public method
 
 
-v0.22     6/01/2010
+v0.22	 6/01/2010
 	- Replaced the Object starter function (uFlex) with a PHP Object Constructor
 	- added the sid(Session ID) variable:
 	- Added Form error reporting when matching fields on 'register' and 'update' methods
 
-v0.20     5/16/2010
+v0.20	 5/16/2010
 	- Added the activation method to the console log
 	- Added an md5 email hash to the end of the ativation hash
 	- Trim All fields on registration and update methods
 	- Fixed some grammar and spelling typos
   
-v0.15     4/15/2010
+v0.15	 4/15/2010
   First Public Relase
   +Registration Method
   	- Custome and Built-in fields validation

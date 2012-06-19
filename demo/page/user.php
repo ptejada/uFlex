@@ -7,13 +7,8 @@
 		//Display single users
 		
 		$select = (intval($uid)!=0) ? "user_id" : "username";
-		//$select = "user_id";
-		$sql = "SELECT * 
-				FROM users
-				WHERE {$select}='{$uid}'
-			";
 		
-		$data = getRow($sql);
+		$data = $user->getRow(Array($select => $uid));
 		
 		if($data){
 			?>
@@ -23,6 +18,7 @@
 				<tr><td></td><td></td></tr>
 				<?php
 					foreach($data as $field=>$val){
+						if($field == "email") continue;
 						echo "<tr><td>{$field}</td><td>  =>  </td><td> {$val}</td></tr>";
 					}
 				?>
@@ -34,13 +30,15 @@
 	}else{
 		//Display random users
 		$sql = "SELECT * 
-				FROM users
+				FROM :table 
 				WHERE activated=1
 				ORDER BY RAND()
 				LIMIT 24
 			";
 		
-		$data = getQuery($sql);
+		$data = $user->getStatement($sql);
+		$data->execute();
+		$data = $data->fetchAll(PDO::FETCH_ASSOC);
 		
 		if($data){
 			

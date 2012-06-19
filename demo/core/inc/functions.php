@@ -39,33 +39,6 @@
 		return $res;
 	}
 	
-	function getQuery($sql){
-		$query = mysql_query($sql);
-		if(mysql_error()){ die(mysql_error()); }
-		if(mysql_num_rows($query)){
-			while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
-				$rows[] = $row;
-			}
-		}else{
-			//echo "Query returned empty";
-			return false;
-		}
-		return $rows;
-	}
-	
-	//Get a Single SQL record
-	function getRow($sql){
-		$query = mysql_query($sql);
-		if(mysql_error()){ die(mysql_error()."<br /> SQL: $sql"); }
-		if(mysql_num_rows($query)){
-			$row = mysql_fetch_array($query, MYSQL_ASSOC);
-		}else{
-			//echo "Query returned empty";
-			return false;
-		}
-		return $row;
-	}
-	
 	function showMsg($index="NoteMsgs"){
 		if(isset($_SESSION[$index])){
 			if(!is_array($_SESSION[$index])) return;

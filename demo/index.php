@@ -50,7 +50,7 @@
 		</div>
 		<div id="footer">
 			<hr>
-			Copyright Test &copy; 2011 - 
+			Copyright Test &copy; 2012 - 
 			<a href="http://crusthq.com/projects/uFlex/">uFlex Home</a> - 
 			v<?php echo uFlex::version?>
 			<hr>
