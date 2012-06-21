@@ -604,7 +604,10 @@ Returns false on error
 		if($this->pass and $this->id){
 
 			$code = $this->make_hash($this->id,$this->pass);
-
+			
+			if(!$this->opt['cookie_host'])
+				$this->opt['cookie_host'] = $_SERVER['HTTP_HOST'];
+			
 			if(!headers_sent()){
 				//echo "PHP";
 				setcookie($this->opt['cookie_name'],$code,strtotime($this->opt['cookie_time']),
