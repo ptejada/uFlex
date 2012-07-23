@@ -24,7 +24,7 @@
 
 class uFlex {
 	//Constants
-	const version = 0.86;
+	const version = 0.87;
 	const salt = "{{::salt}}"; //IMPORTANT: //IMPORTANT: This constant is deprecated, useless you are upgrading class
 	//End of constants\\\\
 	/**
@@ -582,10 +582,13 @@ Returns false on error
 
 	function logout(){
 		$this->logger("login");
-		$deleted = setcookie($this->opt['cookie_name'],"",time() - 3600,"/"); //Deletes the Auto Coookie
+		$deleted = setcookie($this->opt['cookie_name'],"",time() - 3600,
+			$this->opt['cookie_path'],$this->opt['cookie_host']); //Deletes the Auto Coookie
+			
 		$this->signed = 0;
 		//Import default user object
-		$this->data = $_SESSION[$this->opt['user_session']] = $this->opt['default_user'];
+		$_SESSION[$this->opt['user_session']] = $this->data = $this->opt['default_user'];
+		
 		if(!$deleted){
 			$this->report("The Autologin cookie could not be deleted");
 		}
@@ -604,7 +607,10 @@ Returns false on error
 		if($this->pass and $this->id){
 
 			$code = $this->make_hash($this->id,$this->pass);
-
+			
+			if(!$this->opt['cookie_host'])
+				$this->opt['cookie_host'] = $_SERVER['HTTP_HOST'];
+			
 			if(!headers_sent()){
 				//echo "PHP";
 				setcookie($this->opt['cookie_name'],$code,strtotime($this->opt['cookie_time']),
@@ -889,8 +895,7 @@ Returns false on error
 			$this->db = new PDO($dsn, $user, $pass);
 			$this->report("Connected to database.");
 		}catch(PDOException $e){
-			print_r($this->db);
-			$this->error("Failed to connect to database because " . $e->getMessage());
+			$this->error("Failed to connect to database, [SQLSTATE] " . $e->getCode());
 		}
 		
 		if(is_object($this->db)) return true;

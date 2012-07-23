@@ -23,8 +23,8 @@ h2+div {
 		$err = "<h2 class='error'>$err</h2><h1>Ok <a href='{$_SERVER['SCRIPT_NAME']}'>Continue</a></h1>";
 		die($err);
 	}
-	$toVersion = 0.86;
-	$fromVersion = 0.75;
+	$toVersion = 0.87;
+	$fromVersion = 0.86;
 	
 	$classFile = "class.uFlex.php";
 	$template = "class.uFlex.update.tpl";
@@ -85,38 +85,29 @@ h2+div {
 		
 		$master = array(
 			"{{::salt}}"					=> uFlex::salt,
-			/* 
-			 * FOR NEXT UPDATE
-			 * 
 			"{{_db_host}}"					=> $u->db['host'],
 			"{{_db_user}}"					=> $u->db['user'],
 			"{{_db_pass}}"					=> $u->db['pass'],
 			"{{_db_name}}"					=> $u->db['name'],
 			"{{_db_dsn}}"					=> $u->db['dsn'],
-			 */
-			"{{_db_host}}"					=> "",
-			"{{_db_user}}"					=> "",
-			"{{_db_pass}}"					=> "",
-			"{{_db_name}}"					=> "",
-			"{{_db_dsn}}"					=> "",
 			
-			"{{_table_name}}"			   => $u->opt['table_name'],
-			"{{_cookie_time}}"			  => $u->opt['cookie_time'],
-			"{{_cookie_name}}"			  => $u->opt['cookie_name'],
-			"{{_cookie_path}}"			  => $u->opt['cookie_path'],
-			"{{_cookie_host}}"			  => $u->opt['cookie_host'],
-			"{{_user_session}}"			 => $u->opt['user_session'],
-			"{{_default_user-_username}}"   => $u->opt['default_user']['username'],
+			"{{_table_name}}"				=> $u->opt['table_name'],
+			"{{_cookie_time}}"				=> $u->opt['cookie_time'],
+			"{{_cookie_name}}"				=> $u->opt['cookie_name'],
+			"{{_cookie_path}}"				=> $u->opt['cookie_path'],
+			"{{_cookie_host}}"				=> $u->opt['cookie_host'],
+			"{{_user_session}}"				=> $u->opt['user_session'],
+			"{{_default_user-_username}}"	=> $u->opt['default_user']['username'],
 			"{{_default_user-_user_id}}"	=> $u->opt['default_user']['user_id'],
-			"{{_default_user-_password}}"   => $u->opt['default_user']['password'],
-			"{{_default_user-_signed}}"	 => $u->opt['default_user']['signed'],
+			"{{_default_user-_password}}"	=> $u->opt['default_user']['password'],
+			"{{_default_user-_signed}}"		=> $u->opt['default_user']['signed'],
 			
-			"{{_username-_limit}}"		  => $u->validations['username']['limit'],
-			"{{_username-_regEx}}"		  => $u->validations['username']['regEx'],
-			"{{_password-_limit}}"		  => $u->validations['password']['limit'],
-			"{{_password-_regEx}}"		  => $u->validations['password']['regEx'],
-			"{{_email-_limit}}"			 => $u->validations['email']['limit'],
-			"{{_email-_regEx}}"			 => $u->validations['email']['regEx'],
+			"{{_username-_limit}}"			=> $u->validations['username']['limit'],
+			"{{_username-_regEx}}"			=> $u->validations['username']['regEx'],
+			"{{_password-_limit}}"			=> $u->validations['password']['limit'],
+			"{{_password-_regEx}}"			=> $u->validations['password']['regEx'],
+			"{{_email-_limit}}"				=> $u->validations['email']['limit'],
+			"{{_email-_regEx}}"				=> $u->validations['email']['regEx'],
 			
 			"{{_1}}"		=> $u->errorList[1],
 			"{{_2}}"		=> $u->errorList[2],
