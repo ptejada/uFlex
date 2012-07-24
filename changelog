@@ -1,5 +1,10 @@
 uFlex Changelog
 
+v0.88	7/23/2012
+	- Fixed an autologin cookie bug where user could not be logged out in PHP 5.4.x
+	
+v0.87	7/22/2012
+	- Patched some security bugs
 
 v0.86	6/15/2012
 	- Constant ::debug deprecated, not really needed
