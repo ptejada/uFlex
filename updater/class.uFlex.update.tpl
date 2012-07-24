@@ -24,7 +24,7 @@
 
 class uFlex {
 	//Constants
-	const version = 0.87;
+	const version = 0.88;
 	const salt = "{{::salt}}"; //IMPORTANT: //IMPORTANT: This constant is deprecated, useless you are upgrading class
 	//End of constants\\\\
 	/**
@@ -582,6 +582,10 @@ Returns false on error
 
 	function logout(){
 		$this->logger("login");
+		
+		if(!$this->opt['cookie_host'])
+			$this->opt['cookie_host'] = $_SERVER['HTTP_HOST'];
+		
 		$deleted = setcookie($this->opt['cookie_name'],"",time() - 3600,
 			$this->opt['cookie_path'],$this->opt['cookie_host']); //Deletes the Auto Coookie
 			

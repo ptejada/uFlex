@@ -5,6 +5,7 @@ Getting Started
 * Try the demo in this package and view its source
 * See the methods documention here <http://crusthq.com/projects/uFlex/documentation/>
 
+This class is developed, mantained and tested in a **PHP 5.3.x** enviroment.
 Updating your current uFlex Class version
 ====================================
 
