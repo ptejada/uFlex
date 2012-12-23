@@ -14,7 +14,7 @@
 	$page_inc = "page/" . str_replace("-", "_", $page) . $ext;
 	
 	//Page not found
-	if(!file_exists($page_inc)) send404();
+	if(!file_exists($page_inc) || strpos($page_inc, "..")) send404();
 		
 	$page_title = ucfirst($page);
 ?>
@@ -46,7 +46,7 @@
 			<hr>		
 		</div>
 		<div id="content">
-			<?php include($page_inc); ?>			
+			<?php include($page_inc); ?>
 		</div>
 		<div id="footer">
 			<hr>

@@ -2,6 +2,7 @@
 /.project
 /.buildpath
 /demo/core/config.php
+/index.php
 *.class
 *.pyc
 *.pyo
