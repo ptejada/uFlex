@@ -581,7 +581,7 @@ Returns false on error
 	}
 
 	function logout(){
-		$this->logger("login");
+		$this->logger("logout");
 		
 		if(!$this->opt['cookie_host'])
 			$this->opt['cookie_host'] = $_SERVER['HTTP_HOST'];
@@ -593,7 +593,7 @@ Returns false on error
 		//Import default user object
 		$_SESSION[$this->opt['user_session']] = $this->data = $this->opt['default_user'];
 		
-		if(!$deleted){
+		if(!$deleted && !headers_sent()){
 			$this->report("The Autologin cookie could not be deleted");
 		}
 		$this->report("User Logged out");
