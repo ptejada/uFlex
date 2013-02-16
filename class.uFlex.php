@@ -640,23 +640,38 @@ Returns false on error
 			$this->error("Info required to set the cookie {$this->opt['cookie_name']} is not available");
 		}
 	}
-	
-	private function session($index=false, $val=false){
+
+	/**
+	 * Manage the session uFlex object variables
+	 * 
+	 * This method has many functions:
+	 * session([String]) => Get the value of the index
+	 * session([String], [String|mixed]) => Set the specifeid index with the given value
+	 * session([Array]) => Overwrite the whole uFlex session space with a given array
+	 * 
+	 * @param string|array $index Session index to get or set
+	 * @param mixed[] $val The value to the set the $index with
+	 */
+	function session($index=false, $val=false){
+		//Get uFlex session index value
 		if(is_string($index) and !$val){
 			return @$_SESSION[$this->opt['user_session']][$index];
 		}
 		
+		//Set the value for a uFlex index
 		if(is_string($index) and $val){
 			$_SESSION[$this->opt['user_session']][$index] = $val;
 			return;
 		}
 		
+		//Overwrite the whole uFlex session space with a given array
 		if(is_array($index) and !$val){
 			$_SESSION[$this->opt['user_session']] = $index;
 			return;	
 		}
+
 		//return full session user data
-		return $_SESSION[$this->opt['user_session']];	
+		return $_SESSION[$this->opt['user_session']];
 	}
 	
 	private function update_session($d){
