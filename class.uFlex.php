@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright (c) 2012 Pablo Tejada, http://crusthq.com/projects/uFlex/
+	Copyright (c) 2013 Pablo Tejada, http://crusthq.com/projects/uFlex/
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files (the
@@ -124,21 +124,22 @@ class uFlex{
 		self::__construct($user,$pass,$auto);
 	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-Register A New User
--Takes two parameters, the first being required
-	@info = array object (takes an associatve array, 
-				the index being the fieldname(column in database) 
-				and the value its content(value)
-	+optional second parameter
-	@activation = boolean(true/false)
-		default = false 
-Returns activation hash if second parameter @activation is true
-Returns true if second parameter @activation is false
-Returns false on Error
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Register A New User
+	 * 
+	 * Takes two parameters, the first being required
+	 * 
+	 * @param array $info An associatve array, 
+					the index being the fieldname(column in database) 
+					and the value its content(value)
+	 * @param bool $activation Default is false, if true the user will need required further steps to activate account 
+	 * 				Otherwise the account will be activated if registration succeeds
+	 * 
+	 * @return array|bool Returns activation hash if second parameter $activation is true 
+	 * 						Returns true if second parameter $activation is false 
+	 * 						Returns false on Error
+	 */
+
 	function register($info,$activation = false){
 		$this->logger("registration"); //Index for Errors and Reports
 
@@ -208,18 +209,17 @@ Returns false on Error
 		}
 	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-Similar to the register method function in structure
-This Method validates and updates any field in the database
--Takes one parameter
-	@info = array object (takes an associatve array, 
-				the index being the fieldname(column in database) 
-				and the value its content(value)
-On Success returns true
-On Failure return false	
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Validates and updates any field in the database for the current user
+	 * 
+	 * Similar to the register method function in structure, 
+	 * this Method validates and updates any field in the database
+	 * 
+	 * @param array $info An associatve array, 
+					the index being the fieldname(column in database) 
+					and the value its content(value)
+	 * @return bool Returns true on success anf false on errror
+	 */
 	function update($info){
 		$this->logger("update"); //Index for Errors and Reports
 
@@ -269,33 +269,38 @@ On Failure return false
 		}
 	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-Adds validation to queue for either the Registration or Update Method
-Single Entry:
-	Requires the first two parameters
-		@name  = string (name of the field to be validated)
-		@limit = string (range in the format of "5-10")
-			*to make a field optional start with 0 (Ex. "0-10")
-	Optional third paramenter
-		@regEx = string (Regular Expresion to test the field)
-_____________________________________________________________________________________________________
-
-Multiple Entry:
-	Takes only the first argument
-		@name = Array Object (takes an object in the following format:
-			array(
-				"username" => array(
-						"limit" => "3-15",
-						"regEx" => "/^([a-zA-Z0-9_])+$/"
-						),
-				"password" => array(
-						"limit" => "3-15",
-						"regEx" => false
-						)
-				);
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Adds validation to queue for either the Registration or Update Method
+	 * 
+	 * Single Entry:
+	 * 	Requires the first two parameters
+	 * 		$name  = string (name of the field to be validated)
+	 * 		$limit = string (range of the accepted value length in the format of "5-10")
+	 * 			- to make a field optional start with 0 (Ex. "0-10")
+	 * 
+	 * 	Optional third paramenter
+	 * 		$regEx = string (Regular Expresion to test the field)
+	 * _____________________________________________________________________________________________________
+	 * 
+	 * Multiple Entry:
+	 * 	Takes only the first argument
+	 * 		$name = Array Object (takes an object in the following format:
+	 * 			array(
+	 * 				"username" => array(
+	 * 						"limit" => "3-15",
+	 * 						"regEx" => "/^([a-zA-Z0-9_])+$/"
+	 * 						),
+	 * 				"password" => array(
+	 * 						"limit" => "3-15",
+	 * 						"regEx" => false
+	 * 						)
+	 * 				);
+	 * 
+	 * @param string|array $name Name of the field to validate or an array of all the fields and their validations
+	 * @param string $limit A range of the accepted value length in the format of "5-10",
+	 * 						to make a field optional start with 0 (Ex. "0-10")
+	 * @return null
+	 */
 	function addValidation($name,$limit = "0-1",$regEx = false){
 		$this->logger("registration");
 		if(is_array($name)){
@@ -311,14 +316,15 @@ Multiple Entry:
 		}
 	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////	
-/*
-Activates Account with hash
-Takes Only and Only the URL parameter of the confirmation page
-	@hash = string
-Returns true on account activation and false on failure
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Activates Account with hash
+	 * 
+	 * Takes Only and Only the URL parameter of a confirmation page 
+	 * which would be the hash returned by the register method
+	 * 
+	 * @param string $hash Hash returned in the register method
+	 * @return bool Returns true account activation and false on failure
+	 */
 	function activate($hash){
 		$this->logger("activation");
 
@@ -338,16 +344,14 @@ Returns true on account activation and false on failure
 		}
 	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-Method to reset password, Returns confirmation code to reset password
--Takes one parameter and is required
-	@email = string(user email to reset password)
-On Success it returns an array(email,username,user_id,hash) which could then be use to 
- construct the confirmation URL and Email
-On Failure it returns false
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Method to reset password, Returns confirmation code to reset password
+	 * 
+	 * @param string $email User email to reset password
+	 * @return array|false On Success it returns an array(email,username,user_id,hash) 
+	 * 						which could then be use to construct the confirmation URL and Email.
+	 * 						On Failure it returns false
+	 */
 	function pass_reset($email){
 		$this->logger("pass_reset");
 
@@ -377,23 +381,21 @@ On Failure it returns false
 		}
 	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-Changes a Password with a Confirmation hash from the pass_reset method
-*this is for users that forget their passwords to change the signed user password use ->update()
--Takes two parameters
-	@hash = string (pass_reset method hash)
-	@new = array (an array with indexes 'password' and 'password2')
-					Example:
-					array(
-						[password] => pass123
-						[password2] => pass123
-					)
-					*use ->addValidation('password', ...) to validate password
-Returns true on a successful password change
-Returns false on error
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Changes a Password with a Confirmation hash from the pass_reset method
+	 * 
+	 * This is for users that forget their passwords to change the signed in user password use ->update()
+	 * 
+	 * @param string pass_reset method hash
+	 * @param array $new An array with indexes 'password' and 'password2'
+	 * 					Example:
+	 * 					array(
+	 * 						[password] => pass123
+	 * 						[password2] => pass123
+	 * 					)
+	 * @return bool Returns true on a successful password change. 
+	 * 				Returns false on error
+	 */
 	function new_pass($hash,$newPass){
 		$this->logger("new_pass");
 
@@ -420,8 +422,10 @@ Returns false on error
 		}
 	}
 
-	/*
-	 *  Public function to start a delayed constructor
+	/**
+	 * Public function to start a delayed constructor
+	 * 
+	 * When you initialize the class like `new uFlex(false)` the object construction will be halted until this method is called.
 	 */
 	 function start(){
 	 	$this->__construct();
@@ -430,7 +434,9 @@ Returns false on error
  /*////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\
 ////////Private and Secondary Methods below this line\\\\\\\\\\\\\
  \*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////////////////*/
-/*Object Constructor*/
+	/**
+	 * Object constructor
+	 */
 	function __construct($name='', $pass=false, $auto=false){
 		if($name === false) return;
 		
@@ -465,6 +471,7 @@ Returns false on error
 	/**
 	 * Private Login proccesor function
 	 * 
+	 * @ignore
 	 */
 	private function loginUser($user = false,$pass = false,$auto = false){
 		//Session Login
@@ -579,7 +586,14 @@ Returns false on error
 			return false;
 		}
 	}
-
+	
+	/**
+	 * Logout the user
+	 * 
+	 * Logs out the current user and deletes any autologin cookies
+	 * 
+	 * @return void
+	 */
 	function logout(){
 		$this->logger("logout");
 		
@@ -598,7 +612,11 @@ Returns false on error
 		}
 		$this->report("User Logged out");
 	}
-
+	
+	/**
+	 * Logs user last login in database
+	 * @ignore
+	 */
 	private function log_login(){
 		//Update last_login
 		$time = time();
@@ -606,7 +624,10 @@ Returns false on error
 		if($this->check_sql($sql, Array("time" => $time, "id" => $this->id)))
 			$this->report("Last Login updated");
 	}
-
+	
+	/**
+	 * Set the autologin cookie for the current user
+	 */
 	function setCookie(){
 		if($this->pass and $this->id){
 
@@ -674,6 +695,10 @@ Returns false on error
 		return $_SESSION[$this->opt['user_session']];
 	}
 	
+	/**
+	 * Updates the session and the object with the provided array
+	 * @ignore
+	 */
 	private function update_session($d){
 		unset($_SESSION['uFlex']['update']);
 
@@ -683,7 +708,10 @@ Returns false on error
 		$this->report("Session updated");
 		$this->update_from_session();
 	}
-
+	
+	/**
+	 * Update the object with the PHP session information
+	 */
 	private function update_from_session(){
 		$d = $this->session();
 
@@ -696,13 +724,23 @@ Returns false on error
 		$this->report("Session has been imported to the object");
 	}
 
+	/**
+	 * The legacy password hasher for backwrads compatibility 
+	 */
 	function legacy_hash_pass($pass){
 		$salt = uFlex::salt;
 		$this->pass = md5($salt.$pass.$salt);
 		return $this->pass;
 	}
 	
-	function hash_pass($pass){
+	/**
+	 * The password hasher
+	 * 
+	 * Hashes a clear text password for the current user
+	 * 
+	 * @ignore
+	 */
+	private function hash_pass($pass){
 		
 		$regdate = false;
 		
@@ -722,14 +760,27 @@ Returns false on error
 		$this->pass = md5($pre.$pass.$post);
 		return $this->pass;
 	}
-
+	
+	/**
+	 * Log the type of request being initialized and log with the error amd report methods
+	 * 
+	 * @param string $log Request name
+	 * @return object Self $this object
+	 */
 	function logger($log){
 		$this->log = $log;
 		unset($this->console['errors'][$log]);
 		unset($this->console['form'][$log]);
 		$this->report(">>Startting new $log request");
+		return $this;
 	}
-
+	
+	/**
+	 * Add a report log entry
+	 * 
+	 * @param string|false $str Text information, default is false
+	 * @return true|array If $str is false returns the arary of reports in the current logger
+	 */
 	function report($str = false){
 		$index = $this->log;
 		if($str){
@@ -747,6 +798,12 @@ Returns false on error
 		}
 	}
 
+	/**
+	 * Add an error log entry
+	 * 
+	 * @param string|false $str Text information, default is false
+	 * @return true|array If $str is false returns the arary of errors in the current logger
+	 */
 	function error($str = false){
 		$index = $this->log;
 		if($str){
@@ -768,7 +825,13 @@ Returns false on error
 		}
 	}
 
-	//Adds fields with errors to the console
+	/**
+	 * Add a form field error log entry
+	 * 
+	 * @param string|false $field Field name, default is false
+	 * @param string|false $error Text information, default is false
+	 * @return true|array If $field and $error is false returns the arary of form field errror in the current logger
+	 */
 	function form_error($field = false,$error = false){
 		$index = $this->log;
 		if($field){
@@ -789,7 +852,11 @@ Returns false on error
 		}
 	}
 
-	//Check for errors in the console
+	/**
+	 * Check if there is an error in the current logger
+	 * 
+	 * @return bool
+	 */
 	function has_error($index = false){
 		//Check for errors
 		$index = $index?$index:$this->log;
@@ -803,7 +870,9 @@ Returns false on error
 		}
 	}
 
-	//Generates a unique comfirm hash
+	/**
+	 * Generates a unique comfirm hash
+	 */
 	function make_hash($uid,$hash = false){
 		$e_uid = $this->encode($uid);
 		$e_uid_length = strlen($e_uid);
@@ -822,8 +891,10 @@ Returns false on error
 		$this->confirm = $code;
 		return $code;
 	}
-
-	//Validates a confirmation hash
+	
+	/**
+	 * Checks and validates a confirmation hash
+	 */
 	function check_hash($hash,$bypass = false){
 		if(strlen($hash) != 32 || !preg_match("/^[0-9]{4}/",$hash)){
 			$this->error(11);
@@ -872,7 +943,9 @@ Returns false on error
 		return true;
 	}
 
-	//Saves the confirmation hash in the database
+	/**
+	 * Saves the confirmation hash in the database
+	 */
 	function save_hash(){
 		if($this->confirm and $this->id){
 			$sql = "UPDATE :table SET confirmation=:hash, activated=0 WHERE user_id=:id";
@@ -894,6 +967,9 @@ Returns false on error
 		return true;
 	}
 	
+	/**
+	 * Connects to the database
+	 */
 	function connect(){
 		if(is_object($this->db)) return true;
 		
@@ -921,7 +997,9 @@ Returns false on error
 		return false;
 	}
 	
-	//Test field in database for a value
+	/**
+	 * Test field in database for a value
+	 */
 	function check_field($field,$val,$err = false){
 		$res = $this->getRow(Array($field => $val));
 		
@@ -939,7 +1017,9 @@ Returns false on error
 		}
 	}
 
-	//Executes SQL query and checks for success
+	/**
+	 * Executes SQL query and checks for success
+	 */
 	function check_sql($sql, $args=false){
 		$st = $this->getStatement($sql);
 		
@@ -965,7 +1045,9 @@ Returns false on error
 		}
 	}
 
-	//Get a single user row depending on arguments
+	/**
+	 * Get a single user row depending on arguments
+	 */
 	function getRow($args){
 		$sql = "SELECT * FROM :table WHERE :args LIMIT 1";
 		
@@ -982,7 +1064,7 @@ Returns false on error
 	}
 	
 	/*
-	 * Get the PDO statment
+	 * Get a PDO statment
 	 */
 	function getStatement($sql, $args=false){
 		if(!$this->connect()) return false;
@@ -1022,7 +1104,10 @@ Returns false on error
 		return $res;
 	}
 
-	//Validates All fields in ->tmp_data array
+	/**
+	 * Validates All fields in ->tmp_data array
+	 * 
+	 */
 	function validateAll(){
 		$info = $this->tmp_data;
 		foreach($info as $field => $val){
