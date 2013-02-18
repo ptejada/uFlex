@@ -23,8 +23,8 @@ h2+div {
 		$err = "<h2 class='error'>$err</h2><h1>Ok <a href='{$_SERVER['SCRIPT_NAME']}'>Continue</a></h1>";
 		die($err);
 	}
-	$toVersion = 0.88;
-	$fromVersion = 0.87;
+	$toVersion = 0.91;
+	$fromVersion = 0.88;
 	
 	$classFile = "class.uFlex.php";
 	$template = "class.uFlex.update.tpl";
@@ -32,7 +32,7 @@ h2+div {
 	
 	if(@$_GET['restore']){
 		if(!rename($backupFile,$classFile)){
-			echo "<p>File <span>$classFile</span> could NOT be restored</p>";	   
+			echo "<p>File <span>$classFile</span> could NOT be restored</p>";
 		}else{
 			echo "<p>File <span>$classFile</span> was restored successfully. Is like nothing happened</p>";
 		};
