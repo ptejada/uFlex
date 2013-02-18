@@ -1,5 +1,10 @@
 uFlex Changelog
 
+v0.91	2/17/2013
+	- Overhaul of inline documentation
+	- Made the ->session method public
+	- Enhanced the ->logout method
+
 v0.88	7/23/2012
 	- Fixed an autologin cookie bug where user could not be logged out in PHP 5.4.x
 	
