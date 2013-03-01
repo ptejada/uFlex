@@ -432,7 +432,7 @@ class uFlex{
 	 }
 	
  /*////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\
-////////Private and Secondary Methods below this line\\\\\\\\\\\\\
+////////Protected and Secondary Methods below this line\\\\\\\\\\\\\
  \*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////////////////*/
 	/**
 	 * Object constructor
@@ -469,11 +469,11 @@ class uFlex{
 	}
 	
 	/**
-	 * Private Login proccesor function
+	 * Protected Login proccesor function
 	 * 
 	 * @ignore
 	 */
-	private function loginUser($user = false,$pass = false,$auto = false){
+	protected function loginUser($user = false,$pass = false,$auto = false){
 		//Session Login
 		if($this->session("signed")){
 			$this->report("User Is signed in from session");
@@ -617,7 +617,7 @@ class uFlex{
 	 * Logs user last login in database
 	 * @ignore
 	 */
-	private function log_login(){
+	protected function log_login(){
 		//Update last_login
 		$time = time();
 		$sql = "UPDATE :table SET last_login=:time WHERE user_id=:id";
@@ -699,7 +699,7 @@ class uFlex{
 	 * Updates the session and the object with the provided array
 	 * @ignore
 	 */
-	private function update_session($d){
+	protected function update_session($d){
 		unset($_SESSION['uFlex']['update']);
 
 		$this->session($d);
@@ -712,7 +712,7 @@ class uFlex{
 	/**
 	 * Update the object with the PHP session information
 	 */
-	private function update_from_session(){
+	protected function update_from_session(){
 		$d = $this->session();
 
 		$this->id = $d['user_id'];
@@ -740,7 +740,7 @@ class uFlex{
 	 * 
 	 * @ignore
 	 */
-	private function hash_pass($pass){
+	protected function hash_pass($pass){
 		
 		$regdate = false;
 		
@@ -1132,7 +1132,7 @@ class uFlex{
 	}
 
 	//Validates field($name) in tmp_data
-	private function validate($name,$limit,$regEx = false){
+	protected function validate($name,$limit,$regEx = false){
 		$Name = ucfirst($name);
 		$str = $this->tmp_data[$name];
 		$l = explode("-",$limit);
