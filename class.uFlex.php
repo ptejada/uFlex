@@ -24,7 +24,7 @@
 
 class uFlex{
 	//Constants
-	const version = 0.91;
+	const version = 0.92;
 	const salt = "sd5a4"; //IMPORTANT: This constant is deprecated, useless you are upgrading class
 	//End of constants\\\\
 	/**
