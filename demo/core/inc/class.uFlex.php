@@ -24,7 +24,7 @@
 
 class uFlex {
 	//Constants
-	const version = 0.92;
+	const version = 0.93;
 	const salt = "sd5a4"; //IMPORTANT: //IMPORTANT: This constant is deprecated, useless you are upgrading class
 	//End of constants\\\\
 	/**
@@ -366,7 +366,7 @@ class uFlex {
 			
 			$this->make_hash($user['user_id']);
 			$this->id = $user['user_id'];
-			$this->save_hash();
+			$this->save_hash(true);
 
 			$data = array(
 				"email" => $email, 
@@ -946,9 +946,9 @@ class uFlex {
 	/**
 	 * Saves the confirmation hash in the database
 	 */
-	function save_hash(){
+	function save_hash($activated = false){
 		if($this->confirm and $this->id){
-			$sql = "UPDATE :table SET confirmation=:hash, activated=0 WHERE user_id=:id";
+			$sql = "UPDATE :table SET confirmation=:hash, activated=".(($activated)?'activated':0)." WHERE user_id=:id";
 			$data = Array(
 				"id"	=> $this->id,
 				"hash"	=> $this->confirm
