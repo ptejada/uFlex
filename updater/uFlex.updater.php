@@ -23,8 +23,8 @@ h2+div {
 		$err = "<h2 class='error'>$err</h2><h1>Ok <a href='{$_SERVER['SCRIPT_NAME']}'>Continue</a></h1>";
 		die($err);
 	}
-	$toVersion = 0.91;
-	$fromVersion = 0.88;
+	$toVersion = 0.93;
+	$fromVersion = 0.92;
 	
 	$classFile = "class.uFlex.php";
 	$template = "class.uFlex.update.tpl";
