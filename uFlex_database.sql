@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_login` int(11) NOT NULL DEFAULT '0',
   `group_id` int(2) NOT NULL DEFAULT '1',
   PRIMARY KEY (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
