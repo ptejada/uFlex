@@ -744,11 +744,11 @@ class uFlex{
 		
 		$regdate = false;
 		
-		if(isset($this->data['reg_date']))
-			$regdate = $this->data['reg_date'];
-		
-		if(!$regdate and isset($this->tmp_data['reg_date']))
+		if(isset($this->tmp_data['reg_date']))
 			$regdate = $this->tmp_data['reg_date'];
+		
+		if(!$regdate and isset($this->data['reg_date']))
+			$regdate = $this->data['reg_date'];
 		
 		if(!$regdate){
 			return $this->legacy_hash_pass($pass);
