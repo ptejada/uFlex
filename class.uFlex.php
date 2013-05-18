@@ -24,9 +24,7 @@
 
 class uFlex{
 	//Constants
-	const version = 0.93;
-	const salt = "sd5a4"; //IMPORTANT: This constant is deprecated, useless you are upgrading class
-	//End of constants\\\\
+	const version = 0.94;
 	/**
 	 * PDO / database credentials
 	 */
@@ -35,17 +33,18 @@ class uFlex{
 		"user" => "",
 		"pass" => "",
 		"name" => "",	//Database name
-		"dsn" => ""		//Alterntive PDO DSN string
+		"dsn" => ""		//Alternative PDO DSN string
 	);
+	var $clone = 0;
 	var $id;		//Current user ID
 	var $sid;		//Current User Session ID
 	var $username;	//Signed username
 	var $pass;		//Holds the user password hash
 	var $signed;	//Boolean, true = user is signed-in
 	var $data;		//Holds entire user database row
-	var $console;	//Cotainer for errors and reports
-	var $log;		//Used for traking errors and reports
-	var $confirm;	//Holds the hash for any type of comfirmation
+	var $console;	//Container for errors and reports
+	var $log;		//Used for tracking errors and reports
+	var $confirm;	//Holds the hash for any type of confirmation
 	var $tmp_data;	//Holds the temporary user information during registration and other methods
 	var $opt = array( //Array of Internal options
 		"table_name" => "users",
@@ -115,8 +114,8 @@ class uFlex{
 	 * Public function to initiate a login request at any time
 	 * 
 	 * @access public
-	 * @param string $user username or email 
-	 * @param string $pass password 
+	 * @param string|bool $user username or email
+	 * @param string|bool $pass password
 	 * @param bool|int $auto boolean to remember or not the user 
 	 */
 	function login($user=false,$pass=false,$auto=false){
@@ -129,8 +128,8 @@ class uFlex{
 	 * 
 	 * Takes two parameters, the first being required
 	 * 
-	 * @param array $info An associatve array, 
-					the index being the fieldname(column in database) 
+	 * @param array $info An associative array,
+					the index being the field name(column in database)
 					and the value its content(value)
 	 * @param bool $activation Default is false, if true the user will need required further steps to activate account 
 	 * 				Otherwise the account will be activated if registration succeeds
@@ -299,6 +298,7 @@ class uFlex{
 	 * @param string|array $name Name of the field to validate or an array of all the fields and their validations
 	 * @param string $limit A range of the accepted value length in the format of "5-10",
 	 * 						to make a field optional start with 0 (Ex. "0-10")
+	 * @param string|bool $regEx Regular expression to the test the field with
 	 * @return null
 	 */
 	function addValidation($name,$limit = "0-1",$regEx = false){
@@ -386,8 +386,8 @@ class uFlex{
 	 * 
 	 * This is for users that forget their passwords to change the signed in user password use ->update()
 	 * 
-	 * @param string pass_reset method hash
-	 * @param array $new An array with indexes 'password' and 'password2'
+	 * @param string $hash hash returned by the pass_reset() method
+	 * @param array $newPass An array with indexes 'password' and 'password2'
 	 * 					Example:
 	 * 					array(
 	 * 						[password] => pass123
@@ -469,7 +469,7 @@ class uFlex{
 	}
 	
 	/**
-	 * Protected Login proccesor function
+	 * Protected Login processor function
 	 * 
 	 * @ignore
 	 */
@@ -670,8 +670,10 @@ class uFlex{
 	 * session([String], [String|mixed]) => Set the specifeid index with the given value
 	 * session([Array]) => Overwrite the whole uFlex session space with a given array
 	 * 
-	 * @param string|array $index Session index to get or set
-	 * @param mixed[] $val The value to the set the $index with
+	 * @param string|array|bool $index Session index to get or set
+	 * @param mixed[]|bool $val The value to the set the $index with
+	 *
+	 * @return bool|mixed[]
 	 */
 	function session($index=false, $val=false){
 		//Get uFlex session index value
@@ -682,13 +684,13 @@ class uFlex{
 		//Set the value for a uFlex index
 		if(is_string($index) and $val){
 			$_SESSION[$this->opt['user_session']][$index] = $val;
-			return;
+			return true;
 		}
 		
 		//Overwrite the whole uFlex session space with a given array
 		if(is_array($index) and !$val){
 			$_SESSION[$this->opt['user_session']] = $index;
-			return;	
+			return true;
 		}
 
 		//return full session user data
@@ -725,7 +727,7 @@ class uFlex{
 	}
 
 	/**
-	 * The legacy password hasher for backwrads compatibility 
+	 * The legacy password hasher for backwards compatibility
 	 */
 	function legacy_hash_pass($pass){
 		$salt = uFlex::salt;
@@ -778,8 +780,9 @@ class uFlex{
 	/**
 	 * Add a report log entry
 	 * 
-	 * @param string|false $str Text information, default is false
-	 * @return true|array If $str is false returns the arary of reports in the current logger
+	 * @param string|bool $str Text information, default is false
+	 *
+	 * @return bool|mixed[] If $str is false returns the arary of reports in the current logger
 	 */
 	function report($str = false){
 		$index = $this->log;
@@ -801,8 +804,8 @@ class uFlex{
 	/**
 	 * Add an error log entry
 	 * 
-	 * @param string|false $str Text information, default is false
-	 * @return true|array If $str is false returns the arary of errors in the current logger
+	 * @param string|bool $str Text information, default is false
+	 * @return bool|array If $str is false returns the arary of errors in the current logger
 	 */
 	function error($str = false){
 		$index = $this->log;
@@ -828,9 +831,9 @@ class uFlex{
 	/**
 	 * Add a form field error log entry
 	 * 
-	 * @param string|false $field Field name, default is false
-	 * @param string|false $error Text information, default is false
-	 * @return true|array If $field and $error is false returns the arary of form field errror in the current logger
+	 * @param string|bool $field Field name, default is false
+	 * @param string|bool $error Text information, default is false
+	 * @return bool|array If $field and $error is false returns the arary of form field errror in the current logger
 	 */
 	function form_error($field = false,$error = false){
 		$index = $this->log;
@@ -854,7 +857,9 @@ class uFlex{
 
 	/**
 	 * Check if there is an error in the current logger
-	 * 
+	 *
+	 * @param bool|string $index Stack name to look for errors
+	 *
 	 * @return bool
 	 */
 	function has_error($index = false){
@@ -871,7 +876,7 @@ class uFlex{
 	}
 
 	/**
-	 * Generates a unique comfirm hash
+	 * Generates a unique confirm hash
 	 */
 	function make_hash($uid,$hash = false){
 		$e_uid = $this->encode($uid);
@@ -898,7 +903,7 @@ class uFlex{
 	function check_hash($hash,$bypass = false){
 		if(strlen($hash) != 32 || !preg_match("/^[0-9]{4}/",$hash)){
 			$this->error(11);
-			return;
+			return false;
 		}
 
 		$e_uid_pos = substr($hash,0,2);
@@ -1019,6 +1024,11 @@ class uFlex{
 
 	/**
 	 * Executes SQL query and checks for success
+	 *
+	 * @param string $sql SQL query string
+	 * @param bool|array $args Array of arguments to execute $sql with
+	 *
+	 * @return bool
 	 */
 	function check_sql($sql, $args=false){
 		$st = $this->getStatement($sql);
@@ -1063,8 +1073,12 @@ class uFlex{
 		return $st->fetch(PDO::FETCH_ASSOC);
 	}
 	
-	/*
-	 * Get a PDO statment
+	/**
+	 * Get a PDO statement
+	 *
+	 * @param string $sql SQL query string
+	 * @param bool|mixed[] $args argument to execute the statement with
+	 * @return bool|mixed[]
 	 */
 	function getStatement($sql, $args=false){
 		if(!$this->connect()) return false;
@@ -1184,6 +1198,21 @@ class uFlex{
 		$k=$this->encoder;preg_match_all("/[1][a-zA-Z]|[2-9]|[a-zA-Z]|[0]/",$d,$a);$n="";$o=count($k);foreach($a[0]as$i){
 			$f=preg_match("/1([a-zA-Z])/",$i,$v);if($f==true){	$i=$o+array_search($v[1],$k);}else{$i=array_search($i,$k);}$n.=$i;}
 		return $n;
-	}	
+	}
+	/*
+	 * Magic method to handle object cloning
+	 */
+	function __clone(){
+		$this->clone++;
+
+		$this->opt["user_session"] .= "_c" . $this->clone;
+		$this->opt["cookie_name"] .= "_c" . $this->clone;
+
+		$this->sid = $this->id = $this->username = $this->pass = $this->signed = $this->log = $this->confirm = false;
+		$this->data = $this->tmp_data = $this->console = $this->log =  array();
+
+		//Import default user object
+		$this->data = $this->opt['default_user'];
+	}
 }
 ?>

@@ -1,5 +1,12 @@
 uFlex Changelog
 
+v0.94 5/15/2013
+	- Added a magic clone method to clean the cloned object
+	- Deprecated the updater script.
+
+v0.93   2/24/2013
+	- Updated private methods to protected
+
 v0.91	2/17/2013
 	- Overhaul of inline documentation
 	- Made the ->session method public
