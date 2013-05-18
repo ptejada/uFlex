@@ -1,9 +1,9 @@
 Getting Started
 =========================
 
-* Check the examples here <http://crusthq.com/projects/uFlex/examples/>
+* Check the examples here <http://ptejada.com/projects/uFlex/examples/>
 * Try the demo in this package and view its source
-* See the methods documention here <http://crusthq.com/projects/uFlex/documentation/>
+* See the methods documention here <http://ptejada.com/projects/uFlex/documentation/>
 
 This class is developed, mantained and tested in a **PHP 5.3.x** enviroment.
 

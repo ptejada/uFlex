@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright (c) 2012 Pablo Tejada, http://crusthq.com/projects/uFlex/
+	Copyright (c) 2012 Pablo Tejada, http://ptejada.com/projects/uFlex/
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files (the
