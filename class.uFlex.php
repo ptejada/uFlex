@@ -523,31 +523,6 @@ class uFlex{
 		//Query Database for user
 		$userFile = $this->getRow(Array($getBy => $user));
 		
-		if($userFile and !$this->signed){
-			$this->tmp_data = $userFile;
-			$this->hash_pass($pass);
-			$this->signed = $this->pass == $userFile["password"] ? true : false;
-			
-			//Try legacy hash
-			if(!$this->signed){
-				$this->legacy_hash_pass($pass);
-				$this->signed = $this->pass == $userFile["password"] ? true : false;
-				
-				//Update password hash in database
-				if($this->signed){
-					$this->data = $userFile;
-					$this->id = $userFile['user_id'];
-					$this->update(Array("password" => $pass));
-					$this->log = "login";
-				}
-			}
-		}else if($this->signed){
-			//Continue login from cookie
-		}else{
-			$this->error(10);
-			return false;
-		}
-		
 		if($this->signed){
 			//If Account is not Activated
 			if($userFile['activated'] == 0){
@@ -558,7 +533,7 @@ class uFlex{
 					//Account has been deactivated
 					$this->error(9);
 				}else{
-					//Account deativated due to a password reset or reactivation request
+					//Account deactivated due to a password reset or reactivation request
 					$this->error(14);
 				}
 				return false;
@@ -727,15 +702,6 @@ class uFlex{
 	}
 
 	/**
-	 * The legacy password hasher for backwards compatibility
-	 */
-	function legacy_hash_pass($pass){
-		$salt = uFlex::salt;
-		$this->pass = md5($salt.$pass.$salt);
-		return $this->pass;
-	}
-	
-	/**
 	 * The password hasher
 	 * 
 	 * Hashes a clear text password for the current user
@@ -751,10 +717,6 @@ class uFlex{
 		
 		if(!$regdate and isset($this->tmp_data['reg_date']))
 			$regdate = $this->tmp_data['reg_date'];
-		
-		if(!$regdate){
-			return $this->legacy_hash_pass($pass);
-		}
 		
 		$pre = $this->encode($regdate);
 		$pos = substr($regdate, 5, 1);

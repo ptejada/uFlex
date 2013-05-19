@@ -3,6 +3,7 @@ uFlex Changelog
 v0.94 5/15/2013
 	- Added a magic clone method to clean the cloned object
 	- Deprecated the updater script.
+	- Deprecated the static hash and legacy password hash
 
 v0.93   2/24/2013
 	- Updated private methods to protected
