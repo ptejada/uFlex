@@ -3,29 +3,27 @@ Getting Started
 
 * Check the examples here <http://ptejada.com/projects/uFlex/examples/>
 * Try the demo in this package and view its source
-* See the methods documention here <http://ptejada.com/projects/uFlex/documentation/>
+* See the methods documentation here <http://ptejada.com/projects/uFlex/documentation/>
 
-This class is developed, mantained and tested in a **PHP 5.3.x** enviroment.
+This class is developed, maintained and tested in a **PHP 5.3.x** environment.
 
 Updating your current uFlex Class version
 ====================================
 
-### If you have edited/modify the class options...
+Just replace your old *class.uFlex.php* file with the new one.
 
-	
-~~As of v0.51 the usual uFlex package now includes an 'updater' folder which includes a script(*uFlex.updater.php*) that will~~
-~~will automatically migrate all customizable variables inside the class that may have have changed/updated. You can always ~~
-~~manually migrated what you have changed.~~
+Configuring
+====================================
 
-As of v0.86 a new method of changing the dafault values of the classs options and properties was introduced. This new method 
-does not requires you to directly update the class file itselft. The advantage of this method is that you can have all your
+As of v0.86 a new method for changing the default values of the class options and properties was introduced. This new method
+does not requires you to directly update the class file itself. The advantage of this method is that you can have all your
 configurations in a separate file, making it as simple as drag and drop to update the class file in the future. If you are using 
 this method you may just replace the *class.uFlex.php* with the new one.
 
 Example:
 ```php
 <?php
-	//Instanciate the uFlex object
+	//Instantiate the uFlex object
 	$user = new uFlex(false);
 	
 	//Add database credentials and information 
@@ -36,24 +34,51 @@ Example:
 	
 	/*
 	 * You can update any customizable property of the class before starting the object
-	 * construction proccess
+	 * construction process
 	 */
 	
 	//Start object construction
 	$user->start();
 ?>
 ```
-	
-	
-### If you have NOT touched(modified) the class at all...
-	
-Just replace your old *class.uFlex.php* file with the new one.
 
-Extending the class to create your user manement object
+Here is an excerpt from the PHP class file which lists the customizable properties you could change prior to calling
+`start()` on a uFlex instance
+
+```php
+	/**
+	 * PDO / database credentials
+	 */
+	var $db = array(
+		"host" => "",
+		"user" => "",
+		"pass" => "",
+		"name" => "",	//Database name
+		"dsn" => ""		//Alternative PDO DSN string
+	);
+	...
+	var $opt = array( //Array of Internal options
+		"table_name" => "users",
+		"cookie_time" => "+30 days",
+		"cookie_name" => "auto",
+		"cookie_path" => "/",
+		"cookie_host" => false,
+		"user_session" => "userData",
+		"default_user" => array(
+				"username" => "Guess",
+				"user_id" => 0,
+				"password" => 0,
+				"signed" => false
+				)
+		);
+
+```
+
+Extending the class to create your own user management object
 ==========================================================
 
-In PHP you area able extends classes just like in object oriented programming language. Therefore you could extend the `uFlex` class
-and add your methods or modifications without having to modifiy the `uFlex` class itself.
+In PHP you area able extends classes just like in any object oriented programming language. Therefore you could extend the `uFlex` class
+and add your methods or modifications without having to modify the `uFlex` class itself.
 
 ```php
 <php
