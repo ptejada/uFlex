@@ -720,7 +720,7 @@
 				$this->opt['cookie_host'] = $_SERVER['HTTP_HOST'];
 
 			$deleted = setcookie($this->opt['cookie_name'],"",time() - 3600,
-				$this->opt['cookie_path'],$this->opt['cookie_host']); //Deletes the Auto Coookie
+				$this->opt['cookie_path'],$this->opt['cookie_host']); //Deletes the Auto Cookie
 
 			$this->signed = 0;
 			//Import default user object
@@ -786,7 +786,7 @@
 		 *
 		 * This method has many functions:
 		 * session([String]) => Get the value of the index
-		 * session([String], [String|mixed]) => Set the specifeid index with the given value
+		 * session([String], [String|mixed]) => Set the specified index with the given value
 		 * session([Array]) => Overwrite the whole uFlex session space with a given array
 		 *
 		 * @param string|array|bool $index Session index to get or set
@@ -847,7 +847,7 @@
 		}
 
 		/**
-		 * The password hasher
+		 * The password hash maker
 		 *
 		 * Hashes a clear text password for the current user
 		 *
@@ -855,17 +855,17 @@
 		 */
 		protected function hash_pass($pass){
 
-			$regdate = false;
+			$registrationDate = false;
 
 			if(isset($this->data['reg_date']))
-				$regdate = $this->data['reg_date'];
+				$registrationDate = $this->data['reg_date'];
 
-			if(!$regdate and isset($this->tmp_data['reg_date']))
-				$regdate = $this->tmp_data['reg_date'];
+			if(!$registrationDate and isset($this->tmp_data['reg_date']))
+				$registrationDate = $this->tmp_data['reg_date'];
 
-			$pre = $this->encode($regdate);
-			$pos = substr($regdate, 5, 1);
-			$post = $this->encode($regdate * (substr($regdate, $pos, 1)));
+			$pre = $this->encode($registrationDate);
+			$pos = substr($registrationDate, 5, 1);
+			$post = $this->encode($registrationDate * (substr($registrationDate, $pos, 1)));
 			$this->pass = md5($pre.$pass.$post);
 			return $this->pass;
 		}
@@ -880,7 +880,7 @@
 			$this->log = $log;
 			unset($this->console['errors'][$log]);
 			unset($this->console['form'][$log]);
-			$this->report(">>Startting new $log request");
+			$this->report(">> Starting new $log request");
 			return $this;
 		}
 
@@ -889,7 +889,7 @@
 		 *
 		 * @param string|bool $str Text information, default is false
 		 *
-		 * @return bool|mixed[] If $str is false returns the arary of reports in the current logger
+		 * @return bool|mixed[] If $str is false returns the array of reports in the current logger
 		 */
 		function report($str = false){
 			$index = $this->log;
@@ -897,7 +897,7 @@
 				if(is_string($str))
 					$str = ucfirst($str);
 
-				$this->console['reports'][$index][] = $str; //Strore Report
+				$this->console['reports'][$index][] = $str; //Store Report
 				return true;
 			}else{
 				if($index){
@@ -942,7 +942,7 @@
 		 *
 		 * @param string|bool $field Field name, default is false
 		 * @param string|bool $error Text information, default is false
-		 * @return bool|array If $field and $error is false returns the arary of form field errror in the current logger
+		 * @return bool|array If $field and $error is false returns the array of form field error in the current logger
 		 */
 		function form_error($field = false,$error = false){
 			$index = $this->log;
@@ -1036,8 +1036,8 @@
 
 			//Bypass hash confirmation and get the user by partially matching its password
 			if($bypass){
-				preg_match("/^([0-9]{4})(.{2,".($e_uid_pos - 4)."})(".$e_uid.")/",$hash,$exerpt);
-				$pass = $exerpt[2];
+				preg_match("/^([0-9]{4})(.{2,".($e_uid_pos - 4)."})(".$e_uid.")/",$hash,$excerpt);
+				$pass = $excerpt[2];
 
 				if(strpos($user['password'], $pass) === false){
 					$this->error(12);
@@ -1295,7 +1295,7 @@
 			$min = intval($l[0]);
 			$max = intval($l[1]);
 			if(!$max and !$min){
-				$this->error("Invalid second paramater for the $name validation");
+				$this->error("Invalid second parameter for the $name validation");
 				return false;
 			}
 			if(!$str){
