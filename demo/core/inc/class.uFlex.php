@@ -21,20 +21,25 @@
 		OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 		WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	*/
+	/**
+	 * uFlex class file
+	 *
+	 * @author Pablo Tejada
+	 * @package uFlex
+	 */
 
 	/**
 	 * Class uFlex
 	 */
 	class uFlex{
 		/**
-		 * @var int Class Version
+		 * Class Version
+		 * @var int
 		 */
 		const version = 0.95;
 		/**
-		 * An array of database credentials or a PDO object if
+		 * @var PDO|array An array of database credentials or a PDO object if
 		 * connected to the database
-		 *
-		 * @var array|PDO $db PDO object or array for database credentials
 		 */
 		var $db = array(
 			"host" => "",
@@ -103,7 +108,10 @@
 		var $tmp_data;
 
 		/**
-		 * @var array Array of Internal options:
+		 * Array of Internal options:
+		 *
+		 * Array of internal options:
+		 * <pre>
 		 * [table_name]: Name of the users table
 		 * [cookie_time]: Autologin cookie lifetime
 		 * [cookie_name]: Autologin cookie name
@@ -111,6 +119,8 @@
 		 * [cookie_host]: Autologin cookie host
 		 * [user_session]: $_SESSION index to use
 		 * [default_user]: An associative array with properties of the default array
+		 * </pre>
+		 * @var array
 		 */
 		var $opt = array(
 			"table_name" => "users",
@@ -373,6 +383,7 @@
 		 * _____________________________________________________________________________________________________
 		 *
 		 * Multiple Entry:
+		 * <pre>
 		 * 	Takes only the first argument
 		 * 		$name = Array Object (takes an object in the following format:
 		 * 			array(
@@ -385,6 +396,7 @@
 		 * 						"regEx" => false
 		 * 						)
 		 * 				);
+		 * </pre>
 		 *
 		 * @access public
 		 * @api
@@ -1343,6 +1355,7 @@
 		}
 		/**
 		 * Magic method to handle object cloning
+		 * @ignore
 		 */
 		function __clone(){
 			$this->clone++;
