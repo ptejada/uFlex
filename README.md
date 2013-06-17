@@ -95,7 +95,7 @@ and add your methods or modifications without having to modify the `uFlex` class
 		 */
 		function updateAvatar(){}
 		
-		function linkOpeniDAccout(){}
+		function linkOpeniD(){}
 	}
 ?>
 ```
