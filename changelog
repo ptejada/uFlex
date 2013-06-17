@@ -1,5 +1,9 @@
 uFlex Changelog
 
+v0.95 6/17/2013
+	- Fixed login bug
+	- Fixed typos and enhance inline PHPDoc blocks
+
 v0.94 5/15/2013
 	- Added a magic clone method to clean the cloned object
 	- Deprecated the updater script.

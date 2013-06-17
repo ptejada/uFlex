@@ -26,7 +26,9 @@
 	 * Class uFlex
 	 */
 	class uFlex{
-		//Constants
+		/**
+		 * @var int Class Version
+		 */
 		const version = 0.95;
 		/**
 		 * An array of database credentials or a PDO object if
@@ -51,68 +53,57 @@
 		protected $clone = 0;
 
 		/**
-		 * Current user ID
-		 * @var int
+		 * @var int Current user ID
 		 */
 		var $id;
 
 		/**
-		 * Current User PHP Session ID
-		 * @var string
+		 * @var string Current User PHP Session ID
 		 */
 		var $sid;
 
 		/**
-		 * Current user username
-		 * @var string
+		 * @var string Current user username
 		 */
 		var $username;
 
 		/**
-		 * Holds the user password hash
-		 * @var string
+		 * @var string Holds the user password hash
 		 */
 		var $pass;
 
 		/**
-		 * Flag of weather a user is signed-in or not
-		 * @var bool
+		 * @var bool Flag of weather a user is signed-in or not
 		 */
 		var $signed;
 
 		/**
-		 * Holds entire user database row as an associative array
-		 * @var array
+		 * @var array Holds entire user database row as an associative array
 		 */
 		var $data;
 
 		/**
-		 * Container to hold errors and reports
-		 * @var array
+		 * @var array Container to hold errors and reports
 		 */
 		var $console;
 
 		/**
-		 * Pointer for tracking errors and reports in the console
-		 * @var string
+		 * @var string Pointer for tracking errors and reports in the console
 		 */
 		protected $log;
 
 		/**
-		 * Holds the hash for any type of confirmation
-		 * @var string
+		 * @var string Holds the hash for any type of confirmation
 		 */
 		var $confirm;
 
 		/**
-		 * Holds the temporary user information during registration and other methods
-		 * @var array
+		 * @var array Holds the temporary user information during registration and other methods
 		 */
 		var $tmp_data;
 
 		/**
-		 * Array of Internal options:
-		 *
+		 * @var array Array of Internal options:
 		 * [table_name]: Name of the users table
 		 * [cookie_time]: Autologin cookie lifetime
 		 * [cookie_name]: Autologin cookie name
@@ -120,8 +111,6 @@
 		 * [cookie_host]: Autologin cookie host
 		 * [user_session]: $_SESSION index to use
 		 * [default_user]: An associative array with properties of the default array
-		 *
-		 * @var array
 		 */
 		var $opt = array(
 			"table_name" => "users",
@@ -139,8 +128,7 @@
 		);
 
 		/**
-		 * Array for default field validations
-		 * @var array
+		 * @var array Array for default field validations
 		 */
 		var $validations = array(
 			"username" => array(
@@ -170,8 +158,7 @@
 		);
 
 		/**
-		 * Array of errors text. Could use overwritten for multilingual support
-		 * @var array
+		 * @var array Array of errors text. Could use overwritten for multilingual support
 		 */
 		var $errorList = array(
 			//Database Error while calling register functions
@@ -988,6 +975,10 @@
 
 		/**
 		 * Generates a unique confirm hash
+		 *
+		 * @param int $uid user id
+		 * @param bool|string $hash optional hash to implement
+		 * @return string
 		 */
 		protected function make_hash($uid,$hash = false){
 			$e_uid = $this->encode($uid);
