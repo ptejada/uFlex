@@ -1,5 +1,8 @@
 uFlex Changelog
 
+v0.96 7/26/2013
+	- Added the manageUser() factory. The factory returns a clone of the uFlex instance which allows simple user managing capabilities such as updating a user field, resetting its password and so on.
+
 v0.95 6/17/2013
 	- Fixed login bug
 	- Fixed typos and enhance inline PHPDoc blocks

@@ -36,7 +36,7 @@
 		 * Class Version
 		 * @var int
 		 */
-		const version = 0.95;
+		const version = 0.96;
 		/**
 		 * @var PDO|array An array of database credentials or a PDO object if
 		 * connected to the database
@@ -359,7 +359,10 @@
 			//Check for Changes
 			if($this->check_sql($sql, $data)){
 				$this->report("Information Updated");
-				$_SESSION['uFlex']['update'] = true;
+
+				if($this->clone == 0)
+					$_SESSION['uFlex-' . $this->clone . '-update'] = true;
+
 				return true;
 			}else{
 				$this->error(2);
@@ -552,6 +555,39 @@
 			$this->__construct();
 		}
 
+		/**
+		 * User factory
+		 *
+		 * Returns a clone of the uFlex instance which allows simple user managing
+		 * capabilities such as updating a user field, resetting its password and so on.
+		 *
+		 * @api
+		 *
+		 * @param int $id
+		 * @return bool|uFlex Returns false if user does not exists in database
+		 */
+		function manageUser( $id=0 ){
+			$user = clone $this;
+			$user->logger("Cloning");
+
+			if( $id > 0){
+				$user->report("Fetching user from database");
+				$data = $user->getRow(array("user_id"=>$id));
+				if($data){
+					$user->id = $data['user_id'];
+					$user->data = $data;
+					$user->username = $data['username'];
+					$user->pass = $data['password'];
+					$user->signed = true;
+
+					$user->report("User imported to object");
+					return $user;
+				}
+			}
+
+			return false;
+		}
+
 		/*////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\
 		////////Protected and Secondary Methods below this line\\\\\\\\\\\\\
 		 \*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////////////////////////////////////////////*/
@@ -609,12 +645,14 @@
 			if($this->session("signed")){
 				$this->report("User Is signed in from session");
 				$this->update_from_session();
-				if(isset($_SESSION['uFlex']['update'])){
+				if(isset($_SESSION['uFlex-' . $this->clone . '-update'])){
 					$this->report("Updating Session from database");
 					//Get User From database because its info has change during current session
 					$update = $this->getRow(Array("user_id" => "$this->id"));
 					$this->update_session($update);
 					$this->log_login(); //Update last_login
+					//Cleaning session flag
+					unset($_SESSION['uFlex-' . $this->clone . '-update']);
 				}
 				return true;
 			}
@@ -723,7 +761,7 @@
 
 			$this->signed = 0;
 			//Import default user object
-			$_SESSION[$this->opt['user_session']] = $this->data = $this->opt['default_user'];
+			$this->session($this->data = $this->opt['default_user']);
 
 			if(!$deleted && !headers_sent()){
 				$this->report("The Autologin cookie could not be deleted");
@@ -820,8 +858,6 @@
 		 * @ignore
 		 */
 		protected function update_session($d){
-			unset($_SESSION['uFlex']['update']);
-
 			$this->session($d);
 			$this->session("signed",1);
 

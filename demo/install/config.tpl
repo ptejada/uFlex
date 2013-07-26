@@ -1,7 +1,7 @@
 <?php
 	include('inc/class.uFlex.php');
 	
-	//Instanciate the uFlex object
+	//Instantiate the uFlex object
 	$user = new uFlex(false);
 	
 	//Add database credentials and information 
@@ -20,8 +20,8 @@
 	 * 
 	 * You may change and customize all the options and configurations like
 	 * this, even the error messages. By exporting your customizations outside
-	 * the class file it will be easier to mantain your application configuration
-	 * and update the class core itselft in the future. Just remember to start
+	 * the class file it will be easier to maintain your application configuration
+	 * and update the class core itself in the future. Just remember to start
 	 * the object with the first parameter 'false', new uFlex(false), to halt
 	 * the object construction.
 	 */
