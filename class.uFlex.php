@@ -787,14 +787,15 @@
 		protected function setCookie(){
 			if($this->pass and $this->id){
 
+				$cookied = false;
 				$code = $this->make_hash($this->id,$this->pass);
 
 				if(!$this->opt['cookie_host'])
-					$this->opt['cookie_host'] = $_SERVER['HTTP_HOST'];
+					$this->opt['cookie_host'] = $_SERVER['SERVER_NAME'];
 
 				if(!headers_sent()){
 					//echo "PHP";
-					setcookie($this->opt['cookie_name'],$code,strtotime($this->opt['cookie_time']),
+					$cookied = setcookie($this->opt['cookie_name'],$code,strtotime($this->opt['cookie_time']),
 						$this->opt['cookie_path'],$this->opt['cookie_host']);
 				}else{
 					//Headers have been sent use JavaScript to set cookie
@@ -810,9 +811,15 @@
 				';
 					echo "setCookie('{$this->opt['cookie_name']}','{$code}',{$time})";
 					echo "</script>";
+					$cookied = true;
 				}
 
-				$this->report("Cookies have been updated for auto login");
+				if ($cookied){
+					$this->report("Cookies have been updated for auto login");
+				}else{
+					$this->error("Cookies could not be updated for auto login");
+				}
+
 			}else{
 				$this->error("Info required to set the cookie {$this->opt['cookie_name']} is not available");
 			}
