@@ -1,0 +1,13 @@
+.userBox {
+	max-width: 90px;
+}
+.userBox:hover img {
+	box-shadow: 0 0 5px 7px;
+}
+.userBox .label {
+	overflow: hidden;
+}
+
+form .error {
+	padding-left: 5px ;
+}
