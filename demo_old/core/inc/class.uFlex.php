@@ -36,7 +36,7 @@
 		 * Class Version
 		 * @var int
 		 */
-		const version = 0.96;
+		const version = 0.97;
 		/**
 		 * @var PDO|array An array of database credentials or a PDO object if
 		 * connected to the database
@@ -700,7 +700,7 @@
 				//Continue login from cookie
 
 			}else{
-				$this->error(10);
+				$this->form_error('password',$this->errorList[10]);
 				return false;
 			}
 
@@ -738,7 +738,7 @@
 				if(isset($_COOKIE[$this->opt['cookie_name']])){
 					$this->logout();
 				}
-				$this->error(10);
+				$this->form_error('password',$this->errorList[10]);
 				return false;
 			}
 		}
@@ -754,7 +754,7 @@
 			$this->logger("logout");
 
 			if(!$this->opt['cookie_host'])
-				$this->opt['cookie_host'] = $_SERVER['HTTP_HOST'];
+				$this->opt['cookie_host'] = $_SERVER['SERVER_NAME'];
 
 			$deleted = setcookie($this->opt['cookie_name'],"",time() - 3600,
 				$this->opt['cookie_path'],$this->opt['cookie_host']); //Deletes the Auto Cookie
@@ -787,14 +787,15 @@
 		protected function setCookie(){
 			if($this->pass and $this->id){
 
+				$cookied = false;
 				$code = $this->make_hash($this->id,$this->pass);
 
 				if(!$this->opt['cookie_host'])
-					$this->opt['cookie_host'] = $_SERVER['HTTP_HOST'];
+					$this->opt['cookie_host'] = $_SERVER['SERVER_NAME'];
 
 				if(!headers_sent()){
 					//echo "PHP";
-					setcookie($this->opt['cookie_name'],$code,strtotime($this->opt['cookie_time']),
+					$cookied = setcookie($this->opt['cookie_name'],$code,strtotime($this->opt['cookie_time']),
 						$this->opt['cookie_path'],$this->opt['cookie_host']);
 				}else{
 					//Headers have been sent use JavaScript to set cookie
@@ -810,9 +811,15 @@
 				';
 					echo "setCookie('{$this->opt['cookie_name']}','{$code}',{$time})";
 					echo "</script>";
+					$cookied = true;
 				}
 
-				$this->report("Cookies have been updated for auto login");
+				if ($cookied){
+					$this->report("Cookies have been updated for auto login");
+				}else{
+					$this->error("Cookies could not be updated for auto login");
+				}
+
 			}else{
 				$this->error("Info required to set the cookie {$this->opt['cookie_name']} is not available");
 			}

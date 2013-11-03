@@ -20,9 +20,7 @@ if(count($_POST)){
 	echo json_encode(array(
 		'error'    => $user->error(),
 		'confirm'  => "You are now login as <b>$user->username</b>",
-		'form'    => array(
-			'password' => $errMsg
-		)
+		'form'     => $user->form_error(),
 	));
 }
 
