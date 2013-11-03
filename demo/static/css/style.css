@@ -1,5 +1,6 @@
 .userBox {
 	max-width: 90px;
+	margin-bottom: 15px;
 }
 .userBox:hover img {
 	box-shadow: 0 0 5px 7px;
