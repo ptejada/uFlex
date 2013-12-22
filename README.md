@@ -101,4 +101,4 @@ and add your methods or modifications without having to modify the `uFlex` class
 ```
 For a robust example of how you can extend the `uFlex` class check this file [iD class][iD]
 
-[iD]: https://github.com/ptejada/iD/blob/master/core/inc/class.iD.php
+[iD]: https://github.com/ptejada/iD/blob/master/app/iD/models/Auth.php
