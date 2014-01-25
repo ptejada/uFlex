@@ -333,8 +333,10 @@
 			}
 			//Check for Email in database
 			if(isset($info['email']))
-				if($this->check_field('email',$info['email'],"This Email is Already in Use"))
-					return false;
+				if($info['email']!=$this->data['email']){
+					if($this->check_field('email',$info['email'],"This Email is Already in Use"))
+						return false;
+				}
 
 			//Check for errors
 			if($this->has_error()) return false;
