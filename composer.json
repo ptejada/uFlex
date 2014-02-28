@@ -1,0 +1,25 @@
+{
+    "name": "ptejada/uflex",
+    "description": "All in one PHP user authentication class",
+    "keywords": ["authorization","auth", "login", "user"],
+    "homepage": "http://ptejada.com/projects/uFlex",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pablo Tejada",
+            "email": "pablo@ptejada.com"
+        }
+    ],
+    "support": {
+        "email": "uflex@googlegroups.com",
+        "issues": "https://github.com/ptejada/uFlex/issues"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ptejada\\UFlex\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.3.0"
+    }
+}
