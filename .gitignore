@@ -1,6 +1,6 @@
 .idea
 vendor
-compose.lock
+composer.lock
 demo/core/config.php
 demo_old/core/config.php
 /index.php
