@@ -4,192 +4,136 @@ namespace Ptejada\UFlex;
 
 class DB
 {
+    /** @var string - The server IP or host name */
     private $host = '';
+    /** @var string - The server user to login as */
     private $user = '';
+    /** @var string - The user password */
     private $password = '';
+    /** @var string - The name of the database */
     private $dbName = '';
+    /** @var string - Alternative DSN string */
     private $dsn = '';
 
+    /** @var \PDO - The DB connection session */
+    private $connection;
+
+    /** @var  Log - Log errors and report */
+    public $log;
+
     /**
-     * Connects to the database
+     * @param string $hostOrDSN - The domain/IP of the DB or the PDO DSN string
+     * @param string $dbNameOrUser
+     * @param string $userOrPassword
+     * @param string $password
+     */
+    public function __construct($hostOrDSN='', $dbNameOrUser='', $userOrPassword='', $password='')
+    {
+        if (!$password) {
+            // add full DSN string
+            $this->dsn = $hostOrDSN;
+            $this->user = $dbNameOrUser;
+            $this->password = $userOrPassword;
+        } else {
+            // Add the default DB credentials for MySQL
+            $this->host = $hostOrDSN;
+            $this->dbName = $dbNameOrUser;
+            $this->user = $userOrPassword;
+            $this->password = $password;
+        }
+    }
+
+    /**
+     * Generate the DSN string for the connection
+     * @return string
+     */
+    protected function generateDSN()
+    {
+        if ( ! $this->dsn ) {
+            $this->dsn = "mysql:dbname={$this->dbName};host={$this->host}";
+        }
+
+        return $this->dsn;
+    }
+
+    /**
+     * Gets the connecting to the database
      * Check if the database connection exists if not connects to the database
      *
-     * @return bool
+     * @return \PDO | bool
      */
-    protected function connect()
+    public function getConnection()
     {
-        if (is_object($this->db)) {
-            return true;
+        if ( ! ($this->log instanceof Log) ) {
+            $this->log = new Log();
         }
 
-        /* Connect to an ODBC database using driver invocation */
-        $user = $this->db['user'];
-        $pass = $this->db['pass'];
-        $host = $this->db['host'];
-        $name = $this->db['name'];
-        $dsn = $this->db['dsn'];
+        $this->log->channel('DB');
 
-        if (!$dsn) {
-            $dsn = "mysql:dbname={$name};host={$host}";
+        // Use cached connection if already connected to server
+        if ($this->connection instanceof \PDO) {
+            return $this->connection;
         }
 
-        $this->report("Connecting to database...");
+        $this->log->report("Connecting to database...");
 
         try{
-            $this->db = new \PDO($dsn, $user, $pass);
-            $this->report("Connected to database.");
-        } catch ( PDOException $e ){
-            $this->error("Failed to connect to database, [SQLSTATE] " . $e->getCode());
+            $this->connection = new \PDO($this->generateDSN(), $this->user, $this->password);
+            $this->log->report("Connected to database.");
+        } catch ( \PDOException $e ){
+            $this->log->error("Failed to connect to database, [SQLSTATE] " . $e->getCode());
         }
 
-        if (is_object($this->db)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Test field value in database
-     * Check for the uniqueness of a value in a specified field/column.
-     * For example could be use to check for the uniqueness of a username
-     * or email prior to registration
-     *
-     * @param string      $field The name of the field
-     * @param string|int  $val   The value for the field to check
-     * @param bool|string $err   Custom error string to log if field value is not unique
-     *
-     * @return bool
-     */
-    function check_field($field, $val, $err = false)
-    {
-        $res = $this->getRow(Array($field => $val));
-
-        if ($res) {
-            if ($err) {
-                $this->form_error($field, $err);
-            } else {
-                $this->form_error($field, "The $field $val exists in database");
-            }
-            $this->report("There was a match for $field = $val");
-            return true;
+        // Check is the connection to server succeed
+        if ($this->connection instanceof \PDO) {
+            return $this->connection;
         } else {
-            $this->report("No Match for $field = $val");
+            // There was an error connecting to the DB server
             return false;
         }
     }
 
     /**
-     * Executes SQL query and checks for success
+     * Get table object
      *
-     * @param string     $sql  SQL query string
-     * @param bool|array $args Array of arguments to execute $sql with
+     * @param $tableName
      *
-     * @return bool
+     * @return DBTAble
      */
-    function check_sql($sql, $args = false)
+    public function getTable($tableName)
     {
-        $st = $this->getStatement($sql);
-
-        if (!$st) {
-            return false;
-        }
-
-        if ($args) {
-            $st->execute($args);
-            $this->report("SQL Data Sent: [" . implode(', ', $args) . "]"); //Log the SQL Query first
-        } else {
-            $st->execute();
-        }
-
-        $rows = $st->rowCount();
-
-        if ($rows > 0) {
-            //Good, Rows where affected
-            $this->report("$rows row(s) where Affected");
-            return true;
-        } else {
-            //Bad, No Rows where Affected
-            $this->report("No rows were Affected");
-            return false;
-        }
+        return new DBTAble($this, $tableName);
     }
 
     /**
-     * Get a single user row depending on arguments
-     *
-     * @param array $args field and value pair set to look up user for
-     *
-     * @return bool|mixed
+     * @param string $user
      */
-    function getRow($args)
+    public function setUser($user)
     {
-        $sql = "SELECT * FROM :TABLE WHERE :args LIMIT 1";
-
-        $st = $this->getStatement($sql, $args);
-
-        if (!$st) {
-            return false;
-        }
-
-        if (!$st->rowCount()) {
-            $this->report("Query returned empty");
-            return false;
-        }
-
-        return $st->fetch(\PDO::FETCH_ASSOC);
+        $this->user = $user;
     }
 
     /**
-     * Get a PDO statement
-     *
-     * @param string       $sql  SQL query string
-     * @param bool|mixed[] $args argument to execute the statement with
-     *
-     * @return bool|\PDOStatement
+     * @param string $password
      */
-    function getStatement($sql, $args = false)
+    public function setPassword($password)
     {
-        if (!$this->connect()) {
-            return false;
-        }
+        $this->password = $password;
+    }
 
-        if ($args) {
-            $finalArgs = array();
-            foreach ($args as $field => $val) {
-                $finalArgs[] = " {$field}=:{$field}";
-            }
+    /**
+     * @param string $dbName
+     */
+    public function setDbName($dbName)
+    {
+        $this->dbName = $dbName;
+    }
 
-            $finalArgs = implode(" AND", $finalArgs);
-
-            if (strpos($sql, " :args")) {
-                $sql = str_replace(" :args", $finalArgs, $sql);
-            } else {
-                $sql .= $finalArgs;
-            }
-        }
-
-        //Replace the :table placeholder
-        $sql = str_replace(" :table ", " {$this->opt["table_name"]} ", $sql);
-
-        $this->report("SQL Statement: {$sql}"); //Log the SQL Query first
-
-        if ($args) {
-            $this->report("SQL Data Sent: [" . implode(', ', $args) . "]");
-        } //Log the SQL Query first
-
-        //Prepare the statement
-        $res = $this->db->prepare($sql);
-
-        if ($args) {
-            $res->execute($args);
-        }
-
-        if ($res->errorCode() > 0) {
-            $error = $res->errorInfo();
-            $this->error("PDO({$error[0]})[{$error[1]}] {$error[2]}");
-            return false;
-        }
-
-        return $res;
+    /**
+     * Get the record of the last inserted record
+     * @return int
+     */
+    public function getLastInsertedID(){
+        return $this->getConnection()->lastInsertId();
     }
 }

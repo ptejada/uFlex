@@ -2,6 +2,11 @@
 
 namespace Ptejada\UFlex;
 
+/**
+ * Class log reports and errors
+ *
+ * @package Ptejada\UFlex
+ */
 class Log
 {
     /** @var array - Predefined list of errors, useful for locale messages */
@@ -19,13 +24,21 @@ class Log
 
     /**
      * Initializes a new log instance with the options to set an initial namespace
+     *
      * @param string $namespace
+     * @param Log    $logLink
      */
-    public function __construct($namespace = null)
+    public function __construct($namespace = null, Log $logLink=null)
     {
         if ($namespace) {
             // Sets the name
             $this->changeNamespace($namespace);
+        }
+
+        if (!is_null($logLink)) {
+
+            // Links the console with an existing instance
+            $this->console = &$logLink->getFullConsole();
         }
     }
 
@@ -54,6 +67,15 @@ class Log
         $errors = $this->getErrors();
 
         return count($errors) > 0;
+    }
+
+    /**
+     * Get the full console array
+     * @return array
+     */
+    public function &getFullConsole()
+    {
+        return $this->console;
     }
 
     /**
