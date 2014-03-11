@@ -292,4 +292,20 @@ class Log
             return $this->currentChannel;
         }
     }
+
+    /**
+     * Creates a new instance of Log with a linked console
+     *
+     * @param $namespace
+     *
+     * @return Log
+     */
+    public function newChildLog($namespace)
+    {
+        $child = new Log($namespace, $this);
+        // TODO: Experimental line to copy the namespace
+        //$child->changeNamespace($this->getNamespace());
+
+        return $child;
+    }
 }

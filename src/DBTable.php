@@ -16,13 +16,8 @@ class DBTAble
     public function __construct(DB $db, $table)
     {
         $this->db = $db;
-        $this->log = new Log($table, $this->log);
+        $this->log = $db->log->newChildLog($table);
         $this->tableName = $table;
-    }
-
-    public function __call($functionName, $arguments)
-    {
-        $this->log->channel('DB');
     }
 
     /**
@@ -130,7 +125,7 @@ class DBTAble
      *
      * @return bool|\PDOStatement
      */
-    function getStatement($sql, $args = false)
+    public function getStatement($sql, $args = false)
     {
         // The parsed sql statement
         $query = $this->buildQuery($sql, $args);

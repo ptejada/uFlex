@@ -23,7 +23,6 @@ class DBTableTest extends \PHPUnit_Framework_TestCase {
     public function testFull()
     {
         $db = self::$db;
-        $db->getConnection();
         $table = $db->getTable('Users');
 
         $this->assertInstanceOf('Ptejada\UFlex\DBTAble', $table, 'Should be an instance of DBTable');
@@ -57,8 +56,8 @@ class DBTableTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertInstanceOf('StdClass', $user, 'Retrieve a record from the table');
 
-        var_dump($table->log->getFullConsole());
-        var_dump($db->log->getFullConsole());
+        // Both console log should be equal
+        $this->assertEquals($db->log->getFullConsole(), $table->log->getFullConsole());
     }
 
 }

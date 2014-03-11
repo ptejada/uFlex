@@ -41,6 +41,8 @@ class DB
             $this->user = $userOrPassword;
             $this->password = $password;
         }
+
+        $this->log = new Log('DB');
     }
 
     /**
@@ -65,10 +67,10 @@ class DB
     public function getConnection()
     {
         if ( ! ($this->log instanceof Log) ) {
-            $this->log = new Log();
+            $this->log = new Log('DB');
         }
 
-        $this->log->channel('DB');
+        $this->log->channel('Connection');
 
         // Use cached connection if already connected to server
         if ($this->connection instanceof \PDO) {

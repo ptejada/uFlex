@@ -113,5 +113,21 @@ class LogTest extends \PHPUnit_Framework_TestCase {
         }
 
     }
+
+    public function testLinking()
+    {
+        $log1 = new Log('1');
+        $console = &$log1->getFullConsole();
+        $this->assertEmpty($console['errors']);
+        $log1->error('Hello World');
+        $this->assertNotEmpty($console['errors']);
+        $this->assertEquals(1, count($console['errors']));
+
+        $log2 = $log1->newChildLog('2');
+        $log2->error('Hello World 2');
+        $this->assertEquals(2, count($console['errors']));
+
+    }
+
 }
  
