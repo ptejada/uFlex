@@ -37,7 +37,7 @@
 			<div class="form-group text-center">
 				<button type="submit" class="btn btn-primary">Update</button>
 				<br>
-				<a href="<? echo $base?>/account" class="">Back to my account</a>
+				<a href="<?php echo $base?>/account" class="">Back to my account</a>
 			</div>
 		</form>
 
