@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<link href="http://bootswatch.com/readable/bootstrap.min.css" rel="stylesheet">
-	<link rel=stylesheet type=text/css href="<? echo $base?>/static/css/style.css" />
+	<link rel=stylesheet type=text/css href="<?php echo $base?>/static/css/style.css" />
 
 </head>
 <body>
@@ -21,13 +21,13 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="<? echo $base?>/">uFlex</a>
+				<a class="navbar-brand" href="<?php echo $base?>/">uFlex</a>
 			</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li><a href="<? echo $base?>/users">Users</a></li>
+					<li><a href="<?php echo $base?>/users">Users</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li></li>

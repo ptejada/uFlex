@@ -333,8 +333,10 @@
 			}
 			//Check for Email in database
 			if(isset($info['email']))
-				if($this->check_field('email',$info['email'],"This Email is Already in Use"))
-					return false;
+				if($info['email']!=$this->data['email']){
+					if($this->check_field('email',$info['email'],"This Email is Already in Use"))
+						return false;
+				}
 
 			//Check for errors
 			if($this->has_error()) return false;
@@ -630,6 +632,43 @@
 		}
 
 		/**
+		* adding unique session name using connection config
+		* use as protected method for internal purpose
+		*
+		*/
+		protected function set_unique_opt_user_session($unique_conn)
+		{
+			// get original opt['user_session']
+			$orig_opt = substr($this->opt["user_session"], 0, -33);
+			
+			// set new unique opt['user_session'] by adding connection config
+			$this->opt["user_session"] = $orig_opt . '-' . $unique_conn;
+		}
+		
+		/**
+		* validating user session by adding unique session name using connection config
+		* use as protected method for internal purpose
+		*
+		*/
+		protected function validate_opt_user_session()
+		{
+			$unique_conn = md5($this->db["host"] . $this->db["user"] . $this->db["pass"] . $this->db["name"]);
+			
+			// make sure to set unique opt['user_session']
+			$this->set_unique_opt_user_session($unique_conn);
+			
+			// get original opt['user_session']
+			$orig_opt = substr($this->opt["user_session"], 0, -33);
+			
+			// check wether user session match with connection config
+			if ($this->opt["user_session"] == ($orig_opt . '-' . $unique_conn))
+				return true;
+			
+			// if not match
+			return false;
+		}
+		
+		/**
 		 * Protected Login processor function
 		 *
 		 * @param string|bool $user username or email
@@ -641,20 +680,24 @@
 		 * @return bool True if user was successfully logged in, false otherwise
 		 */
 		protected function loginUser($user = false,$pass = false,$auto = false){
-			//Session Login
-			if($this->session("signed")){
-				$this->report("User Is signed in from session");
-				$this->update_from_session();
-				if(isset($_SESSION['uFlex-' . $this->clone . '-update'])){
-					$this->report("Updating Session from database");
-					//Get User From database because its info has change during current session
-					$update = $this->getRow(Array("user_id" => "$this->id"));
-					$this->update_session($update);
-					$this->log_login(); //Update last_login
-					//Cleaning session flag
-					unset($_SESSION['uFlex-' . $this->clone . '-update']);
+			//validate session connection
+			if($this->validate_opt_user_session())
+			{
+				//Session Login
+				if($this->session("signed")){
+					$this->report("User Is signed in from session");
+					$this->update_from_session();
+					if(isset($_SESSION['uFlex-' . $this->clone . '-update'])){
+						$this->report("Updating Session from database");
+						//Get User From database because its info has change during current session
+						$update = $this->getRow(Array("user_id" => "$this->id"));
+						$this->update_session($update);
+						$this->log_login(); //Update last_login
+						//Cleaning session flag
+						unset($_SESSION['uFlex-' . $this->clone . '-update']);
+					}
+					return true;
 				}
-				return true;
 			}
 			//Cookies Login
 			if(isset($_COOKIE[$this->opt['cookie_name']]) and !$user and !$pass){
