@@ -2,4 +2,4 @@ language: php
 php:
   - 5.3
 
-script: phpunit tests
+script: phpunit tests --bootstrap vendor/autoload.php
