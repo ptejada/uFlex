@@ -2,4 +2,7 @@ language: php
 php:
   - 5.3
 
+before_script:
+  - composer update
+
 script: phpunit tests --bootstrap vendor/autoload.php
