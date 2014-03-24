@@ -1,3 +1,8 @@
+Status [![Build Status](https://travis-ci.org/ptejada/uFlex.svg?branch=1.0-DEV)](https://travis-ci.org/ptejada/uFlex)
+=========================
+
+Currently under development
+
 Getting Started
 =========================
 

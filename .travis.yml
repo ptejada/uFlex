@@ -5,4 +5,4 @@ php:
 before_script:
   - composer update
 
-script: phpunit tests --bootstrap vendor/autoload.php
+script: phpunit  --bootstrap vendor/autoload.php tests
