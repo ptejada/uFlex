@@ -2,7 +2,7 @@
 
 namespace Ptejada\UFlex;
 
-class DBTAble
+class DB_Table
 {
     /** @var string - The table name */
     private $tableName = '';

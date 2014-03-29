@@ -97,14 +97,16 @@ class DB
 
     /**
      * Get table object
+
      *
-     * @param $tableName
+*@param $tableName
+
      *
-     * @return DBTAble
+*@return DB_Table
      */
     public function getTable($tableName)
     {
-        return new DBTAble($this, $tableName);
+        return new DB_Table($this, $tableName);
     }
 
     /**
