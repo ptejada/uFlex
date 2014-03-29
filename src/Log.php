@@ -90,7 +90,7 @@ class Log
         // Uses the passed channel or fallback to the current selected channel
         $channel = $this->namespaceChannel($channel);
 
-        if ( ! is_array($this->console['errors'][$channel]) ) {
+        if ( ! isset($this->console['errors'][$channel]) ) {
             $this->console['errors'][$channel] = array();
         }
 
