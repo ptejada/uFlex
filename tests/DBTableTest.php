@@ -25,7 +25,7 @@ class DBTableTest extends \PHPUnit_Framework_TestCase {
         $db = self::$db;
         $table = $db->getTable('Users');
 
-        $this->assertInstanceOf('Ptejada\UFlex\DBTAble', $table, 'Should be an instance of DBTable');
+        $this->assertInstanceOf('Ptejada\UFlex\DB_Table', $table, 'Should be an instance of DBTable');
         $this->assertInstanceOf('Ptejada\UFlex\Log', $table->log);
 
         // Creates the table
