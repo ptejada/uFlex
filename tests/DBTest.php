@@ -48,7 +48,7 @@ class DBTest extends \PHPUnit_Framework_TestCase {
         $db = new DB('sqlite::memory:');
         $table = $db->getTable('Users');
 
-        $this->assertInstanceOf('Ptejada\UFlex\DBTAble', $table, 'Should be an instance of DBTable');
+        $this->assertInstanceOf('Ptejada\UFlex\DB_TAble', $table, 'Should be an instance of DBTable');
     }
 
 }
