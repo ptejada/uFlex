@@ -36,14 +36,10 @@ class Hash
      */
     public function generateUserPassword(User $user, $password, $generateOld=false)
     {
-        $registrationDate = false;
+        $registrationDate = $user->reg_date;
 
-        if (isset($user->data['reg_date'])) {
-            $registrationDate = $user->data['reg_date'];
-        }
-
-        if (!$registrationDate and isset($user->tmp_data['reg_date'])) {
-            $registrationDate = $user->tmp_data['reg_date'];
+        if (!$registrationDate) {
+            $registrationDate = $user->_updates->reg_date;
         }
 
         $pre = $this->encode($registrationDate);
@@ -91,7 +87,7 @@ class Hash
      *
      * @param string $hash hashed string to check
      *
-     * @return bool
+     * @return array
      */
     function examine($hash)
     {

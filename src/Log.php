@@ -308,4 +308,19 @@ class Log
 
         return $child;
     }
+
+    /**
+     * Adds a predefined error to the internal list
+     *
+     * @param int|array $id - Must be numeric or associative array with numeric keys
+     * @param string    $message
+     */
+    public function addPredefinedError($id, $message = '')
+    {
+        if (is_array($id)) {
+            $this->errorList = array_diff_key($this->errorList, $id) + $id;
+        } else {
+            $this->errorList[$id] = $message;
+        }
+    }
 }

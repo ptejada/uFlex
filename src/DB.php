@@ -5,9 +5,9 @@ namespace Ptejada\UFlex;
 class DB
 {
     /** @var string - The server IP or host name */
-    private $host = '';
+    private $host = 'localhost';
     /** @var string - The server user to login as */
-    private $user = '';
+    private $user = 'root';
     /** @var string - The user password */
     private $password = '';
     /** @var string - The name of the database */
@@ -23,23 +23,17 @@ class DB
 
     /**
      * @param string $hostOrDSN - The domain/IP of the DB or the PDO DSN string
-     * @param string $dbNameOrUser
-     * @param string $userOrPassword
-     * @param string $password
+     * @param string $dbName - The name of the database
      */
-    public function __construct($hostOrDSN='', $dbNameOrUser='', $userOrPassword='', $password='')
+    public function __construct($hostOrDSN='', $dbName='')
     {
-        if (!$password) {
+        if (!$dbName) {
             // add full DSN string
             $this->dsn = $hostOrDSN;
-            $this->user = $dbNameOrUser;
-            $this->password = $userOrPassword;
         } else {
             // Add the default DB credentials for MySQL
             $this->host = $hostOrDSN;
-            $this->dbName = $dbNameOrUser;
-            $this->user = $userOrPassword;
-            $this->password = $password;
+            $this->dbName = $dbName;
         }
 
         $this->log = new Log('DB');

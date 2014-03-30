@@ -46,6 +46,15 @@ class Session extends Collection
             // Link the SESSION namespace to the local $data variable
             parent::__construct($_SESSION[$namespace]);
         }
+    }
 
+    /**
+     * Get current session ID identifier
+     *
+     * @return string
+     */
+    public function getID()
+    {
+        return session_id();
     }
 }

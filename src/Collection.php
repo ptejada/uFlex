@@ -53,4 +53,14 @@ class Collection
         }
         return null;
     }
+
+    public function __isset($name)
+    {
+        return isset($this->_data[$name]);
+    }
+
+    public function __unset($name)
+    {
+        unset($this->_data[$name]);
+    }
 }

@@ -117,4 +117,20 @@ class Cookie
     {
         $this->value = $value;
     }
+
+    /**
+     * Destroys the cookie
+     * @return bool
+     */
+    public function destroy(){
+        $deleted = setcookie(
+            $this->name,
+            '',
+            time() - 3600,
+            $this->path,
+            $this->host
+        ); //Deletes Cookie
+
+        return $deleted && !headers_sent();
+    }
 }
