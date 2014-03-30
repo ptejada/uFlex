@@ -15,6 +15,8 @@ class Session extends Collection
     /** @var  Log - Log errors and report */
     public $log;
 
+    protected $namespace;
+
     /**
      * Initialize a session handler by namespace
      *
@@ -23,6 +25,7 @@ class Session extends Collection
     public function __construct($namespace = null)
     {
         $this->log = new Log('Session');
+        $this->namespace = $namespace;
 
         // Starts the session if it has not been started yet
         if (!isset($_SESSION) && !headers_sent()) {
@@ -56,5 +59,20 @@ class Session extends Collection
     public function getID()
     {
         return session_id();
+    }
+
+    /**
+     * Empty the session namespace
+     */
+    public function destroy(){
+        if (is_null($this->namespace)) {
+            // Destroy the whole session
+            session_destroy();
+        }
+        else
+        {
+            // Just empty the current session namespace
+            unset($_SESSION[$this->namespace]);
+        }
     }
 }

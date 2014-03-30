@@ -246,6 +246,10 @@ class UserBase
     {
         if (isset($this->_data[$name])) {
             return $this->_data[$name];
+        } else {
+            if ($this->_updates->$name) {
+                return $this->_updates->$name;
+            }
         }
 
         $trace = debug_backtrace();

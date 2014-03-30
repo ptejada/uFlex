@@ -38,10 +38,6 @@ class Hash
     {
         $registrationDate = $user->reg_date;
 
-        if (!$registrationDate) {
-            $registrationDate = $user->_updates->reg_date;
-        }
-
         $pre = $this->encode($registrationDate);
         $pos = substr($registrationDate, 5, 1);
         $post = $this->encode($registrationDate * (substr($registrationDate, $pos, 1)));

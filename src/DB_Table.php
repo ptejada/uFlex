@@ -16,7 +16,7 @@ class DB_Table
     public function __construct(DB $db, $table)
     {
         $this->db = $db;
-        $this->log = $db->log->newChildLog($table);
+        $this->log = $db->log;
         $this->tableName = $table;
     }
 
@@ -190,7 +190,7 @@ class DB_Table
                 $sql = str_replace(' _arguments_', $finalArgs, $sql);
             } else {
                 // Appends the parameters string the sql query
-                $sql .= $finalArgs;
+                // $sql .= $finalArgs; TODO: Watch this expression if it is on use
             }
         }
 

@@ -64,20 +64,18 @@ class DB
             $this->log = new Log('DB');
         }
 
-        $this->log->channel('Connection');
-
         // Use cached connection if already connected to server
         if ($this->connection instanceof \PDO) {
             return $this->connection;
         }
 
-        $this->log->report("Connecting to database...");
+        $this->log->report('Connecting to database...');
 
         try{
             $this->connection = new \PDO($this->generateDSN(), $this->user, $this->password);
-            $this->log->report("Connected to database.");
+            $this->log->report('Connected to database.');
         } catch ( \PDOException $e ){
-            $this->log->error("Failed to connect to database, [SQLSTATE] " . $e->getCode());
+            $this->log->error('Failed to connect to database, [SQLSTATE] ' . $e->getCode());
         }
 
         // Check is the connection to server succeed
