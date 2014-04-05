@@ -86,7 +86,7 @@ class LogTest extends \PHPUnit_Framework_TestCase {
         // The error for field 'name' should be present
         $this->assertArrayHasKey('name',$this->log->getFormErrors(), 'The field \'name\' should have an error');
 
-        $this->assertEquals(1, count($this->log->getReports()), 'There should only be one report entry');
+        $this->assertEquals(2, count($this->log->getReports()), 'There should only be two report entry');
         $this->assertEquals(1, count($this->log->getErrors()), 'There should only be one error entry');
     }
 
@@ -96,7 +96,7 @@ class LogTest extends \PHPUnit_Framework_TestCase {
         $reports = &$this->log->getReports();
 
         $this->assertEquals(0, count($errors), 'No initial errors');
-        $this->assertEquals(0, count($reports), 'No initial reports');
+        $this->assertEquals(1, count($reports), 'Only The initial channel report');
 
         for ($i=0; $i<10; $i++)
         {
@@ -104,11 +104,11 @@ class LogTest extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals(10, count($errors), 'There should be errors');
-        $this->assertEquals(10, count($reports), 'There should be reports');
+        $this->assertEquals(11, count($reports), 'There should be reports');
 
         $this->assertEquals(count($reports), count($reports), 'There should be the same amount of errors and reports');
 
-        foreach ($reports as $report) {
+        foreach (array_slice($reports,1) as $report) {
             $this->assertRegExp('/Error:/', $report, 'All reports should be errors');
         }
 
@@ -118,7 +118,6 @@ class LogTest extends \PHPUnit_Framework_TestCase {
     {
         $log1 = new Log('1');
         $console = &$log1->getFullConsole();
-        $this->assertEmpty($console['errors']);
         $log1->error('Hello World');
         $this->assertNotEmpty($console['errors']);
         $this->assertEquals(1, count($console['errors']));

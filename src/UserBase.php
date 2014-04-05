@@ -175,7 +175,7 @@ class UserBase
     protected function validate($name, $limit, $regEx = false)
     {
         $Name = ucfirst($name);
-        $value = $this->_updates[$name];
+        $value = $this->_updates->$name;
         $length = explode('-', $limit);
         $min = intval($length[0]);
         $max = intval($length[1]);
@@ -205,14 +205,14 @@ class UserBase
 
         // Validate the value minimum length
         if (strlen($value) < $min) {
-            $this->log->formError($name, "The $Name is too short. it should at least be $min characters long");
+            $this->log->formError($name, "The $Name is too short. It should at least be $min characters long");
             return false;
         }
 
         // Validate the value pattern
         if ($regEx) {
             preg_match($regEx, $value, $match);
-            if (preg_match($regEx, $value, $match) === 1) {
+            if (preg_match($regEx, $value, $match) === 0) {
                 $this->log->formError($name, "The $Name \"{$value}\" is not valid");
                 return false;
             }
@@ -251,6 +251,8 @@ class UserBase
                 return $this->_updates->$name;
             }
         }
+
+        return null;
 
         $trace = debug_backtrace();
         trigger_error(

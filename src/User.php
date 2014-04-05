@@ -25,7 +25,7 @@ class User extends UserBase
     protected $db;
 
     /** @var DB_Table - The database table object */
-    protected $table;
+    public $table;
 
     /** @var  Cookie - The cookie for autologin */
     protected $cookie;
@@ -77,7 +77,7 @@ class User extends UserBase
         $this->log->channel('login');
 
         // Start the class if is not been start yet
-        $this->start();
+        $this->start(false);
 
         //Session Login
         if ($this->session->signed) {
@@ -112,7 +112,6 @@ class User extends UserBase
                 $autoLogin = true;
                 $getBy = 'user_id';
                 $identifier = $uid;
-                $this->signed = true;
             } else {
                 $this->log->error(6);
                 $this->logout();
@@ -121,7 +120,7 @@ class User extends UserBase
         } else {
             //Credentials Login
             if ($identifier && $password) {
-                if (preg_match($this->validations['email']['regEx'], $identifier)) {
+                if (preg_match($this->_validations->email->regEx, $identifier)) {
                     //Login using email
                     $getBy = 'email';
                 } else {
@@ -131,7 +130,9 @@ class User extends UserBase
 
                 $this->log->report('Credentials received');
             } else {
-                $this->log->error(7);
+                if ($identifier && !$password) {
+                    $this->log->error(7);
+                }
                 return false;
             }
         }
@@ -143,13 +144,26 @@ class User extends UserBase
         $userFileArray = (array) $userFile;
 
         if ($userFile && !$this->isSigned()) {
-            $this->_updates = new Collection($userFileArray);
-            $this->session->signed =  $this->hash->generateUserPassword($this, $password) === $userFile->password;
-        } else {
-            if ($this->isSigned()) {
-                //Continue login from cookie
-                return true;
+            if (isset($partial)) {
+                // Partially match the user password to authenticate
+                $this->session->signed = strpos($userFile->password, $partial) >= 0;
             } else {
+                // Fully match the user password to authenticate
+                $this->_updates = new Collection($userFileArray);
+                if (strlen($userFile->password) === 40) {
+                    /*
+                     * Try new password algorithm
+                     */
+                    $this->session->signed =  $this->hash->generateUserPassword($this, $password) === $userFile->password;
+                } else {
+                    /*
+                     * Try legacy password algorithm
+                     */
+                    $this->session->signed =  $this->hash->generateUserPassword($this, $password, true) === $userFile->password;
+                }
+            }
+        } else {
+            if (!$this->isSigned() && $password) {
                 $this->log->formError('password', $this->errorList[10]);
                 return false;
             }
@@ -189,9 +203,11 @@ class User extends UserBase
             $this->log->report('User Logged in Successfully');
             return true;
         } else {
-            // Removes the autologin cookie
-            $this->cookie->destroy();
-            $this->log->formError('password', $this->errorList[10]);
+            if ($password) {
+                // Removes the autologin cookie
+                $this->cookie->destroy();
+                $this->log->formError('password', 10);
+            }
             return false;
         }
     }
@@ -486,7 +502,7 @@ class User extends UserBase
     /**
      * Starts and Configures the object
      */
-    public function start()
+    public function start($login=true)
     {
         if ( ! ($this->db instanceof DB) ) {
             // Updating the predefine error logs
@@ -509,9 +525,6 @@ class User extends UserBase
             //Instantiate the table DB object
             $this->table = $this->db->getTable($this->config->userTableName);
 
-            // Instantiate the session namespace
-            $this->session = new Session($this->config->userSession);
-
             // Instantiate and configure the cookie object
             $this->cookie = new Cookie($this->config->cookieName);
             $this->cookie->setHost($this->config->cookieHost);
@@ -519,14 +532,21 @@ class User extends UserBase
             $this->cookie->setLifetime($this->config->cookieTime);
 
             // Instantiate the session
-            $this->session = new Session($this->config->userSession);
+            $this->session = new Session($this->config->userSession, $this->log);
 
-            // Link the session with the user data
-            if (!$this->session->data) {
-                $this->session->data = array();
-            }
-            $this->_data  =& $this->session->data->getAll();
         }
+
+        // Link the session with the user data
+        if (is_null($this->session->data)) {
+            $this->session->data = array();
+        }
+        $this->_data =& $this->session->data->getAll();
+
+        if ($login) {
+            $this->login();
+        }
+
+        return $this;
     }
 
     /**

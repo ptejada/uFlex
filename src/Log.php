@@ -142,7 +142,7 @@ class Log
      * Note: Only one error per field in a channel namespace
      *
      * @param string $field   - The form field name
-     * @param string $message - The error message to link to the field
+     * @param string|int $message - The error message to link to the field or an ID of a predefined error message
      *
      * @return $this
      */
@@ -150,7 +150,13 @@ class Log
     {
         $formErrors = &$this->getFormErrors();
         if ($message) {
-            $formErrors[$field] = $message;
+            if (is_int($message) && isset($this->errorList[$message])) {
+                // Use predefined error
+                $formErrors[$field] = $this->errorList[$message];
+            }else{
+                // Use given error message
+                $formErrors[$field] = $message;
+            }
             $this->error($message);
         } else {
             // if the message if omitted use the field as a generic message
@@ -250,6 +256,8 @@ class Log
 
     /**
      * Change the current channel
+     * Note: note changing to a channel with existing errors
+     * from previous calls will be cleared
      *
      * @param $channelName
      *
@@ -258,7 +266,25 @@ class Log
     public function channel($channelName)
     {
         $this->currentChannel = $this->namespaceChannel($channelName);
+        // Mark start of a new start
+        $this->report(">> New $channelName request");
+        // Clear any errors on the channel
+        $this->clearErrors();
         return $this;
+    }
+
+    /**
+     * Clears existing errors for a channel
+     *
+     * @param string $channelName
+     */
+    public function clearErrors($channelName='')
+    {
+        $channel = $this->namespaceChannel($channelName);
+
+        // Clear any existing errors for the channel
+        $this->console['errors'][$channel] = array();
+        $this->console['form'][$channel] = array();
     }
 
     /**

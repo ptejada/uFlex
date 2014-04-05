@@ -30,7 +30,7 @@ class DBTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('PDO', $db->getConnection(), 'Successfully connects to DB');
         $this->assertFalse($db->log->hasError(), 'There should be no error');
         $this->assertNotEmpty($db->log->getReports(), 'There should some report entries');
-        $this->assertEquals(2, count($db->log->getReports()), 'Expect exactly 2 report after connection');
+        $this->assertEquals(3, count($db->log->getReports()), 'Expect exactly 3 report after connection');
     }
 
     public function testConnectionFails()
@@ -40,7 +40,7 @@ class DBTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotInstanceOf('PDO', $db->getConnection(), 'Fails to connects to DB');
         $this->assertTrue($db->log->hasError(), 'There should be errors');
         $this->assertNotEmpty($db->log->getErrors(), 'There should some report entries');
-        $this->assertEquals(2, count($db->log->getReports()), 'Expect exactly 2 reports after connection fails');
+        $this->assertEquals(3, count($db->log->getReports()), 'Expect exactly 3 reports after connection fails');
     }
 
     public function testGetTable()

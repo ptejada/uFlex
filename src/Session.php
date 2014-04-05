@@ -21,10 +21,11 @@ class Session extends Collection
      * Initialize a session handler by namespace
      *
      * @param string $namespace - Session namespace to manage
+     * @param   Log  $log
      */
-    public function __construct($namespace = null)
+    public function __construct($namespace = null, Log $log=null)
     {
-        $this->log = new Log('Session');
+        $this->log = $log instanceof Log ? $log :  new Log('Session');
         $this->namespace = $namespace;
 
         // Starts the session if it has not been started yet
@@ -64,13 +65,12 @@ class Session extends Collection
     /**
      * Empty the session namespace
      */
-    public function destroy(){
+    public function destroy()
+    {
         if (is_null($this->namespace)) {
             // Destroy the whole session
             session_destroy();
-        }
-        else
-        {
+        } else {
             // Just empty the current session namespace
             unset($_SESSION[$this->namespace]);
         }
