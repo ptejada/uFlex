@@ -24,7 +24,9 @@ class Cookie
         $this->setLifetime($lifetime);
         $this->setPath($path);
         if (!$host) {
-            $this->setHost($_SERVER['SERVER_NAME']);
+            if (isset($_SERVER['SERVER_NAME'])) {
+                $this->setHost($_SERVER['SERVER_NAME']);
+            }
         }
         else
         {

@@ -82,6 +82,9 @@ class UserBase
 
         // Hydrate the model with user information
         $this->_data = $userData;
+
+        // Initializes the updates collection
+        $this->_updates = new Collection();
     }
 
     /**
