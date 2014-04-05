@@ -73,10 +73,12 @@ class UserBase
         $this->hash = new Hash();
 
         // Convert the configurations to a collection
-        $this->config = new Collection(array_merge(array(), (array) $this->config));
+        $config = array_merge(array(), (array) $this->config);
+        $this->config = new Collection($config);
 
         // Convert the validations rule to a collection
-        $this->_validations = new Collection(array_merge(array(), (array) $this->_validations));
+        $validations = array_merge(array(), (array) $this->_validations);
+        $this->_validations = new Collection($validations);
 
         // Hydrate the model with user information
         $this->_data = $userData;

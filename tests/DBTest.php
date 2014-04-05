@@ -15,14 +15,6 @@ class DBTest extends \PHPUnit_Framework_TestCase {
     /** @var  DB */
     protected static $db;
 
-    public static function setUpBeforeClass()
-    {
-        $db = self::$db = new DB('sqlite::memory:');
-        //$pdo = $db->getConnection();
-
-        //$pdo->exec(file_get_contents(dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'uFlex_database.sql'));
-    }
-
     public function testConnection()
     {
         $db = new DB('sqlite::memory:');
@@ -33,6 +25,7 @@ class DBTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(3, count($db->log->getReports()), 'Expect exactly 3 report after connection');
     }
 
+    /*
     public function testConnectionFails()
     {
         $db = new DB('localhost','test','root','');
@@ -42,6 +35,7 @@ class DBTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($db->log->getErrors(), 'There should some report entries');
         $this->assertEquals(3, count($db->log->getReports()), 'Expect exactly 3 reports after connection fails');
     }
+    */
 
     public function testGetTable()
     {
