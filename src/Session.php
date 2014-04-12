@@ -10,7 +10,7 @@ namespace Ptejada\UFlex;
  *
  * @package Ptejada\UFlex
  */
-class Session extends Collection
+class Session extends LinkedCollection
 {
     /** @var  Log - Log errors and report */
     public $log;
@@ -31,11 +31,11 @@ class Session extends Collection
         // Starts the session if it has not been started yet
         if (!isset($_SESSION) && !headers_sent()) {
             session_start();
-            $this->log->report("Session is been started...");
+            $this->log->report('Session is been started...');
         } elseif (isset($_SESSION)) {
-            $this->log->report("Session has already been started");
+            $this->log->report('Session has already been started');
         } else {
-            $this->log->error("Session could not be started");
+            $this->log->error('Session could not be started');
         }
 
         if (is_null($namespace)) {
@@ -72,6 +72,7 @@ class Session extends Collection
             session_destroy();
         } else {
             // Just empty the current session namespace
+            $_SESSION[$this->namespace] = array();
             unset($_SESSION[$this->namespace]);
         }
     }

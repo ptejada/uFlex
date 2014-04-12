@@ -7,9 +7,9 @@ class Collection
     /** @var array */
     protected $_data;
 
-    public function __construct(array &$info = array())
+    public function __construct(array $info = array())
     {
-       $this->_data =& $info;
+       $this->_data = $info;
     }
 
     /**
@@ -38,7 +38,7 @@ class Collection
     /**
      * @param $name
      *
-     * @return mixed|Collection
+     * @return mixed|LinkedCollection
      */
     public function __get($name)
     {
@@ -46,7 +46,7 @@ class Collection
             $value =& $this->_data[$name];
 
             if (is_array($value)) {
-                return new Collection($value);
+                return new LinkedCollection($value);
             } else {
                 return $value;
             }

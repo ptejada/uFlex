@@ -159,6 +159,86 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($this->user->email);
     }
 
+    public function testUserUpdate()
+    {
+        $this->user->login('pablo', 1234);
+
+        $this->assertFalse($this->user->log->hasError());
+        $this->assertEmpty($this->user->session->update);
+
+        $newEmail = 'jose@live.com';
+        $this->user->update(array('email'=>$newEmail));
+
+        $this->assertTrue($this->user->session->update);
+        $this->assertEquals($newEmail, $this->user->email);
+        $this->assertNotEmpty($this->user->username);
+    }
+
+    public function testResetPassword()
+    {
+        $this->user->login();
+
+        $this->assertFalse($this->user->log->hasError());
+
+        $result = $this->user->resetPassword('jose@live.com');
+        $this->assertFalse($result);
+        $this->assertTrue($this->user->log->hasError());
+
+        $result = $this->user->resetPassword('pablo@live.com');
+        $this->assertInstanceOf('Ptejada\UFlex\Collection',$result);
+        $this->assertFalse($this->user->log->hasError());
+
+        $this->assertEquals('pablo', $result->username);
+        $this->assertEquals('pablo@live.com', $result->email);
+        $this->assertEquals(1, $result->user_id);
+        $this->assertEquals(40, strlen($result->confirmation));
+
+        // Confirm confirmation was saved on the on DB
+        $user = $this->user->table->getRow(array('user_id'=>1));
+        $this->assertEquals($user->confirmation, $result->confirmation);
+    }
+
+    public function testNewPassword()
+    {
+        $this->user->login('pablo', 456);
+        $this->assertTrue($this->user->log->hasError());
+        $this->assertFalse($this->user->isSigned());
+
+        $result = $this->user->resetPassword('pablo@live.com');
+        $this->assertInstanceOf('Ptejada\UFlex\Collection',$result);
+        $this->assertFalse($this->user->log->hasError());
+
+        $newPassword = array(
+            'password' => 456,
+            'password2' => 789,
+        );
+
+        $this->user->newPassword($result->confirmation, $newPassword);
+        $this->assertTrue($this->user->log->hasError());
+
+        $newPassword['password2'] = 456;
+        $this->user->newPassword('c4504f0b39c478f39c4badbf74ddbaedf71ecfae' , $newPassword);
+        $this->assertTrue($this->user->log->hasError());
+
+        $this->user->newPassword($result->confirmation, $newPassword);
+        $this->assertFalse($this->user->log->hasError());
+
+        // Test the new login credentials
+        $this->user->login('pablo', 456);
+        $this->assertFalse($this->user->log->hasError());
+        $this->assertTrue($this->user->isSigned());
+    }
+
+    public function testLogout()
+    {
+        $this->user->login('pablo', 1234);
+        $this->assertFalse($this->user->log->hasError());
+        $this->assertTrue($this->user->isSigned());
+
+        $this->user->logout();
+        $this->assertFalse($this->user->isSigned());
+    }
+
     protected function getUserInfo($id=0)
     {
         return array(
@@ -168,6 +248,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
             'email'   => substr(md5(rand()), 0, 5) . '@' . substr(md5(rand()), 0, 8) . '.com',
         );
     }
+
     protected function tearDown()
     {
         $this->user = null;

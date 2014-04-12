@@ -54,12 +54,12 @@ class Cookie
             //Headers have been sent use JavaScript to set the cookie
             echo "<script>";
             echo '
-				  function setCookie(c_name,value,expiredays){
-					var exdate=new Date();
-					exdate.setDate(exdate.getDate()+expiredays);
-					document.cookie=c_name+ "=" +escape(value)+((expiredays==null) ? "" : "; expires="+exdate.toUTCString()) + "; domain="+ escape("'.$this->host.'") + "; path=" + escape("'.$this->path.'");
-				  }
-				';
+              function setCookie(c_name,value,expiredays){
+                var exdate=new Date();
+                exdate.setDate(exdate.getDate()+expiredays);
+                document.cookie=c_name+ "=" +escape(value)+((expiredays==null) ? "" : "; expires="+exdate.toUTCString()) + "; domain="+ escape("' . $this->host . '") + "; path=" + escape("' . $this->path . '");
+              }
+            ';
             echo "setCookie('{$this->name}','{$this->value}',{$this->lifetime})";
             echo "</script>";
             $added = true;
@@ -125,18 +125,23 @@ class Cookie
      * @return bool
      */
     public function destroy(){
-        if (!headers_sent()) {
-            return setcookie(
-                $this->name,
-                '',
-                time() - 3600,
-                $this->path,
-                $this->host
-            ); //Deletes Cookie
-        }
-        else
-        {
-            return false;
+        if (!is_null($this->getValue())) {
+            if (!headers_sent()) {
+                return setcookie(
+                    $this->name,
+                    '',
+                    time() - 3600,
+                    $this->path,
+                    $this->host
+                ); //Deletes Cookie
+            }
+            else
+            {
+                return false;
+            }
+        } else {
+            // The cookie does not exists, there is nothing to destroy
+            return true;
         }
     }
 }

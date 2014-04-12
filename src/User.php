@@ -234,7 +234,7 @@ class User extends UserBase
         $this->log->channel('registration'); //Index for Errors and Reports
 
         //Saves Registration Data in Class
-        $this->_updates = new Collection($info);
+        $this->_updates = $info = new Collection($info);
 
         //Validate All Fields
         if (!$this->validateAll()) {
@@ -242,27 +242,27 @@ class User extends UserBase
         } //There are validations error
 
         //Set Registration Date
-        $this->_updates->reg_date = time();
+        $info->reg_date = time();
 
         /*
          * Built in actions for special fields
          */
 
         //Hash Password
-        if ( $this->_updates->password ) {
-            $this->_updates->password = $this->hash->generateUserPassword($this, $this->_updates->password);
+        if ( $info->password ) {
+            $info->password = $this->hash->generateUserPassword($this, $info->password);
         }
 
         //Check for Email in database
-        if ($this->_updates->email) {
-            if ($this->table->isUnique('email', $this->_updates->email, 'This Email is Already in Use')) {
+        if ($info->email) {
+            if ($this->table->isUnique('email', $info->email, 'This Email is Already in Use')) {
                 return false;
             }
         }
 
         //Check for username in database
-        if ($this->_updates->username) {
-            if ($this->table->isUnique('username', $this->_updates->username, 'This Username is not available')) {
+        if ($info->username) {
+            if ($this->table->isUnique('username', $info->username, 'This Username is not available')) {
                 return false;
             }
         }
@@ -275,16 +275,16 @@ class User extends UserBase
         //User Activation
         if ($activation) {
             //Add Validation Hash
-            $this->_updates->confirmation = $this->hash->generate();
+            $info->confirmation = $this->hash->generate();
         } else {
             //Activates user upon registration
-            $this->_updates->activated = 1;
+            $info->activated = 1;
         }
 
         //Prepare Info for SQL Insertion
         $data = array();
         $into = array();
-        foreach ($this->_updates->getAll() as $index => $val) {
+        foreach ($info->getAll() as $index => $val) {
             if (!preg_match("/2$/", $index)) { //Skips double fields
                 $into[] = $index;
                 //For the statement
@@ -303,10 +303,10 @@ class User extends UserBase
         //Enter New user to Database
         if ($this->table->runQuery($sql, $data)) {
             $this->log->report('New User has been registered');
-            $this->_updates->user_id = $this->table->getLastInsertedID();
+            $info->user_id = $this->table->getLastInsertedID();
             if ($activation) {
                 // Return the confirmation hash
-                return $this->_updates->confirmation;
+                return $info->confirmation;
             } else {
                 return true;
             }
@@ -378,7 +378,7 @@ class User extends UserBase
 
         $set = implode(', ', $set);
 
-        //Prepare User Update	Query
+        //Prepare User Update Query
         $sql = "UPDATE _table_ SET $set
                 WHERE user_id={$this->user_id}";
 
@@ -388,6 +388,8 @@ class User extends UserBase
 
             if ($this->clone === 0) {
                 $this->session->update = true;
+                // Update the current object with the updated information
+                $this->_data = array_merge($this->_data, $updates->getAll());
             }
 
             return true;
@@ -429,14 +431,12 @@ class User extends UserBase
 
             $this->table->runQuery('UPDATE _table_ SET confirmation=:confirmation WHERE user_id=:user_id', $data);
 
-            $response = array(
+            return new Collection(array(
                 'email'        => $email,
                 'username'     => $user->username,
                 'user_id'      => $user->user_id,
                 'confirmation' => $data['confirmation']
-            );
-
-            return new Collection($response);
+            ));
         } else {
             $this->log->error(4);
             return false;
@@ -467,36 +467,32 @@ class User extends UserBase
 
         list($uid, $partial) = $this->hash->examine($hash);
 
-        if (!$uid) {
-            return false;
-        }
-
-        if ($user = $this->table->getRow(array('user_id' => $uid, 'confirmation' => $hash))) {
+        if ($uid && $user = $this->table->getRow(array('user_id' => $uid, 'confirmation' => $hash))) {
             $this->_updates =  new Collection($newPass);
             if (!$this->validateAll()) {
                 return false;
             } //There are validations error
 
-            $this->_updates =  new Collection($user);
+            $this->_updates =  new Collection((array) $user);
 
             // Generate the password hash
             $pass = $this->hash->generateUserPassword($this, $newPass['password']);
 
             $sql = "UPDATE _table_ SET `password`=:pass, confirmation='', activated=1 WHERE confirmation=:confirmation AND user_id=:id";
             $data = array(
-                'id'   => $this->id,
+                'id'   => $this->user_id,
                 'pass' => $pass,
                 'confirmation' => $hash
             );
             if ($this->table->runQuery($sql, $data)) {
                 $this->log->report('Password has been changed');
                 return true;
-            } else {
-                //Error
-                $this->log->error(5);
-                return false;
             }
         }
+
+        //Error
+        $this->log->error(5);
+        return false;
     }
 
     /**
@@ -591,8 +587,6 @@ class User extends UserBase
         if (!$this->cookie->destroy()) {
             $this->log->report('The Autologin cookie could not be deleted');
         }
-
-        $this->signed = 0;
 
         // Destroy the session
         $this->session->destroy();
