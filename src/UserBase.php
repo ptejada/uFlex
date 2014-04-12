@@ -143,7 +143,7 @@ class UserBase
      */
     protected function validateAll()
     {
-        foreach ($this->_updates->getAll() as $field => $val) {
+        foreach ($this->_updates->toArray() as $field => $val) {
             //Match double fields
             $field2 = $field . '2';
             if (!is_null($this->_updates->$field2)) {

@@ -22,7 +22,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase {
     {
         // Manage the whole session
         $session = new Session();
-        $this->assertEquals(array(), $session->getAll());
+        $this->assertEquals(array(), $session->toArray());
         $this->assertFalse($session->log->hasError());
 
         //Manage namespace on the SESSION
@@ -44,7 +44,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase {
         $session->list->one = 1;
         $session->list->two = 2;
 
-        $this->assertEquals($_SESSION['test']['list'], $session->list->getAll());
+        $this->assertEquals($_SESSION['test']['list'], $session->list->toArray());
     }
 
 }

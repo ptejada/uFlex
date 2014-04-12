@@ -25,7 +25,7 @@ class Collection
      * Return the raw underling array of the collection
      * @return array
      */
-    public function &getAll()
+    public function &toArray()
     {
         return $this->_data;
     }

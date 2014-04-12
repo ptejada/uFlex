@@ -284,7 +284,7 @@ class User extends UserBase
         //Prepare Info for SQL Insertion
         $data = array();
         $into = array();
-        foreach ($info->getAll() as $index => $val) {
+        foreach ($info->toArray() as $index => $val) {
             if (!preg_match("/2$/", $index)) { //Skips double fields
                 $into[] = $index;
                 //For the statement
@@ -368,7 +368,7 @@ class User extends UserBase
         //Prepare Info for SQL Insertion
         $data = array();
         $set = array();
-        foreach ($updates->getAll() as $index => $val) {
+        foreach ($updates->toArray() as $index => $val) {
             if (!preg_match('/2$/', $index)) { //Skips double fields
                 $set[] = "{$index}=:{$index}";
                 //For the statement
@@ -389,7 +389,7 @@ class User extends UserBase
             if ($this->clone === 0) {
                 $this->session->update = true;
                 // Update the current object with the updated information
-                $this->_data = array_merge($this->_data, $updates->getAll());
+                $this->_data = array_merge($this->_data, $updates->toArray());
             }
 
             return true;
@@ -536,7 +536,7 @@ class User extends UserBase
         if (is_null($this->session->data)) {
             $this->session->data = array();
         }
-        $this->_data =& $this->session->data->getAll();
+        $this->_data =& $this->session->data->toArray();
 
         if ($login) {
             $this->login();

@@ -70,7 +70,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($this->user->log->hasError());
         $this->assertTrue($this->user->isSigned());
 
-        $this->assertGreaterThanOrEqual(5, count($this->user->session->data->getAll()));
+        $this->assertGreaterThanOrEqual(5, count($this->user->session->data->toArray()));
         $this->assertNotEmpty($this->user->username);
         $this->assertNotEmpty($this->user->password);
         $this->assertNotEmpty($this->user->email);
@@ -93,7 +93,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($output);
         $this->assertEquals(0, strpos($output, '<script>'));
 
-        $this->assertGreaterThanOrEqual(5, count($this->user->session->data->getAll()));
+        $this->assertGreaterThanOrEqual(5, count($this->user->session->data->toArray()));
         $this->assertNotEmpty($this->user->username);
         $this->assertNotEmpty($this->user->password);
         $this->assertNotEmpty($this->user->email);

@@ -43,7 +43,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotNull($list->zero);
         $this->assertNotNull($list->empty);
 
-        $this->assertEquals($info, $list->getAll(), 'Compares the full collection with the raw original array');
+        $this->assertEquals($info, $list->toArray(), 'Compares the full collection with the raw original array');
     }
 
     public function testSetters()
@@ -61,7 +61,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase {
             )
         );
 
-        $this->assertEquals($expectation, $list->getAll());
+        $this->assertEquals($expectation, $list->toArray());
     }
 
 
