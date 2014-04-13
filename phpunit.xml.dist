@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="./vendor/autoload.php">
+<phpunit bootstrap="./autoload.php">
 
     <testsuites>
         <testsuite name="uFlex Test Suite">

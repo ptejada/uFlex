@@ -58,7 +58,8 @@ class User extends UserBase
         12 => 'Your identification could not be confirmed',
         //When saving hash to database fails
         13 => 'Failed to save confirmation request',
-        14 => 'You need to reset your password to login'
+        14 => 'You need to reset your password to login',
+        15 => 'Can not register a new user, as user is already logged in.',
     );
 
     /**
@@ -233,6 +234,17 @@ class User extends UserBase
     {
         $this->log->channel('registration'); //Index for Errors and Reports
 
+        /*
+         * Prevent a signed user from registering a new user
+         * NOTE: If a signed user needs to register a new user
+         * clone the signed user object a register the new user
+         * with the clone.
+         */
+        if ($this->isSigned()) {
+            $this->log->error(15);
+            return false;
+        }
+
         //Saves Registration Data in Class
         $this->_updates = $info = new Collection($info);
 
@@ -329,12 +341,22 @@ class User extends UserBase
      *
      * @return bool Returns true on success anf false on error
      */
-    public function update($updates)
+    public function update(array $updates = null)
     {
         $this->log->channel('update');
 
-        //Saves Updates Data in Class
-        $this->_updates = $updates = new Collection($updates);
+        if (!is_null($updates)) {
+            //Saves Updates Data in Class
+            $this->_updates = $updates = new Collection($updates);
+        } else {
+            if ($this->_updates instanceof Collection && !$this->_updates->isEmpty()) {
+                // Use the updates from the queue
+                $updates = $this->_updates;
+            } else {
+                // No updates
+                return false;
+            }
+        }
 
         //Validate All Fields
         if (!$this->validateAll()) {
@@ -388,9 +410,10 @@ class User extends UserBase
 
             if ($this->clone === 0) {
                 $this->session->update = true;
-                // Update the current object with the updated information
-                $this->_data = array_merge($this->_data, $updates->toArray());
             }
+
+            // Update the current object with the updated information
+            $this->_data = array_merge($this->_data, $updates->toArray());
 
             return true;
         } else {
@@ -411,7 +434,7 @@ class User extends UserBase
      *                        which could then be use to construct the confirmation URL and Email.
      *                        On Failure it returns false
      */
-    function resetPassword($email)
+    public function resetPassword($email)
     {
         $this->log->channel('resetPassword');
 
@@ -461,7 +484,7 @@ class User extends UserBase
      * @return bool Returns true on a successful password change.
      *                Returns false on error
      */
-    function newPassword($hash, $newPass)
+    public function newPassword($hash, $newPass)
     {
         $this->log->channel('newPassword');
 
@@ -556,7 +579,7 @@ class User extends UserBase
      *
      * @return bool|User Returns false if user does not exists in database
      */
-    function manageUser($id = 0)
+    public function manageUser($id = 0)
     {
         $user = clone $this;
         $user->log->channel('Cloning');
@@ -566,7 +589,6 @@ class User extends UserBase
             $data = $user->table->getRow(array('user_id' => $id));
             if ($data) {
                 $user->_data = (array) $data;
-                $user->signed = true;
 
                 $user->log->report('User imported to object');
                 return $user;
@@ -592,7 +614,7 @@ class User extends UserBase
         $this->session->destroy();
 
         //Import default user object
-        $this->_data = $this->config->userDefaultData;
+        $this->_data = $this->config->userDefaultData->toArray();
 
         $this->log->report('User Logged out');
     }
@@ -626,9 +648,12 @@ class User extends UserBase
      *
      * @ignore
      */
-    function __clone()
+    protected function __clone()
     {
         $this->clone++;
+
+        // Copy the configuration
+        $this->config = new Collection($this->config->toArray());
 
         $this->config->cookieName .= '_c' . $this->clone;
         $this->config->userSession .= '_c' . $this->clone;
@@ -636,11 +661,19 @@ class User extends UserBase
         $this->session = new Session($this->config->userSession);
         $this->cookie = new Cookie($this->config->cookieName);
 
-        $this->signed = false;
-        $this->_updates = array();
-        $this->log->changeNamespace('UserClone'.$this->clone);
+        $this->_updates = new Collection();
+        $this->log = $this->log->newChildLog('UserClone'.$this->clone);
 
-        //Import default user object
-        $this->_data = $this->config->userDefaultData;
+        //Import default user object to session
+        $this->session->data = $this->config->userDefaultData->toArray();
+        //Link the new session namespace to the internal data array
+        $this->_data =& $this->session->data->toArray();
+    }
+
+    public function __destruct()
+    {
+        if ($this->clone > 0) {
+            $this->session->destroy();
+        }
     }
 }

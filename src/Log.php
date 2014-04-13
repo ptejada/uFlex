@@ -14,7 +14,7 @@ class Log
     /** @var string - Stores the Log instance internal namespace fro logs */
     protected $namespace = 'Log';
     /** @var string - Stores the current selected channel */
-    protected $currentChannel = 'Main';
+    protected $currentChannel = '_main';
 
     protected $console = array(
         'errors'  => array(),
@@ -51,9 +51,11 @@ class Log
      */
     public function changeNamespace($namespace)
     {
+        $this->cleanConsole();
+
         $this->namespace = $namespace;
         // Changes current channel
-        $this->channel('_');
+        $this->channel('_main');
         return $this;
     }
 
@@ -265,6 +267,7 @@ class Log
      */
     public function channel($channelName)
     {
+        $this->cleanConsole();
         $this->currentChannel = $this->namespaceChannel($channelName);
         // Mark start of a new start
         $this->report(">> New $channelName request");
@@ -347,6 +350,26 @@ class Log
             $this->errorList = array_diff_key($this->errorList, $id) + $id;
         } else {
             $this->errorList[$id] = $message;
+        }
+    }
+
+    /**
+     * Removes any empty namespace of the current channel from the console
+     */
+    private function cleanConsole()
+    {
+        $channel = $this->namespaceChannel($this->currentChannel);
+
+        if (empty($this->console['errors'][$channel])) {
+            unset($this->console['errors'][$channel]);
+        }
+
+        if (empty($this->console['form'][$channel])) {
+            unset($this->console['form'][$channel]);
+        }
+
+        if (empty($this->console['reports'][$channel])) {
+            unset($this->console['reports'][$channel]);
         }
     }
 }

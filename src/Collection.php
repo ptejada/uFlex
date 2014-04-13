@@ -30,6 +30,15 @@ class Collection
         return $this->_data;
     }
 
+    /**
+     * Checks if the collection is empty
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->_data);
+    }
+
     public function __set($name, $value)
     {
         $this->_data[$name] = $value;

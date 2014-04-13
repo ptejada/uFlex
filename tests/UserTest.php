@@ -239,6 +239,30 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($this->user->isSigned());
     }
 
+    public function testManageUser()
+    {
+        $this->user->register($this->getUserInfo(5));
+
+        $this->user->login('pablo', 1234);
+        $this->assertFalse($this->user->log->hasError());
+        $this->assertTrue($this->user->isSigned());
+
+        $user = $this->user->manageUser(5);
+        $this->assertInstanceOf('\Ptejada\UFlex\User', $user);
+
+        $this->assertNotEquals('jose', $user->username);
+        $result = $user->update(array('username'=>'jose'));
+        $this->assertTrue($result);
+        $this->assertEquals('jose', $user->username);
+
+        // Reload the user from the DB to confirm update
+        $user = $this->user->manageUser(5);
+        $this->assertEquals('jose', $user->username);
+
+        // confirm the main user was not affected
+        $this->assertEquals('pablo', $this->user->username);
+    }
+
     protected function getUserInfo($id=0)
     {
         return array(
