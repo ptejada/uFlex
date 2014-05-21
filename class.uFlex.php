@@ -1224,6 +1224,9 @@
 
 			$rows = $st->rowCount();
 
+			// rowCount() will return 0 for SELECT statements for some SQL engines.
+			$rows = ($rows>0) ? $rows : count($st->fetchAll());
+
 			if($rows > 0){
 				//Good, Rows where affected
 				$this->report("$rows row(s) where Affected");
@@ -1248,12 +1251,14 @@
 
 			if(!$st) return false;
 
-			if(!$st->rowCount()){
+			$result = $st->fetch(PDO::FETCH_ASSOC);
+
+			if(!$result){
 				$this->report("Query returned empty");
 				return false;
 			}
 
-			return $st->fetch(PDO::FETCH_ASSOC);
+			return $result;
 		}
 
 		/**
