@@ -64,6 +64,91 @@ class CollectionTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($expectation, $list->toArray());
     }
 
+    public function testExistence()
+    {
+        $list = new Collection(array(
+            'one' => 1,
+            'two' => 2,
+            'three' => 3,
+            'four' => 4,
+        ));
 
+        $this->assertTrue(isset($list->one));
+        $this->assertFalse(isset($list->five));
+
+        $this->assertNull($list->five);
+        $this->assertNull($list->get('two.one'));
+    }
+
+    public function testUnsetter()
+    {
+        $list = new Collection(array(
+            'one' => array(
+                'two' => 2
+            ),
+            'two' => 2,
+            'three' => 3,
+            'four' => 4,
+        ));
+
+        $this->assertTrue(isset($list->two));
+        unset($list->two);
+        $this->assertFalse(isset($list->two));
+        $list->two = 2;
+        $this->assertTrue(isset($list->two));
+        $list->two = null;
+        $this->assertFalse(isset($list->two));
+
+        $this->assertTrue(isset($list->one->two));
+        unset($list->one->two);
+        $this->assertFalse(isset($list->one->two));
+        $list->one->two = 2;
+        $this->assertTrue(isset($list->one->two));
+        $list->one->two = null;
+        $this->assertFalse(isset($list->one->two));
+    }
+
+    public function testStringGetter()
+    {
+        $list = new Collection(array(
+            'one' => array(
+                'two' => 2
+            ),
+            'two' => 2,
+            'three' => 3,
+            'four' => 4,
+        ));
+
+        error_reporting(E_ALL);
+
+        $this->assertEquals(array('two'=>2), $list->get('one')->toArray());
+        $this->assertEquals(2, $list->get('one.two'));
+        $this->assertEquals(null, $list->get('one.two.three'));
+
+
+    }
+
+    public function testStringSetter()
+    {
+        $list = new Collection(array(
+            'one' => array(
+                'two' => 2
+            ),
+            'two' => 2,
+            'three' => 3,
+            'four' => 4,
+        ));
+
+        error_reporting(E_ALL);
+
+        $list->set('five',5);
+        $this->assertEquals(5, $list->five);
+
+        $list->set('one.two.three',3);
+        $this->assertEquals(3, $list->one->two->three);
+
+        $list->set('two.three.four.five', array(1,1,1,1,1));
+        $this->assertEquals(array(1,1,1,1,1), $list->two->three->four->five->toArray());
+    }
 }
  

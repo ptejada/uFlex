@@ -39,6 +39,68 @@ class Collection
         return empty($this->_data);
     }
 
+    /**
+     * Get a value of an entry in the collection
+     * Useful to get deep array elements without manually dealing with errors
+     * During the process
+     *
+     * @example
+     *      // If the 'two' is not defined this code will trigger a PHP notice
+     *      $list->one->two->three->four->five
+     *
+     *      // This method will never trigger a PHP notice, safe to use at any depth
+     *      $list->get('one.two.three.four.five')
+     *
+     * @param string $keyPath - the period delimited location
+     *
+     * @return mixed|null|Collection|LinkedCollection
+     */
+    public function get($keyPath)
+    {
+        $stops = explode('.', $keyPath);
+
+        $value = $this;
+        foreach($stops as $key){
+            if ($value instanceof Collection){
+                // Move one step deeper into the collection
+                $value = $value->$key;
+            } else {
+                /*
+                 * One more stops still pending and the current
+                 * value is not a collection, terminate iteration
+                 * and set value to null
+                 */
+                $value = null;
+                break;
+            }
+        }
+
+        return $value;
+    }
+
+    public function set($keyPath, $value)
+    {
+        $stops = explode('.', $keyPath);
+
+        $currentLocation = $previousLocation = $this;
+        foreach($stops as $key){
+            if ($currentLocation instanceof Collection){
+                // Move one step deeper into the collection
+                if ( ! ($currentLocation->$key instanceof Collection) ) {
+                    $currentLocation->$key = array();
+                }
+            } else {
+                $currentLocation = array();
+                $currentLocation->$key = array();
+            }
+            $previousLocation = $currentLocation;
+            $currentLocation = $currentLocation->$key;
+        }
+
+        // Set the value
+        $previousLocation->$key = $value;
+    }
+
     public function __set($name, $value)
     {
         $this->_data[$name] = $value;
