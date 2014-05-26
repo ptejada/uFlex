@@ -1,5 +1,5 @@
 <?php
-	if($user->signed) redirect("./account");
+	if($user->isSigned()) redirect("./account");
 ?>
 <div class="row">
 	<div class="col-sm-6 col-sm-offset-3">
@@ -23,7 +23,7 @@
 				<br/><br/>
 				<a href="register">Register a New Account</a>
 				<br>
-				<a href="forgot-password">Forgot password?</a>
+				<a href="resetPassword">Forgot password?</a>
 			</div>
 		</form>
 

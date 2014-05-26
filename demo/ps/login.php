@@ -2,25 +2,27 @@
 
 include("../core/config.php");
 
-//Proccess Login
+//Process Login
 if(count($_POST)){
-	$username = isset($_POST['username']) ? $_POST['username'] : false;
-	$password = isset($_POST['password']) ? $_POST['password'] : false;
-	$auto = isset($_POST['auto']) ? $_POST['auto'] : false;
+    /*
+     * Covert POST into a Collection object
+     * for better value handling
+     */
+    $input = new \Ptejada\UFlex\Collection($_POST);
 
-	$user->login($username,$password,$auto);
+	$user->login($input->username, $input->password, $input->auto);
 
 	$errMsg = '';
 
-	if($user->has_error()){
-		$errMsg = $user->error();
+	if($user->log->hasError()){
+		$errMsg = $user->log->getErrors();
 		$errMsg = $errMsg[0];
 	}
 
 	echo json_encode(array(
-		'error'    => $user->error(),
+		'error'    => $user->log->getErrors(),
 		'confirm'  => "You are now login as <b>$user->username</b>",
-		'form'     => $user->form_error(),
+		'form'     => $user->log->getFormErrors(),
 	));
 }
 

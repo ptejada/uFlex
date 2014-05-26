@@ -1,5 +1,5 @@
 <?php
-	if($user->signed) redirect(".");
+	if($user->isSigned()) redirect(".");
 	
 	$d = @$_SESSION["regData"];
 	unset($_SESSION["regData"]);
@@ -59,7 +59,7 @@
 			<div class="form-group text-center">
 				<button type="submit" class="btn btn-primary">Register</button>
 				<br>
-				<a href="<? echo $base?>/login" class="">Login</a>
+				<a href="<?php echo $base?>/login" class="">Login</a>
 			</div>
 		</form>
 

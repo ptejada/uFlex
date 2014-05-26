@@ -19,7 +19,7 @@
 			<div class="form-group text-center">
 				<button type="submit" class="btn btn-primary">Change Password</button>
 				<br/>
-				<a href="<? echo $base?>/account" class="">Back to my account / Login</a>
+				<a href="<?php echo $base?>/account" class="">Back to my account / Login</a>
 			</div>
 		</form>
 

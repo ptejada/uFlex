@@ -23,9 +23,9 @@ class DB
 
     /**
      * @param string $hostOrDSN - The domain/IP of the DB or the PDO DSN string
-     * @param string $dbName - The name of the database
+     * @param string $dbName    - The name of the database
      */
-    public function __construct($hostOrDSN='', $dbName='')
+    public function __construct($hostOrDSN = '', $dbName = '')
     {
         if (!$dbName) {
             // add full DSN string
@@ -41,11 +41,12 @@ class DB
 
     /**
      * Generate the DSN string for the connection
+     *
      * @return string
      */
     protected function generateDSN()
     {
-        if ( ! $this->dsn ) {
+        if (!$this->dsn) {
             $this->dsn = "mysql:dbname={$this->dbName};host={$this->host}";
         }
 
@@ -60,7 +61,7 @@ class DB
      */
     public function getConnection()
     {
-        if ( ! ($this->log instanceof Log) ) {
+        if (!($this->log instanceof Log)) {
             $this->log = new Log('DB');
         }
 
@@ -89,12 +90,10 @@ class DB
 
     /**
      * Get table object
-
      *
-*@param $tableName
-
+     * @param $tableName
      *
-*@return DB_Table
+     * @return DB_Table
      */
     public function getTable($tableName)
     {
@@ -127,9 +126,11 @@ class DB
 
     /**
      * Get the record of the last inserted record
+     *
      * @return int
      */
-    public function getLastInsertedID(){
+    public function getLastInsertedID()
+    {
         return $this->getConnection()->lastInsertId();
     }
 }

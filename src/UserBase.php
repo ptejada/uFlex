@@ -6,15 +6,6 @@ class UserBase
 {
     /** @var  Log - Log errors and report */
     public $log;
-    
-    /** @var DB - The database connection */
-    protected $db;
-
-    /** @var  Cookie - The cookie for autologin */
-    protected $cookie;
-
-    /** @var  Session - The namespace session object */
-    public $session;
 
     /** @var  Hash - Use to generate hashes */
     protected $hash;
@@ -53,14 +44,13 @@ class UserBase
             'username' => 'Guess',
             'user_id'  => 0,
             'password' => 0,
-            'signed'   => false
         ),
         'database' => array(
-            'host'  =>  'localhost',
-            'name'  =>  '',
-            'user'  =>  '',
-            'password'  =>  '',
-            'dsn'  =>  '',
+            'host'     => 'localhost',
+            'name'     => '',
+            'user'     => '',
+            'password' => '',
+            'dsn'      => '',
         )
     );
 
@@ -238,6 +228,15 @@ class UserBase
     public function getProperty($name)
     {
        return $this->__get($name);
+    }
+
+    /**
+     * Get all the user fields as an array
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->_data;
     }
 
     public function __set($name, $value)

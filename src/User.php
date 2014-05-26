@@ -11,7 +11,7 @@ class User extends UserBase
      *
      * @var int
      */
-    const version = 1.0;
+    const VERSION = '1.0-RC1';
 
     /**
      * Holds a unique clone number of the instance clones
@@ -491,10 +491,12 @@ class User extends UserBase
         list($uid, $partial) = $this->hash->examine($hash);
 
         if ($uid && $user = $this->table->getRow(array('user_id' => $uid, 'confirmation' => $hash))) {
+            $this->log->error('entering');
             $this->_updates =  new Collection($newPass);
             if (!$this->validateAll()) {
                 return false;
             } //There are validations error
+                $this->log->error('jkhlk');
 
             $this->_updates =  new Collection((array) $user);
 
@@ -507,11 +509,15 @@ class User extends UserBase
                 'pass' => $pass,
                 'confirmation' => $hash
             );
+
             if ($this->table->runQuery($sql, $data)) {
                 $this->log->report('Password has been changed');
                 return true;
             }
         }
+
+
+
 
         //Error
         $this->log->error(5);
@@ -557,7 +563,7 @@ class User extends UserBase
 
         // Link the session with the user data
         if (is_null($this->session->data)) {
-            $this->session->data = array();
+            $this->session->data = $this->config->userDefaultData->toArray();
         }
         $this->_data =& $this->session->data->toArray();
 

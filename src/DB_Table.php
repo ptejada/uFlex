@@ -86,7 +86,10 @@ class DB_Table
             $stmt->execute();
         }
 
-        if ($rows = $stmt->rowCount() > 0) {
+        $rows = $stmt->rowCount();
+        $rows = ($rows>0) ? $rows : count($stmt->fetchAll());
+
+        if ($rows > 0) {
             //Good, Rows where affected
             $this->log->report("$rows row(s) where Affected");
             return true;

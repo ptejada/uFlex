@@ -4,9 +4,11 @@
  * Based on example https://github.com/php-fig/fig-standards/blob/master/proposed/psr-4-autoloader/psr-4-autoloader-examples.md
  *
  * @param string $class The fully-qualified class name.
+ *
  * @return void
  */
-spl_autoload_register(function ($class) {
+spl_autoload_register(
+    function ($class){
 
         // project-specific namespace prefix
         $prefix = 'Ptejada\\UFlex\\';
@@ -33,4 +35,5 @@ spl_autoload_register(function ($class) {
         if (file_exists($file)) {
             require $file;
         }
-    });
+    }
+);
