@@ -11,7 +11,7 @@
 		<form method="post" action="<?php echo $base ?>/ps/update.php" data-success="<?php echo $base?>/account">
 			<div class="form-group">
 				<label>Username:</label>
-				<input disabled name="username" type="text" value="<?php echo $user->username?>" class="form-control">
+				<input disabled name="Username" type="text" value="<?php echo $user->Username?>" class="form-control">
 			</div>
 
 			<div class="form-group">
@@ -26,7 +26,7 @@
 
 			<div class="form-group">
 				<label>Email: </label>
-				<input name="email" type="text" required value="<?php echo $user->email?>" class="form-control">
+				<input name="Email" type="text" required value="<?php echo $user->Email?>" class="form-control">
 			</div>
 
 			<div class="form-group">

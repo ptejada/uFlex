@@ -36,7 +36,7 @@ class Hash
      */
     public function generateUserPassword(User $user, $password, $generateOld=false)
     {
-        $registrationDate = $user->reg_date;
+        $registrationDate = $user->RegDate;
 
         $pre = $this->encode($registrationDate);
         $pos = substr($registrationDate, 5, 1);

@@ -13,7 +13,7 @@
 		<form method="post" action="<?php echo $base ?>/ps/register.php" data-success="<?php echo $base?>/login">
 			<div class="form-group">
 				<label>Username:</label>
-				<input name="username" type="text" required class="form-control" autofocus>
+				<input name="Username" type="text" required class="form-control" autofocus>
 			</div>
 
 			<div class="form-group">
@@ -28,17 +28,17 @@
 
 			<div class="form-group">
 				<label>Email: </label>
-				<input name="email" type="text" required class="form-control">
+				<input name="Email" type="text" required class="form-control">
 			</div>
 
 			<div class="form-group">
 				<label>Password:</label>
-				<input name="password" type="password" required class="form-control">
+				<input name="Password" type="password" required class="form-control">
 			</div>
 
 			<div class="form-group">
 				<label>Confirm Password:</label>
-				<input name="password2" type="password" required class="form-control">
+				<input name="Password2" type="password" required class="form-control">
 			</div>
 
 			<div class="form-group">
@@ -48,7 +48,7 @@
 
 			<div class="form-group">
 				<label>Group: </label>
-				<select name="group_id" class="form-control">
+				<select name="GroupID" class="form-control">
 					<option value="1">User</option>
 					<option value="2">Developer</option>
 					<option value="3">Designer</option>

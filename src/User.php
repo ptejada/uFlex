@@ -87,7 +87,7 @@ class User extends UserBase
                 $this->log->report('Updating Session from database');
 
                 //Get User From database because its info has change during current session
-                $update = (array) $this->table->getRow(array('user_id' => $this->user_id, 'activated' => 1));
+                $update = (array) $this->table->getRow(array('ID' => $this->ID, 'Activated' => 1));
                 if ($update) {
                     $this->session->data->update($update);
 
@@ -111,7 +111,7 @@ class User extends UserBase
 
             if ($uid && $partial) {
                 $autoLogin = true;
-                $getBy = 'user_id';
+                $getBy = 'ID';
                 $identifier = $uid;
             } else {
                 $this->log->error(6);
@@ -121,12 +121,12 @@ class User extends UserBase
         } else {
             //Credentials Login
             if ($identifier && $password) {
-                if (preg_match($this->_validations->email->regEx, $identifier)) {
+                if (preg_match($this->_validations->Email->regEx, $identifier)) {
                     //Login using email
-                    $getBy = 'email';
+                    $getBy = 'Email';
                 } else {
-                    //Login using username
-                    $getBy = 'username';
+                    //Login using Username
+                    $getBy = 'Username';
                 }
 
                 $this->log->report('Credentials received');
@@ -147,37 +147,37 @@ class User extends UserBase
         if ($userFile && !$this->isSigned()) {
             if (isset($partial)) {
                 // Partially match the user password to authenticate
-                $this->session->signed = strpos($userFile->password, $partial) >= 0;
+                $this->session->signed = strpos($userFile->Password, $partial) >= 0;
             } else {
                 // Fully match the user password to authenticate
                 $this->_updates = new Collection($userFileArray);
-                if (strlen($userFile->password) === 40) {
+                if (strlen($userFile->Password) === 40) {
                     /*
                      * Try new password algorithm
                      */
-                    $this->session->signed =  $this->hash->generateUserPassword($this, $password) === $userFile->password;
+                    $this->session->signed =  $this->hash->generateUserPassword($this, $password) === $userFile->Password;
                 } else {
                     /*
                      * Try legacy password algorithm
                      */
-                    $this->session->signed =  $this->hash->generateUserPassword($this, $password, true) === $userFile->password;
+                    $this->session->signed =  $this->hash->generateUserPassword($this, $password, true) === $userFile->Password;
                 }
             }
         } else {
             if (!$this->isSigned() && $password) {
-                $this->log->formError('password', $this->errorList[10]);
+                $this->log->formError('Password', $this->errorList[10]);
                 return false;
             }
         }
 
         if ($this->isSigned()) {
             //If Account is not Activated
-            if ($userFile->activated == 0) {
-                if ($userFile->last_login == 0) {
+            if ($userFile->Activated == 0) {
+                if ($userFile->LastLogin == 0) {
                     //Account has not been activated
                     $this->log->error(8);
                 } else {
-                    if (!$userFile->confirmation) {
+                    if (!$userFile->Confirmation) {
                         //Account has been deactivated
                         $this->log->error(9);
                     } else {
@@ -193,7 +193,7 @@ class User extends UserBase
             //If auto Remember User
             if ($autoLogin) {
                 // TODO: The way the autologin cookie works needs to be improved
-                $this->cookie->setValue($this->hash->generate($this->user_id, $this->password));
+                $this->cookie->setValue($this->hash->generate($this->ID, $this->Password));
                 $this->cookie->add();
             }
 
@@ -207,7 +207,7 @@ class User extends UserBase
             if ($password) {
                 // Removes the autologin cookie
                 $this->cookie->destroy();
-                $this->log->formError('password', 10);
+                $this->log->formError('Password', 10);
             }
             return false;
         }
@@ -254,27 +254,27 @@ class User extends UserBase
         } //There are validations error
 
         //Set Registration Date
-        $info->reg_date = time();
+        $info->RegDate = time();
 
         /*
          * Built in actions for special fields
          */
 
         //Hash Password
-        if ( $info->password ) {
-            $info->password = $this->hash->generateUserPassword($this, $info->password);
+        if ( $info->Password ) {
+            $info->Password = $this->hash->generateUserPassword($this, $info->Password);
         }
 
         //Check for Email in database
-        if ($info->email) {
-            if ($this->table->isUnique('email', $info->email, 'This Email is Already in Use')) {
+        if ($info->Email) {
+            if ($this->table->isUnique('Email', $info->Email, 'This Email is Already in Use')) {
                 return false;
             }
         }
 
-        //Check for username in database
-        if ($info->username) {
-            if ($this->table->isUnique('username', $info->username, 'This Username is not available')) {
+        //Check for Username in database
+        if ($info->Username) {
+            if ($this->table->isUnique('Username', $info->Username, 'This Username is not available')) {
                 return false;
             }
         }
@@ -287,10 +287,10 @@ class User extends UserBase
         //User Activation
         if ($activation) {
             //Add Validation Hash
-            $info->confirmation = $this->hash->generate();
+            $info->Confirmation = $this->hash->generate();
         } else {
             //Activates user upon registration
-            $info->activated = 1;
+            $info->Activated = 1;
         }
 
         //Prepare Info for SQL Insertion
@@ -315,10 +315,10 @@ class User extends UserBase
         //Enter New user to Database
         if ($this->table->runQuery($sql, $data)) {
             $this->log->report('New User has been registered');
-            $info->user_id = $this->table->getLastInsertedID();
+            $info->ID = $this->table->getLastInsertedID();
             if ($activation) {
                 // Return the confirmation hash
-                return $info->confirmation;
+                return $info->Confirmation;
             } else {
                 return true;
             }
@@ -369,14 +369,14 @@ class User extends UserBase
          */
 
         //Hash Password
-        if ($updates->password) {
-            $updates->password = $this->hash->generateUserPassword($this, $updates->password);
+        if ($updates->Password) {
+            $updates->Password = $this->hash->generateUserPassword($this, $updates->Password);
         }
 
         //Check for Email in database
-        if ($updates->email) {
-            if ($updates->email != $this->email) {
-                if ($this->table->isUnique('email', $updates->email, 'This Email is Already in Use')) {
+        if ($updates->Email) {
+            if ($updates->Email != $this->Email) {
+                if ($this->table->isUnique('Email', $updates->Email, 'This Email is Already in Use')) {
                     return false;
                 }
             }
@@ -401,8 +401,8 @@ class User extends UserBase
         $set = implode(', ', $set);
 
         //Prepare User Update Query
-        $sql = "UPDATE _table_ SET $set
-                WHERE user_id={$this->user_id}";
+        $sql = 'UPDATE _table_ SET ' . $set . ' WHERE ID=:id';
+        $data['id'] = $this->ID;
 
         //Check for Changes
         if ($this->table->runQuery($sql, $data)) {
@@ -430,7 +430,7 @@ class User extends UserBase
      *
      * @param string $email User email to reset password
      *
-     * @return Collection|bool On Success it returns a Collection with the user's (email,username,user_id,confirmation)
+     * @return Collection|bool On Success it returns a Collection with the user's (Email,Username,ID,Confirmation)
      *                        which could then be use to construct the confirmation URL and Email.
      *                        On Failure it returns false
      */
@@ -438,27 +438,27 @@ class User extends UserBase
     {
         $this->log->channel('resetPassword');
 
-        $user = $this->table->getRow(array('email' => $email));
+        $user = $this->table->getRow(array('Email' => $email));
 
         if ($user) {
-            if (! $user->activated && !$user->confirmation) {
+            if (! $user->Activated && !$user->Confirmation) {
                 //The Account has been manually disabled and can't reset password
                 $this->log->error(9);
                 return false;
             }
 
             $data = array(
-                'user_id' => $user->user_id,
-                'confirmation' => $this->hash->generate($user->user_id),
+                'ID' => $user->ID,
+                'Confirmation' => $this->hash->generate($user->ID),
             );
 
-            $this->table->runQuery('UPDATE _table_ SET confirmation=:confirmation WHERE user_id=:user_id', $data);
+            $this->table->runQuery('UPDATE _table_ SET Confirmation=:Confirmation WHERE ID=:ID', $data);
 
             return new Collection(array(
-                'email'        => $email,
-                'username'     => $user->username,
-                'user_id'      => $user->user_id,
-                'confirmation' => $data['confirmation']
+                'Email'        => $email,
+                'Username'     => $user->Username,
+                'ID'      => $user->ID,
+                'Confirmation' => $data['Confirmation']
             ));
         } else {
             $this->log->error(4);
@@ -490,22 +490,20 @@ class User extends UserBase
 
         list($uid, $partial) = $this->hash->examine($hash);
 
-        if ($uid && $user = $this->table->getRow(array('user_id' => $uid, 'confirmation' => $hash))) {
-            $this->log->error('entering');
+        if ($uid && $user = $this->table->getRow(array('ID' => $uid, 'Confirmation' => $hash))) {
             $this->_updates =  new Collection($newPass);
             if (!$this->validateAll()) {
                 return false;
             } //There are validations error
-                $this->log->error('jkhlk');
 
             $this->_updates =  new Collection((array) $user);
 
             // Generate the password hash
-            $pass = $this->hash->generateUserPassword($this, $newPass['password']);
+            $pass = $this->hash->generateUserPassword($this, $newPass['Password']);
 
-            $sql = "UPDATE _table_ SET `password`=:pass, confirmation='', activated=1 WHERE confirmation=:confirmation AND user_id=:id";
+            $sql = "UPDATE _table_ SET `Password`=:pass, Confirmation='', Activated=1 WHERE Confirmation=:confirmation AND ID=:id";
             $data = array(
-                'id'   => $this->user_id,
+                'id'   => $uid,
                 'pass' => $pass,
                 'confirmation' => $hash
             );
@@ -515,9 +513,6 @@ class User extends UserBase
                 return true;
             }
         }
-
-
-
 
         //Error
         $this->log->error(5);
@@ -592,7 +587,7 @@ class User extends UserBase
 
         if ($id > 0) {
             $user->log->report('Fetching user from database');
-            $data = $user->table->getRow(array('user_id' => $id));
+            $data = $user->table->getRow(array('ID' => $id));
             if ($data) {
                 $user->_data = (array) $data;
 
@@ -643,8 +638,8 @@ class User extends UserBase
     {
         //Update last_login
         $time = time();
-        $sql = "UPDATE _table_ SET last_login=:stamp WHERE user_id=:id";
-        if ($this->table->runQuery($sql, array('stamp' => $time, 'id' => $this->user_id))) {
+        $sql = "UPDATE _table_ SET LastLogin=:stamp WHERE ID=:id";
+        if ($this->table->runQuery($sql, array('stamp' => $time, 'id' => $this->ID))) {
             $this->log->report('Last Login updated');
         }
     }    

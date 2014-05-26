@@ -70,9 +70,9 @@ Here is an excerpt from the PHP class file which lists the customizable properti
 		"cookie_host" => false,
 		"user_session" => "userData",
 		"default_user" => array(
-				"username" => "Guess",
-				"user_id" => 0,
-				"password" => 0,
+				"Username" => "Guess",
+				"ID" => 0,
+				"Password" => 0,
 				"signed" => false
 				)
 		);

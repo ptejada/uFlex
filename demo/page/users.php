@@ -4,7 +4,7 @@
 		<?php
 		//Display random users
 		$sql = "SELECT *
-				FROM _table_ WHERE activated=1
+				FROM _table_ WHERE Activated=1
 				ORDER BY RAND()
 				LIMIT 24
 			";
@@ -19,9 +19,9 @@
 
 			while( $u = $stmt->fetch() ){
 				echo '<div class="col-sm-2 col-xs-4 text-center">';
-				echo "<a class='center-block userBox' href='user?id={$u->user_id}' title='{$u->username}'>";
-				echo gravatar($u->email);
-				echo "<span class='label label-primary center-block'>{$u->username}</span>";
+				echo "<a class='center-block userBox' href='user?id={$u->ID}' title='{$u->Username}'>";
+				echo gravatar($u->Email);
+				echo "<span class='label label-primary center-block'>{$u->Username}</span>";
 				echo '</div></a>';
 			}
 		}else{

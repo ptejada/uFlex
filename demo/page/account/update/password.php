@@ -7,12 +7,12 @@
 		<form method="post" action="<?php echo $base?>/ps/change_password.php" data-success="<?php echo $base?>/account">
 			<div class="form-group">
 				<label>New Password:</label>
-				<input name="password" type="password" class="form-control" required autofocus>
+				<input name="Password" type="password" class="form-control" required autofocus>
 			</div>
 
 			<div class="form-group">
 				<label>Confirm New Password:</label>
-				<input name="password2" type="password" class="form-control" required>
+				<input name="Password2" type="password" class="form-control" required>
 			</div>
 			<input name="c" type="hidden" value="<?php echo getVar("c")?>">
 

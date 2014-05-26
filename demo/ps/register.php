@@ -13,14 +13,14 @@ if (count($_POST)) {
     //Register User
     $user->register(
         array(
-            'username'   => (string) $input->username,
+            'Username'   => (string) $input->Username,
             'first_name' => (string) $input->first_name,
             'last_name'  => (string) $input->last_name,
-            'email'      => (string) $input->email,
-            'password'   => (string) $input->password,
-            'password2'  => (string) $input->password2,
+            'Email'      => (string) $input->Email,
+            'Password'   => (string) $input->Password,
+            'Password2'  => (string) $input->Password2,
             'website'    => (string) $input->website,
-            'group_id'   => (string) $input->group_id,
+            'GroupID'   => (string) $input->GroupID,
         )
     );
 

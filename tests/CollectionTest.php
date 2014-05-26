@@ -20,15 +20,15 @@ class CollectionTest extends \PHPUnit_Framework_TestCase {
             'string' => 'Hello World',
             'zero' => 0,
             'empty' => '',
-            'username' => array(
+            'Username' => array(
                 'limit' => '3-15',
                 'regEx' => '/^([a-zA-Z0-9_])+$/'
             ),
-            'password' => array(
+            'Password' => array(
                 'limit' => '3-15',
                 'regEx' => ''
             ),
-            'email'    => array(
+            'Email'    => array(
                 'limit' => '4-45',
                 'regEx' => '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/i'
             )
@@ -37,7 +37,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase {
         $list = new Collection($info);
 
         $this->assertEquals($info['string'], $list->string, 'Simple single item getter from collection');
-        $this->assertEquals($info['password']['limit'], $list->password->limit, 'Chained Collection getters');
+        $this->assertEquals($info['Password']['limit'], $list->Password->limit, 'Chained Collection getters');
 
         $this->assertNull($list->shouldBeNull);
         $this->assertNotNull($list->zero);

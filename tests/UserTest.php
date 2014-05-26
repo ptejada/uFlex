@@ -30,21 +30,21 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         // Creates the table
         $this->user->table->runQuery("
             CREATE TABLE IF NOT EXISTS _table_ (
-              `user_id` int(7),
-              `username` varchar(15) NOT NULL,
-              `password` varchar(40) ,
-              `email` varchar(35) ,
-              `activated` tinyint(1) NOT NULL DEFAULT '0',
-              `confirmation` varchar(35) ,
-              `reg_date` int(11) ,
-              `last_login` int(11) NOT NULL DEFAULT '0',
-              PRIMARY KEY (`user_id`)
+              `ID` int(7),
+              `Username` varchar(15) NOT NULL,
+              `Password` char(40) ,
+              `Email` varchar(35) ,
+              `Activated` tinyint(1) NOT NULL DEFAULT '0',
+              `Confirmation` char(40),
+              `RegDate` int(11) ,
+              `LastLogin` int(11) NOT NULL DEFAULT '0',
+              PRIMARY KEY (`ID`)
             )
         ");
 
         //Create user
         $this->user->table->runQuery('
-            INSERT INTO _table_(`user_id`, `username`, `password`, `email`, `activated`, `reg_date`)
+            INSERT INTO _table_(`ID`, `Username`, `Password`, `Email`, `Activated`, `RegDate`)
             VALUES (1,"pablo","18609a032b2504973748587e8c428334","pablo@live.com",1,1361145707)
         ');
     }
@@ -59,7 +59,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
     {
         $_SESSION['userData'] = array(
             'data' => array(
-                'user_id' => 1,
+                'ID' => 1,
             ),
             'update' => true,
             'signed' => true,
@@ -71,9 +71,9 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($this->user->isSigned());
 
         $this->assertGreaterThanOrEqual(5, count($this->user->session->data->toArray()));
-        $this->assertNotEmpty($this->user->username);
-        $this->assertNotEmpty($this->user->password);
-        $this->assertNotEmpty($this->user->email);
+        $this->assertNotEmpty($this->user->Username);
+        $this->assertNotEmpty($this->user->Password);
+        $this->assertNotEmpty($this->user->Email);
 
         $this->assertTrue($this->user->isSigned());
     }
@@ -94,9 +94,9 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(0, strpos($output, '<script>'));
 
         $this->assertGreaterThanOrEqual(5, count($this->user->session->data->toArray()));
-        $this->assertNotEmpty($this->user->username);
-        $this->assertNotEmpty($this->user->password);
-        $this->assertNotEmpty($this->user->email);
+        $this->assertNotEmpty($this->user->Username);
+        $this->assertNotEmpty($this->user->Password);
+        $this->assertNotEmpty($this->user->Email);
 
         $this->assertTrue($this->user->isSigned());
     }
@@ -118,22 +118,22 @@ class UserTest extends \PHPUnit_Framework_TestCase {
     {
         $userInfo = $this->getUserInfo();
 
-        $userInfo['username'] = md5(time());
+        $userInfo['Username'] = md5(time());
         $success = $this->user->register($userInfo);
         $this->assertEquals($success, !$this->user->log->hasError());
         $this->assertFalse($success);
 
-        $userInfo['username'] = 'user 1';
+        $userInfo['Username'] = 'user 1';
         $success = $this->user->register($userInfo);
         $this->assertEquals($success, !$this->user->log->hasError());
         $this->assertFalse($success);
 
-        $userInfo['username'] = 'u1';
+        $userInfo['Username'] = 'u1';
         $success = $this->user->register($userInfo);
         $this->assertEquals($success, !$this->user->log->hasError());
         $this->assertFalse($success);
 
-        $this->user->addValidation('username', '2-15');
+        $this->user->addValidation('Username', '2-15');
         $success = $this->user->register($userInfo);
         $this->assertEquals($success, !$this->user->log->hasError());
         $this->assertTrue($success);
@@ -151,12 +151,12 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($success);
 
         $this->assertFalse($this->user->isSigned());
-        $this->user->login($userInfo['username'], $userInfo['password']);
+        $this->user->login($userInfo['Username'], $userInfo['Password']);
         $this->assertTrue($this->user->isSigned());
 
-        $this->assertNotEmpty($this->user->username);
-        $this->assertNotEmpty($this->user->password);
-        $this->assertNotEmpty($this->user->email);
+        $this->assertNotEmpty($this->user->Username);
+        $this->assertNotEmpty($this->user->Password);
+        $this->assertNotEmpty($this->user->Email);
     }
 
     public function testUserUpdate()
@@ -167,11 +167,11 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEmpty($this->user->session->update);
 
         $newEmail = 'jose@live.com';
-        $this->user->update(array('email'=>$newEmail));
+        $this->user->update(array('Email'=>$newEmail));
 
         $this->assertTrue($this->user->session->update);
-        $this->assertEquals($newEmail, $this->user->email);
-        $this->assertNotEmpty($this->user->username);
+        $this->assertEquals($newEmail, $this->user->Email);
+        $this->assertNotEmpty($this->user->Username);
     }
 
     public function testResetPassword()
@@ -188,14 +188,14 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Ptejada\UFlex\Collection',$result);
         $this->assertFalse($this->user->log->hasError());
 
-        $this->assertEquals('pablo', $result->username);
-        $this->assertEquals('pablo@live.com', $result->email);
-        $this->assertEquals(1, $result->user_id);
-        $this->assertEquals(40, strlen($result->confirmation));
+        $this->assertEquals('pablo', $result->Username);
+        $this->assertEquals('pablo@live.com', $result->Email);
+        $this->assertEquals(1, $result->ID);
+        $this->assertEquals(40, strlen($result->Confirmation));
 
         // Confirm confirmation was saved on the on DB
-        $user = $this->user->table->getRow(array('user_id'=>1));
-        $this->assertEquals($user->confirmation, $result->confirmation);
+        $user = $this->user->table->getRow(array('ID'=>1));
+        $this->assertEquals($user->Confirmation, $result->Confirmation);
     }
 
     public function testNewPassword()
@@ -209,18 +209,18 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($this->user->log->hasError());
 
         $newPassword = array(
-            'password' => 456,
-            'password2' => 789,
+            'Password' => 456,
+            'Password2' => 789,
         );
 
-        $this->user->newPassword($result->confirmation, $newPassword);
+        $this->user->newPassword($result->Confirmation, $newPassword);
         $this->assertTrue($this->user->log->hasError());
 
-        $newPassword['password2'] = 456;
+        $newPassword['Password2'] = 456;
         $this->user->newPassword('c4504f0b39c478f39c4badbf74ddbaedf71ecfae' , $newPassword);
         $this->assertTrue($this->user->log->hasError());
 
-        $this->user->newPassword($result->confirmation, $newPassword);
+        $this->user->newPassword($result->Confirmation, $newPassword);
         $this->assertFalse($this->user->log->hasError());
 
         // Test the new login credentials
@@ -250,26 +250,26 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $user = $this->user->manageUser(5);
         $this->assertInstanceOf('\Ptejada\UFlex\User', $user);
 
-        $this->assertNotEquals('jose', $user->username);
-        $result = $user->update(array('username'=>'jose'));
+        $this->assertNotEquals('jose', $user->Username);
+        $result = $user->update(array('Username'=>'jose'));
         $this->assertTrue($result);
-        $this->assertEquals('jose', $user->username);
+        $this->assertEquals('jose', $user->Username);
 
         // Reload the user from the DB to confirm update
         $user = $this->user->manageUser(5);
-        $this->assertEquals('jose', $user->username);
+        $this->assertEquals('jose', $user->Username);
 
         // confirm the main user was not affected
-        $this->assertEquals('pablo', $this->user->username);
+        $this->assertEquals('pablo', $this->user->Username);
     }
 
     protected function getUserInfo($id=0)
     {
         return array(
-            'user_id' => $id ? $id : rand(),
-            'username' => 'user' . rand(),
-            'password' => substr(md5(rand()), 0, 7),
-            'email'   => substr(md5(rand()), 0, 5) . '@' . substr(md5(rand()), 0, 8) . '.com',
+            'ID' => $id ? $id : rand(),
+            'Username' => 'user' . rand(),
+            'Password' => substr(md5(rand()), 0, 7),
+            'Email'   => substr(md5(rand()), 0, 5) . '@' . substr(md5(rand()), 0, 8) . '.com',
         );
     }
 

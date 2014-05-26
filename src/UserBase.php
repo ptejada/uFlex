@@ -18,15 +18,15 @@ class UserBase
     
     /** @var Collection - default field validations*/
     protected $_validations = array(
-        'username' => array(
+        'Username' => array(
             'limit' => '3-15',
             'regEx' => '/^([a-zA-Z0-9_])+$/'
         ),
-        'password' => array(
+        'Password' => array(
             'limit' => '3-15',
             'regEx' => ''
         ),
-        'email'    => array(
+        'Email'    => array(
             'limit' => '4-45',
             'regEx' => '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/i'
         )
@@ -41,9 +41,9 @@ class UserBase
         'userTableName'   => 'users',
         'userSession'     => 'userData',
         'userDefaultData' => array(
-            'username' => 'Guess',
-            'user_id'  => 0,
-            'password' => 0,
+            'Username' => 'Guess',
+            'ID'  => 0,
+            'Password' => 0,
         ),
         'database' => array(
             'host'     => 'localhost',
@@ -92,11 +92,11 @@ class UserBase
      *    Takes only the first argument
      *        $name = Array Object (takes an object in the following format:
      *            array(
-     *                "username" => array(
+     *                "Username" => array(
      *                        "limit" => "3-15",
      *                        "regEx" => "/^([a-zA-Z0-9_])+$/"
      *                        ),
-     *                "password" => array(
+     *                "Password" => array(
      *                        "limit" => "3-15",
      *                        "regEx" => false
      *                        )

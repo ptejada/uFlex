@@ -22,37 +22,37 @@ class UserBaseTest extends \PHPUnit_Framework_TestCase {
     public function testSettersAndGetters()
     {
         $user = new UserBase(array(
-            'username' => 'Pablo',
-            'password' => 'password',
-            'reg_date' => 1396148789,
+            'Username' => 'Pablo',
+            'Password' => 'password',
+            'RegDate' => 1396148789,
         ));
 
-        $this->assertEquals('Pablo', $user->username);
-        $this->assertEquals('password', $user->password);
-        $this->assertEquals(1396148789, $user->reg_date);
+        $this->assertEquals('Pablo', $user->Username);
+        $this->assertEquals('password', $user->Password);
+        $this->assertEquals(1396148789, $user->RegDate);
 
         $this->assertInstanceOf('Ptejada\UFlex\Collection', $user->config);
         $this->assertInstanceOf('Ptejada\UFlex\Collection', $user->config->userDefaultData);
         $this->assertInstanceOf('Ptejada\UFlex\Collection', $user->config->database);
 
         $user->config->userDefaultData->update(array(
-            'username' => 'Anonimo'
+            'Username' => 'Anonimo'
         ));
 
-        $this->assertEquals('Anonimo', $user->config->userDefaultData->username);
+        $this->assertEquals('Anonimo', $user->config->userDefaultData->Username);
 
     }
 
     public function testValidations()
     {
         $user = new UserBase(array(
-            'username' => 'Pablo',
-            'password' => 'password',
-            'reg_date' => 1396148789,
+            'Username' => 'Pablo',
+            'Password' => 'password',
+            'RegDate' => 1396148789,
         ));
 
-        $user->username = 'PabloTejada';
-        $user->addValidation('username','1-5');
+        $user->Username = 'PabloTejada';
+        $user->addValidation('Username','1-5');
 
         $this->assertFalse($user->log->hasError());
     }

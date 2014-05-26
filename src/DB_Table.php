@@ -23,7 +23,7 @@ class DB_Table
     /**
      * Test field value in database
      * Check for the uniqueness of a value in a specified field/column.
-     * For example could be use to check for the uniqueness of a username
+     * For example could be use to check for the uniqueness of a Username
      * or email prior to registration
      *
      * @param string      $field       The name of the field

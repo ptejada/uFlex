@@ -10,7 +10,7 @@ if(count($_POST)){
      */
     $input = new \Ptejada\UFlex\Collection($_POST);
 
-	$user->login($input->username, $input->password, $input->auto);
+	$user->login($input->Username, $input->Password, $input->auto);
 
 	$errMsg = '';
 
@@ -21,7 +21,7 @@ if(count($_POST)){
 
 	echo json_encode(array(
 		'error'    => $user->log->getErrors(),
-		'confirm'  => "You are now login as <b>$user->username</b>",
+		'confirm'  => "You are now login as <b>$user->Username</b>",
 		'form'     => $user->log->getFormErrors(),
 	));
 }

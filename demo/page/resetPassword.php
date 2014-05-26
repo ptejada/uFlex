@@ -8,7 +8,7 @@
             <p>Enter the email associated with your account</p>
 
             <div class="form-group">
-                <input name="email" type="text" required autofocus class="form-control" placeholder="Email Address">
+                <input name="Email" type="text" required autofocus class="form-control" placeholder="Email Address">
             </div>
 
             <div class="form-group text-center">

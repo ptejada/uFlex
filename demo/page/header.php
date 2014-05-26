@@ -36,7 +36,7 @@
 				<p class="navbar-text pull-right">
 					<?php if($user->isSigned()): ?>
 						<a href="<?php echo $base?>/ps/logout.php" class="btn btn-default btn-xs navbar-btn">
-							Logout (<?php echo $user->username?>)
+							Logout (<?php echo $user->Username?>)
 						</a>
 					<?php else: ?>
 						<a href="<?php echo $base?>/login" class="btn btn-default btn-xs navbar-btn">

@@ -15,10 +15,10 @@ $user->config->database->name = "#!db_name"; //Database name
 /*
  * Instead of editing the Class files directly you may make
  * the changes in this space before calling the ->start() method.
- * For example: if we want to change the default username from "Guess"
+ * For example: if we want to change the default Username from "Guess"
  * to "Stranger" you do this:
  *
- * $user->config->userDefaultData->username = 'Stranger';
+ * $user->config->userDefaultData->Username = 'Stranger';
  *
  * You may change and customize all the options and configurations like
  * this, even the error messages. By exporting your customizations outside

@@ -6,7 +6,7 @@ if (!$user->isSigned()) {
 ?>
 <div class="row">
     <div class="col-xs-12">
-        <?php echo gravatar($user->email, 50); ?>
+        <?php echo gravatar($user->Email, 50); ?>
         <div class="btn-group pull-right2">
             <a class="btn btn-primary" href="account/update">Update Information</a>
             <a class="btn btn-primary" href="account/update/password">Change Password</a>

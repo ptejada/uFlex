@@ -31,28 +31,28 @@ class DBTableTest extends \PHPUnit_Framework_TestCase {
         // Creates the table
         $table->runQuery("
             CREATE TABLE IF NOT EXISTS _table_ (
-              `user_id` int(7),
-              `username` varchar(15) NOT NULL,
-              `password` varchar(35) ,
-              `email` varchar(35) ,
-              `activated` tinyint(1) NOT NULL DEFAULT '0',
-              `confirmation` varchar(35) ,
-              `reg_date` int(11) ,
-              `last_login` int(11) NOT NULL DEFAULT '0',
+              `ID` int(7),
+              `Username` varchar(15) NOT NULL,
+              `Password` varchar(35) ,
+              `Email` varchar(35) ,
+              `Activated` tinyint(1) NOT NULL DEFAULT '0',
+              `Confirmation` varchar(35) ,
+              `RegDate` int(11) ,
+              `LastLogin` int(11) NOT NULL DEFAULT '0',
               `first_name` varchar(50) ,
               `last_name` varchar(50) ,
-              PRIMARY KEY (`user_id`)
+              PRIMARY KEY (`ID`)
             )
         ");
 
         for($i=1; $i<5; $i++)
         {
-            $table->runQuery("INSERT INTO _table_(user_id, username) VALUES($i, 'user$i')");
+            $table->runQuery("INSERT INTO _table_(ID, Username) VALUES($i, 'user$i')");
             $this->assertEquals($i, $table->getLastInsertedID(), 'Confirms last inserted record ID');
         }
 
         // Get a record
-        $user = $table->getRow(array('user_id'=>1));
+        $user = $table->getRow(array('ID'=>1));
 
         $this->assertInstanceOf('StdClass', $user, 'Retrieve a record from the table');
 

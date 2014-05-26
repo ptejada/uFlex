@@ -9,17 +9,17 @@
          */
         $input = new \Ptejada\UFlex\Collection($_POST);
 
-		$res = $user->resetPassword($input->email);
+		$res = $user->resetPassword($input->Email);
 
 		$errorMessage = '';
 		$confirmMessage = '';
 
 		if($res){
 			//Hash succesfully generated
-			//You would send an email to $res['email'] with the URL+HASH $res['hash'] to enter the new password
+			//You would send an email to $res['Email'] with the URL+HASH $res['hash'] to enter the new Password
 			//In this demo we will just redirect the user directly
 			
-			$url = "account/update/password?c=" . $res->confirmation;
+			$url = "account/update/password?c=" . $res->Confirmation;
 			$confirmMessage = "Use the link below to change your password <a href='{$url}'>Change Password</a>";
 
 		}else{
@@ -31,7 +31,7 @@
 			'error'    => $user->log->getErrors(),
 			'confirm'  => $confirmMessage,
 			'form'    => array(
-				'email' => $errorMessage
+				'Email' => $errorMessage
 			)
 		));
 	}

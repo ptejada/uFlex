@@ -12,21 +12,21 @@ if (count($_POST)) {
     $hash = $input->c;
 
     if (!$user->isSigned() and $hash) {
-        //Change password with confirmation hash
+        //Change Password with confirmation hash
         $user->newPassword(
             $hash,
             array(
-                'password'  => $input->password,
-                'password2' => $input->password2,
+                'Password'  => $input->Password,
+                'Password2' => $input->Password2,
             )
         );
         $redirectPage = "login";
     } else {
-        //Change the password of signed in user without a confirmation hash
+        //Change the Password of signed in user without a confirmation hash
         $user->update(
             array(
-                'password'  => $input->password,
-                'password2' => $input->password2,
+                'Password'  => $input->Password,
+                'Password2' => $input->Password2,
             )
         );
         $redirectPage = "account";

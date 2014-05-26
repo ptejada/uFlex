@@ -15,14 +15,14 @@ if ($uid) {
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="center-block userBox">
-                            <?php echo gravatar($data->email); ?>
-                            <span class='label label-primary center-block'><?php echo $data->username ?></span>
+                            <?php echo gravatar($data->Email); ?>
+                            <span class='label label-primary center-block'><?php echo $data->Username ?></span>
                         </div>
                     </div>
                     <div class="col-sm-8 col-lg-7">
                         <table class="table table-hover">
                             <?php foreach ($data->toArray() as $name => $value):
-                                if (in_array($name, array('email', 'password', 'confirmation'))) {
+                                if (in_array($name, array('Email', 'Password', 'Confirmation'))) {
                                     continue;
                                 } ?>
                                 <tr>
