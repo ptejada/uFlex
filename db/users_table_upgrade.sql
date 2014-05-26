@@ -1,4 +1,5 @@
 -- Upgrades the table from v1.0 to v1.1 --
+-- IMPORTANT: BackUp your Database before running this script --
 
 --  Note: if your users table was other than `users` update the line below --
 RENAME TABLE `users` TO `Users`;

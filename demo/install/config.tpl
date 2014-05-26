@@ -7,7 +7,7 @@ include(dirname(__FILE__) .'/../../autoload.php');
 $user = new \Ptejada\UFlex\User();
 
 //Add database credentials and information
-$$user->config->database->host = "#!db_host";
+$user->config->database->host = "#!db_host";
 $user->config->database->user = "#!db_user";
 $user->config->database->password = "#!db_pass";
 $user->config->database->name = "#!db_name"; //Database name

@@ -42,7 +42,7 @@ if ($_POST) {
 
     if ($dbAccess) {
         //Import database
-        $sql = file_get_contents("uFlex_database.sql");
+        $sql = file_get_contents("users_table.sql");
         $import1 = $dbh->query($sql);
 
         $sql = file_get_contents("demo.sql");
