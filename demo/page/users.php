@@ -4,25 +4,24 @@
 		<?php
 		//Display random users
 		$sql = "SELECT *
-				FROM :table WHERE activated=1
+				FROM _table_ WHERE Activated=1
 				ORDER BY RAND()
 				LIMIT 24
 			";
 
-		$stmt = $user->getStatement($sql);
+		$stmt = $user->table->getStatement($sql);
 		$stmt->execute();
-		$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		if($data){
+		if($stmt->rowCount()){
 
 			p("Random Users :)", 2);
 			echo '<hr>';
 
-			foreach($data as $u){
+			while( $u = $stmt->fetch() ){
 				echo '<div class="col-sm-2 col-xs-4 text-center">';
-				echo "<a class='center-block userBox' href='user?id={$u['user_id']}' title='{$u['username']}'>";
-				echo gravatar($u['email']);
-				echo "<span class='label label-primary center-block'>{$u['username']}</span>";
+				echo "<a class='center-block userBox' href='user?id={$u->ID}' title='{$u->Username}'>";
+				echo gravatar($u->Email);
+				echo "<span class='label label-primary center-block'>{$u->Username}</span>";
 				echo '</div></a>';
 			}
 		}else{

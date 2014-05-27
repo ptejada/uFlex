@@ -3,7 +3,7 @@
 			<hr>
 			Copyright Test &copy; 2013 -
 			<a href="http://ptejada.com/projects/uFlex/">uFlex Home</a> -
-			v<?php echo uFlex::version?>
+			v<?php echo \ptejada\uFlex\User::VERSION?>
 
 			<br><br>
 		</div>

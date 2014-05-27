@@ -1,5 +1,5 @@
 <?php
-	if($user->signed) redirect("./account");
+	if($user->isSigned()) redirect("./account");
 ?>
 <div class="row">
 	<div class="col-sm-6 col-sm-offset-3">
@@ -10,12 +10,12 @@
 		<form method="post" action="ps/login.php" data-success="<?php echo $base?>/account">
 			<div class="form-group">
 				<label>Username or Email:</label>
-				<input name="username" type="text" class="form-control" required autofocus>
+				<input name="Username" type="text" class="form-control" required autofocus>
 			</div>
 
 			<div class="form-group">
 				<label>Password:</label>
-				<input name="password" type="password" class="form-control" required>
+				<input name="Password" type="password" class="form-control" required>
 			</div>
 
 			<div class="form-group text-center">
@@ -23,7 +23,7 @@
 				<br/><br/>
 				<a href="register">Register a New Account</a>
 				<br>
-				<a href="forgot-password">Forgot password?</a>
+				<a href="resetPassword">Forgot Password?</a>
 			</div>
 		</form>
 

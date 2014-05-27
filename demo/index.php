@@ -1,13 +1,17 @@
 <?php
+/*
+ * This index file servers as a simple unified request
+ * controller and route handler
+ */
 
 if(!file_exists("core/config.php")){
 	header("Location: install/");
 }
 
-include("core/config.php");
-
 $base = dirname($_SERVER['PHP_SELF']);
 $pagePath = substr($_SERVER['REQUEST_URI'], strlen($base)+1);
+
+include('core/config.php');
 
 // Remove any URI variables
 $pagePath = explode('?', $pagePath);

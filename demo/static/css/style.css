@@ -1,14 +1,16 @@
 .userBox {
-	max-width: 90px;
-	margin-bottom: 15px;
+    max-width: 90px;
+    margin-bottom: 15px;
 }
+
 .userBox:hover img {
-	box-shadow: 0 0 5px 7px;
+    box-shadow: 0 0 5px 7px;
 }
+
 .userBox .label {
-	overflow: hidden;
+    overflow: hidden;
 }
 
 form .error {
-	padding-left: 5px ;
+    padding-left: 5px;
 }
