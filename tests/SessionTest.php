@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use Ptejada\UFlex\Session;
+use ptejada\uFlex\Session;
 
 class SessionTest extends \PHPUnit_Framework_TestCase {
 

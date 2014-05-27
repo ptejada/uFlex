@@ -8,7 +8,7 @@ if (count($_POST)) {
      * Covert POST into a Collection object
      * for better values handling
      */
-    $input = new \Ptejada\UFlex\Collection($_POST);
+    $input = new \ptejada\uFlex\Collection($_POST);
 
     //Register User
     $user->register(

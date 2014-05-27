@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use Ptejada\UFlex\Collection;
+use ptejada\uFlex\Collection;
 
 class CollectionTest extends \PHPUnit_Framework_TestCase {
 

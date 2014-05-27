@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use Ptejada\UFlex\Cookie;
+use ptejada\uFlex\Cookie;
 
 class CookieTest extends \PHPUnit_Framework_TestCase {
 

@@ -1,8 +1,12 @@
 <?php
 
-namespace Ptejada\UFlex;
+namespace ptejada\uFlex;
+
 /**
- * Class uFlex
+ * All in one user object use to authenticating, registering new users and other user actions
+ * Note: Either start() or login() must be called at least once on your code per User instance
+ *
+ * @package ptejada\uFlex
  */
 class User extends UserBase
 {
@@ -73,7 +77,7 @@ class User extends UserBase
      *
      * @return bool
      */
-    public function login($identifier='', $password='', $autoLogin=false)
+    public function login($identifier = '', $password = '', $autoLogin = false)
     {
         $this->log->channel('login');
 
@@ -155,12 +159,19 @@ class User extends UserBase
                     /*
                      * Try new password algorithm
                      */
-                    $this->session->signed =  $this->hash->generateUserPassword($this, $password) === $userFile->Password;
+                    $this->session->signed = $this->hash->generateUserPassword(
+                            $this,
+                            $password
+                        ) === $userFile->Password;
                 } else {
                     /*
                      * Try legacy password algorithm
                      */
-                    $this->session->signed =  $this->hash->generateUserPassword($this, $password, true) === $userFile->Password;
+                    $this->session->signed = $this->hash->generateUserPassword(
+                            $this,
+                            $password,
+                            true
+                        ) === $userFile->Password;
                 }
             }
         } else {
@@ -186,7 +197,7 @@ class User extends UserBase
                     }
                 }
                 return false;
-            }         
+            }
 
             $this->session->data->update($userFileArray);
 
@@ -261,7 +272,7 @@ class User extends UserBase
          */
 
         //Hash Password
-        if ( $info->Password ) {
+        if ($info->Password) {
             $info->Password = $this->hash->generateUserPassword($this, $info->Password);
         }
 
@@ -441,14 +452,14 @@ class User extends UserBase
         $user = $this->table->getRow(array('Email' => $email));
 
         if ($user) {
-            if (! $user->Activated && !$user->Confirmation) {
+            if (!$user->Activated && !$user->Confirmation) {
                 //The Account has been manually disabled and can't reset password
                 $this->log->error(9);
                 return false;
             }
 
             $data = array(
-                'ID' => $user->ID,
+                'ID'           => $user->ID,
                 'Confirmation' => $this->hash->generate($user->ID),
             );
 
@@ -457,7 +468,7 @@ class User extends UserBase
             return new Collection(array(
                 'Email'        => $email,
                 'Username'     => $user->Username,
-                'ID'      => $user->ID,
+                'ID'           => $user->ID,
                 'Confirmation' => $data['Confirmation']
             ));
         } else {
@@ -491,20 +502,20 @@ class User extends UserBase
         list($uid, $partial) = $this->hash->examine($hash);
 
         if ($uid && $user = $this->table->getRow(array('ID' => $uid, 'Confirmation' => $hash))) {
-            $this->_updates =  new Collection($newPass);
+            $this->_updates = new Collection($newPass);
             if (!$this->validateAll()) {
                 return false;
             } //There are validations error
 
-            $this->_updates =  new Collection((array) $user);
+            $this->_updates = new Collection((array) $user);
 
             // Generate the password hash
             $pass = $this->hash->generateUserPassword($this, $newPass['Password']);
 
             $sql = "UPDATE _table_ SET `Password`=:pass, Confirmation='', Activated=1 WHERE Confirmation=:confirmation AND ID=:id";
             $data = array(
-                'id'   => $uid,
-                'pass' => $pass,
+                'id'           => $uid,
+                'pass'         => $pass,
                 'confirmation' => $hash
             );
 
@@ -522,9 +533,9 @@ class User extends UserBase
     /**
      * Starts and Configures the object
      */
-    public function start($login=true)
+    public function start($login = true)
     {
-        if ( ! ($this->db instanceof DB) ) {
+        if (!($this->db instanceof DB)) {
             // Updating the predefine error logs
             $this->log->addPredefinedError($this->errorList);
 
@@ -622,6 +633,7 @@ class User extends UserBase
 
     /**
      * Check if a user currently signed-in
+     *
      * @return bool
      */
     public function isSigned()
@@ -642,7 +654,7 @@ class User extends UserBase
         if ($this->table->runQuery($sql, array('stamp' => $time, 'id' => $this->ID))) {
             $this->log->report('Last Login updated');
         }
-    }    
+    }
 
     /**
      * Magic method to handle object cloning
@@ -663,7 +675,7 @@ class User extends UserBase
         $this->cookie = new Cookie($this->config->cookieName);
 
         $this->_updates = new Collection();
-        $this->log = $this->log->newChildLog('UserClone'.$this->clone);
+        $this->log = $this->log->newChildLog('UserClone' . $this->clone);
 
         //Import default user object to session
         $this->session->data = $this->config->userDefaultData->toArray();

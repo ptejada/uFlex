@@ -8,7 +8,7 @@
 
 namespace tests;
 
-use Ptejada\UFlex\DB;
+use ptejada\uFlex\DB;
 
 class DBTest extends \PHPUnit_Framework_TestCase {
 
@@ -42,7 +42,7 @@ class DBTest extends \PHPUnit_Framework_TestCase {
         $db = new DB('sqlite::memory:');
         $table = $db->getTable('Users');
 
-        $this->assertInstanceOf('Ptejada\UFlex\DB_TAble', $table, 'Should be an instance of DBTable');
+        $this->assertInstanceOf('ptejada\uFlex\DB_TAble', $table, 'Should be an instance of DBTable');
     }
 
 }

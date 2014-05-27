@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Ptejada\\UFlex\\": "src/"
+            "ptejada\\uFlex\\": "src/"
         }
     },
     "require": {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ptejada\UFlex;
+namespace ptejada\uFlex;
 
 /**
  * Class to handle the PHP session
@@ -8,7 +8,7 @@ namespace Ptejada\UFlex;
  * Or a direct member of the main session array
  * which is refer as a namespace
  *
- * @package Ptejada\UFlex
+ * @package ptejada\uFlex
  */
 class Session extends LinkedCollection
 {

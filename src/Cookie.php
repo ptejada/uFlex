@@ -1,12 +1,12 @@
 <?php
 
-namespace Ptejada\UFlex;
+namespace ptejada\uFlex;
 
 /**
  * Class handles a single cookie
  * Reads and writes the value of a cookie
  *
- * @package Ptejada\UFlex
+ * @package ptejada\uFlex
  */
 class Cookie
 {

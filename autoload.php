@@ -11,7 +11,7 @@ spl_autoload_register(
     function ($class){
 
         // project-specific namespace prefix
-        $prefix = 'Ptejada\\UFlex\\';
+        $prefix = 'ptejada\\uFlex\\';
 
         // base directory for the namespace prefix
         $base_dir = __DIR__ . '/src/';

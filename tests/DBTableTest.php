@@ -8,7 +8,7 @@
 
 namespace tests;
 
-use Ptejada\UFlex\DB;
+use ptejada\uFlex\DB;
 
 class DBTableTest extends \PHPUnit_Framework_TestCase {
 
@@ -25,8 +25,8 @@ class DBTableTest extends \PHPUnit_Framework_TestCase {
         $db = self::$db;
         $table = $db->getTable('Users');
 
-        $this->assertInstanceOf('Ptejada\UFlex\DB_Table', $table, 'Should be an instance of DBTable');
-        $this->assertInstanceOf('Ptejada\UFlex\Log', $table->log);
+        $this->assertInstanceOf('ptejada\uFlex\DB_Table', $table, 'Should be an instance of DBTable');
+        $this->assertInstanceOf('ptejada\uFlex\Log', $table->log);
 
         // Creates the table
         $table->runQuery("

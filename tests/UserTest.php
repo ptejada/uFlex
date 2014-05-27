@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use Ptejada\UFlex\User;
+use ptejada\uFlex\User;
 
 class UserTest extends \PHPUnit_Framework_TestCase {
     /** @var User  */
@@ -185,7 +185,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($this->user->log->hasError());
 
         $result = $this->user->resetPassword('pablo@live.com');
-        $this->assertInstanceOf('Ptejada\UFlex\Collection',$result);
+        $this->assertInstanceOf('ptejada\uFlex\Collection',$result);
         $this->assertFalse($this->user->log->hasError());
 
         $this->assertEquals('pablo', $result->Username);
@@ -205,7 +205,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($this->user->isSigned());
 
         $result = $this->user->resetPassword('pablo@live.com');
-        $this->assertInstanceOf('Ptejada\UFlex\Collection',$result);
+        $this->assertInstanceOf('ptejada\uFlex\Collection',$result);
         $this->assertFalse($this->user->log->hasError());
 
         $newPassword = array(
@@ -248,7 +248,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($this->user->isSigned());
 
         $user = $this->user->manageUser(5);
-        $this->assertInstanceOf('\Ptejada\UFlex\User', $user);
+        $this->assertInstanceOf('\ptejada\uFlex\User', $user);
 
         $this->assertNotEquals('jose', $user->Username);
         $result = $user->update(array('Username'=>'jose'));

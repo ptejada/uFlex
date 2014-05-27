@@ -1,11 +1,11 @@
 <?php
 
-namespace Ptejada\UFlex;
+namespace ptejada\uFlex;
 
 /**
  * A Collection which references a existing array
  *
- * @package Ptejada\UFlex
+ * @package ptejada\uFlex
  */
 class LinkedCollection extends Collection
 {

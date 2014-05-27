@@ -8,7 +8,7 @@
         * Covert POST into a Collection object
         * for better value handling
         */
-        $input = new \Ptejada\UFlex\Collection($_POST);
+        $input = new \ptejada\uFlex\Collection($_POST);
 
         /*
          * Updates queue

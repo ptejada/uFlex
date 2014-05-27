@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use Ptejada\UFlex\Log;
+use ptejada\uFlex\Log;
 
 class LogTest extends \PHPUnit_Framework_TestCase {
     /** @var  Log */

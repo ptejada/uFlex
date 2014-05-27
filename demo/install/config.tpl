@@ -4,7 +4,7 @@ include('inc/functions.php');
 include(dirname(__FILE__) .'/../../autoload.php');
 
 //Instantiate the uFlex User object
-$user = new \Ptejada\UFlex\User();
+$user = new \ptejada\uFlex\User();
 
 //Add database credentials and information
 $user->config->database->host = "#!db_host";

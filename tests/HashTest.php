@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use Ptejada\UFlex\Hash;
+use ptejada\uFlex\Hash;
 
 class HashTest extends \PHPUnit_Framework_TestCase {
 

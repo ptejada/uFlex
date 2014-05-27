@@ -1,6 +1,6 @@
 <?php
 
-namespace Ptejada\UFlex;
+namespace ptejada\uFlex;
 
 class Collection
 {

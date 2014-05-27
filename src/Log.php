@@ -1,11 +1,11 @@
 <?php
 
-namespace Ptejada\UFlex;
+namespace ptejada\uFlex;
 
 /**
  * Class log reports and errors
  *
- * @package Ptejada\UFlex
+ * @package ptejada\uFlex
  */
 class Log
 {

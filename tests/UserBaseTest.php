@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use Ptejada\UFlex\UserBase;
+use ptejada\uFlex\UserBase;
 
 class UserBaseTest extends \PHPUnit_Framework_TestCase {
 
@@ -31,9 +31,9 @@ class UserBaseTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('password', $user->Password);
         $this->assertEquals(1396148789, $user->RegDate);
 
-        $this->assertInstanceOf('Ptejada\UFlex\Collection', $user->config);
-        $this->assertInstanceOf('Ptejada\UFlex\Collection', $user->config->userDefaultData);
-        $this->assertInstanceOf('Ptejada\UFlex\Collection', $user->config->database);
+        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config);
+        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config->userDefaultData);
+        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config->database);
 
         $user->config->userDefaultData->update(array(
             'Username' => 'Anonimo'
