@@ -12,12 +12,13 @@ The single class file `class.uFlex.php` code can be found on the [Legacy Branch]
 Getting Started
 =========================
 
-If using [Composer](https://getcomposer.org/) just add `ptejada/uFlex: 1.*` to your dependency. Ex:
+If using [Composer](https://getcomposer.org/) just add `ptejada/uflex` to your dependency. Note the casing on `uflex`,
+all lowercase. Ex:
 
 ```
 {
     "require": {
-        "ptejada/uFlex": "1.*"
+        "ptejada/uflex": "1.*"
     }
 }
 ```
