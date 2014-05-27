@@ -38,7 +38,7 @@ class UserBase
         'cookieName'      => 'auto',
         'cookiePath'      => '/',
         'cookieHost'      => false,
-        'userTableName'   => 'users',
+        'userTableName'   => 'Users',
         'userSession'     => 'userData',
         'userDefaultData' => array(
             'Username' => 'Guess',
