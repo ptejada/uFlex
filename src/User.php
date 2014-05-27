@@ -15,7 +15,7 @@ class User extends UserBase
      *
      * @var int
      */
-    const VERSION = '1.0-RC1';
+    const VERSION = '1.0.0-RC1';
 
     /**
      * Holds a unique clone number of the instance clones
