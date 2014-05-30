@@ -2,6 +2,12 @@
 
 namespace ptejada\uFlex;
 
+/**
+ * Class Hash
+ *
+ * @package ptejada\uFlex
+ * @author  Pablo Tejada <pablo@ptejada.com>
+ */
 class Hash
 {
     /** @var  Log - Log errors and report */
@@ -15,9 +21,11 @@ class Hash
      * @ignore
      */
     protected $encoder = array(
-        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t',
-        'u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N',
-        'O','P','Q','R','S','T','U','V','W','X','Y','Z',0,2,3,4,5,6,7,8,9
+        // @formatter:off
+        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+        'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+        0,2,3,4,5,6,7,8,9
+        // @formatter:on
     );
 
     public function __construct()
@@ -34,7 +42,7 @@ class Hash
      *
      * @return string
      */
-    public function generateUserPassword(User $user, $password, $generateOld=false)
+    public function generateUserPassword(User $user, $password, $generateOld = false)
     {
         $registrationDate = $user->RegDate;
 
@@ -48,6 +56,29 @@ class Hash
     }
 
     /**
+     * Encodes an integer
+     *
+     * @param int $number integer to encode
+     *
+     * @return string encoded integer string
+     */
+    protected function encode($number)
+    {
+        $k = $this->encoder;
+        preg_match_all("/[1-9][0-9]|[0-9]/", $number, $a);
+        $n = '';
+        $o = count($k);
+        foreach ($a[0] as $i) {
+            if ($i < $o) {
+                $n .= $k[$i];
+            } else {
+                $n .= '1' . $k[$i - $o];
+            }
+        }
+        return $n;
+    }
+
+    /**
      * Generates a unique hash
      *
      * @param int         $uid  user id
@@ -55,7 +86,7 @@ class Hash
      *
      * @return string
      */
-    public function generate($uid=0, $hash = false)
+    public function generate($uid = 0, $hash = false)
     {
         if ($uid) {
             $e_uid = $this->encode($uid);
@@ -102,29 +133,6 @@ class Hash
         $partial = $excerpt[2];
 
         return array($uid, $partial);
-    }
-
-    /**
-     * Encodes an integer
-     *
-     * @param int $number integer to encode
-     *
-     * @return string encoded integer string
-     */
-    protected function encode($number)
-    {
-        $k = $this->encoder;
-        preg_match_all("/[1-9][0-9]|[0-9]/", $number, $a);
-        $n = '';
-        $o = count($k);
-        foreach ($a[0] as $i) {
-            if ($i < $o) {
-                $n .= $k[$i];
-            } else {
-                $n .= '1' . $k[$i - $o];
-            }
-        }
-        return $n;
     }
 
     /**

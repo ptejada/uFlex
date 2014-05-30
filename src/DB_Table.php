@@ -2,16 +2,20 @@
 
 namespace ptejada\uFlex;
 
+/**
+ * Class DB_Table
+ *
+ * @package ptejada\uFlex
+ * @author  Pablo Tejada <pablo@ptejada.com>
+ */
 class DB_Table
 {
-    /** @var string - The table name */
-    private $tableName = '';
-    
-    /** @var DB - The DB connection session */
-    private $db;
-
     /** @var  Log - Log errors and report */
     public $log;
+    /** @var string - The table name */
+    private $tableName = '';
+    /** @var DB - The DB connection session */
+    private $db;
 
     public function __construct(DB $db, $table)
     {
@@ -47,60 +51,6 @@ class DB_Table
     }
 
     /**
-     * Query the table
-     *
-     * @param      $sql
-     * @param bool $arguments
-     *
-     * @return bool|\PDOStatement
-     */
-    public function query($sql, $arguments = false)
-    {
-        if (! $stmt = $this->getStatement($sql, $arguments)) {
-            // Something went wrong executing the SQL statement
-            return false;
-        }
-        else
-        {
-            return $stmt;
-        }
-    }
-
-    /**
-     * Executes SQL query and checks for success
-     *
-     * @param string     $sql       -  SQL query string
-     * @param array|bool $arguments -  Array of arguments to execute $sql with
-     *
-     * @return bool
-     */
-    public function runQuery($sql, $arguments = false)
-    {
-        if (! $stmt = $this->getStatement($sql, $arguments)) {
-            // Something went wrong executing the SQL statement
-            return false;
-        }
-
-        // If there are no arguments, execute the statement
-        if (!$arguments) {
-            $stmt->execute();
-        }
-
-        $rows = $stmt->rowCount();
-        $rows = ($rows>0) ? $rows : count($stmt->fetchAll());
-
-        if ($rows > 0) {
-            //Good, Rows where affected
-            $this->log->report("$rows row(s) where Affected");
-            return true;
-        } else {
-            //Bad, No Rows where Affected
-            $this->log->report('No rows were Affected');
-            return false;
-        }
-    }
-
-    /**
      * Get a single row from the table depending on arguments
      *
      * @param array $arguments -  field and value pair set to look up user for
@@ -111,10 +61,10 @@ class DB_Table
     {
         $sql = 'SELECT * FROM _table_ WHERE _arguments_ LIMIT 1';
 
-        if (! $stmt = $this->getStatement($sql, $arguments)) {
+        if (!$stmt = $this->getStatement($sql, $arguments)) {
             // Something went wrong executing the SQL statement
             return false;
-        }else{
+        } else {
             return $stmt->fetch();
         }
 
@@ -160,9 +110,7 @@ class DB_Table
                 $this->log->error('Failed to create a PDO statement with: ' . $query);
                 return false;
             }
-        }
-        else
-        {
+        } else {
             // Failed to connect to the database
             return false;
         }
@@ -172,11 +120,11 @@ class DB_Table
      * Builds a query string with the passed arguments
      *
      * @param string $sql
-     * @param array $arguments - Associative array of fields and values
+     * @param array  $arguments - Associative array of fields and values
      *
      * @return string
      */
-    private function buildQuery($sql, $arguments=null)
+    private function buildQuery($sql, $arguments = null)
     {
         if (is_array($arguments)) {
             $finalArgs = array();
@@ -204,10 +152,64 @@ class DB_Table
     }
 
     /**
+     * Query the table
+     *
+     * @param      $sql
+     * @param bool $arguments
+     *
+     * @return bool|\PDOStatement
+     */
+    public function query($sql, $arguments = false)
+    {
+        if (!$stmt = $this->getStatement($sql, $arguments)) {
+            // Something went wrong executing the SQL statement
+            return false;
+        } else {
+            return $stmt;
+        }
+    }
+
+    /**
+     * Executes SQL query and checks for success
+     *
+     * @param string     $sql       -  SQL query string
+     * @param array|bool $arguments -  Array of arguments to execute $sql with
+     *
+     * @return bool
+     */
+    public function runQuery($sql, $arguments = false)
+    {
+        if (!$stmt = $this->getStatement($sql, $arguments)) {
+            // Something went wrong executing the SQL statement
+            return false;
+        }
+
+        // If there are no arguments, execute the statement
+        if (!$arguments) {
+            $stmt->execute();
+        }
+
+        $rows = $stmt->rowCount();
+        $rows = ($rows > 0) ? $rows : count($stmt->fetchAll());
+
+        if ($rows > 0) {
+            //Good, Rows where affected
+            $this->log->report("$rows row(s) where Affected");
+            return true;
+        } else {
+            //Bad, No Rows where Affected
+            $this->log->report('No rows were Affected');
+            return false;
+        }
+    }
+
+    /**
      * Get the ID of the last inserted record
+     *
      * @return int
      */
-    public function getLastInsertedID(){
+    public function getLastInsertedID()
+    {
         return $this->db->getLastInsertedID();
     }
 }

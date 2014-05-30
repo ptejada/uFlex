@@ -34,6 +34,7 @@ For more information:
 * Check the examples here <http://ptejada.com/projects/uFlex/examples/>
 * Try the demo in this package and review its source
 * See the methods documentation here <http://ptejada.com/projects/uFlex/documentation/>
+* For more detailed documentation check generated PHPDoc <http://ptejada.com/docs/uFlex/>
 
 Upgrading from previous version...
 ====================================

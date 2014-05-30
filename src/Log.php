@@ -3,9 +3,10 @@
 namespace ptejada\uFlex;
 
 /**
- * Class log reports and errors
+ * Console to log reports and errors
  *
  * @package ptejada\uFlex
+ * @author Pablo Tejada <pablo@ptejada.com>
  */
 class Log
 {
@@ -16,6 +17,7 @@ class Log
     /** @var string - Stores the current selected channel */
     protected $currentChannel = '_main';
 
+    /** @var array */
     protected $console = array(
         'errors'  => array(),
         'reports' => array(),
@@ -112,7 +114,7 @@ class Log
     /**
      * Get all the report for the current channel or an specific channel
      *
-     * @param string [$channel] - an optional channel name
+     * @param string $channel - (optional) Channel name
      *
      * @return array
      */
@@ -220,7 +222,7 @@ class Log
     /**
      * Get form errors by channel
      *
-     * @param  string [$channel] - Channel to look for form errors in, if omitted the current channel is used
+     * @param  string $channel - (optional) Channel to look for form errors in, if omitted the current channel is used
      *
      * @return array
      */
@@ -332,16 +334,13 @@ class Log
     public function newChildLog($namespace)
     {
         $child = new Log($namespace, $this);
-        // TODO: Experimental line to copy the namespace
-        //$child->changeNamespace($this->getNamespace());
-
         return $child;
     }
 
     /**
      * Adds a predefined error to the internal list
      *
-     * @param int|array $id - Must be numeric or associative array with numeric keys
+     * @param int|array $id Must be numeric or associative array with numeric keys
      * @param string    $message
      */
     public function addPredefinedError($id, $message = '')

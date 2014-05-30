@@ -2,21 +2,44 @@
 
 namespace ptejada\uFlex;
 
+/**
+ * Class UserBase
+ *
+ * @package ptejada\uFlex
+ * @author  Pablo Tejada <pablo@ptejada.com>
+ */
 class UserBase
 {
     /** @var  Log - Log errors and report */
     public $log;
-
+    /** @var Collection - Class configuration options */
+    public $config = array(
+        'cookieTime'      => '30',
+        'cookieName'      => 'auto',
+        'cookiePath'      => '/',
+        'cookieHost'      => false,
+        'userTableName'   => 'Users',
+        'userSession'     => 'userData',
+        'userDefaultData' => array(
+            'Username' => 'Guess',
+            'ID'       => 0,
+            'Password' => 0,
+        ),
+        'database'        => array(
+            'host'     => 'localhost',
+            'name'     => '',
+            'user'     => '',
+            'password' => '',
+            'dsn'      => '',
+        )
+    );
     /** @var  Hash - Use to generate hashes */
     protected $hash;
-    
     /** @var array - The user information object */
     protected $_data;
-
-    /** @var Collection - Updates for the user information object */ 
+    /** @var Collection - Updates for the user information object */
     protected $_updates;
-    
-    /** @var Collection - default field validations*/
+    /** @var Collection - default field validations */
     protected $_validations = array(
         'Username' => array(
             'limit' => '3-15',
@@ -32,28 +55,11 @@ class UserBase
         )
     );
 
-    /** @var Collection - Class configuration options */
-    public $config = array(
-        'cookieTime'      => '30',
-        'cookieName'      => 'auto',
-        'cookiePath'      => '/',
-        'cookieHost'      => false,
-        'userTableName'   => 'Users',
-        'userSession'     => 'userData',
-        'userDefaultData' => array(
-            'Username' => 'Guess',
-            'ID'  => 0,
-            'Password' => 0,
-        ),
-        'database' => array(
-            'host'     => 'localhost',
-            'name'     => '',
-            'user'     => '',
-            'password' => '',
-            'dsn'      => '',
-        )
-    );
-
+    /**
+     * Initializes the the User object
+     *
+     * @param array $userData
+     */
     public function __construct(array $userData = array())
     {
         // Instantiate the logger
@@ -78,17 +84,15 @@ class UserBase
     /**
      * Adds validation to queue for either the Registration or Update Method
      * Single Entry:
-     * <pre>
-     *  Requires the first two parameters
-     *        $name  = string (name of the field to be validated)
-     *        $limit = string (range of the accepted value length in the format of "5-10")
-     *            - to make a field optional start with 0 (Ex. "0-10")
-     *    Optional third parameter
-     *        $regEx = string (Regular Expression to test the field)
-     * </pre>
+     *      Requires the first two parameters
+     *            $name  = string (name of the field to be validated)
+     *            $limit = string (range of the accepted value length in the format of "5-10")
+     *                    - to make a field optional start with 0 (Ex. "0-10")
+     *       Optional third parameter
+     *            $regEx = string (Regular Expression to test the field)
      * _____________________________________________________________________________________________________
      * Multiple Entry:
-     * <pre>
+     *
      *    Takes only the first argument
      *        $name = Array Object (takes an object in the following format:
      *            array(
@@ -101,14 +105,13 @@ class UserBase
      *                        "regEx" => false
      *                        )
      *                );
-     * </pre>
      *
      * @access public
      * @api
      *
      * @param string|array $name  Name of the field to validate or an array of all the fields and their validations
-     * @param string       $limit A range of the accepted value length in the format of "5-10",
-     *                            to make a field optional start with 0 (Ex. "0-10")
+     * @param string       $limit A range of the accepted value length in the format of "5-10", to make a field optional
+     *                            start with 0 (Ex. "0-10")
      * @param string|bool  $regEx Regular expression to the test the field with
      *
      * @return null
@@ -126,6 +129,65 @@ class UserBase
             );
             $this->log->report("The $name field has been added for validation");
         }
+    }
+
+    /**
+     * Get the value of a user property
+     *
+     * @param $name
+     *
+     * @return mixed
+     */
+    public function getProperty($name)
+    {
+        return $this->__get($name);
+    }
+
+    /**
+     * Get the value of a user property
+     *
+     * @param $name
+     *
+     * @return mixed|null
+     */
+    public function __get($name)
+    {
+        if (isset($this->_data[$name])) {
+            return $this->_data[$name];
+        } else {
+            if ($this->_updates->$name) {
+                return $this->_updates->$name;
+            }
+        }
+
+        $trace = debug_backtrace();
+        trigger_error(
+            'Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'],
+            E_USER_NOTICE
+        );
+
+        return null;
+    }
+
+    /**
+     * Queues any updates to user properties
+     *
+     * @param $name
+     * @param $value
+     */
+    public function __set($name, $value)
+    {
+        $this->_updates->$name = $value;
+    }
+
+    /**
+     * Get all the user fields as an array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->_data;
     }
 
     /**
@@ -149,11 +211,11 @@ class UserBase
             $this->_updates->$field = trim($val);
 
             // Check if a validation rule exists for the field
-            if ( $validation = $this->_validations->$field) {
+            if ($validation = $this->_validations->$field) {
                 $this->validate($field, $validation->limit, $validation->regEx);
             }
         }
-        return ! $this->log->hasError();
+        return !$this->log->hasError();
     }
 
     /**
@@ -217,50 +279,5 @@ class UserBase
          */
         $this->log->report("The $name is Valid");
         return true;
-    }
-
-    /**
-     * Get the value of a user property
-     * @param $name
-     *
-     * @return mixed
-     */
-    public function getProperty($name)
-    {
-       return $this->__get($name);
-    }
-
-    /**
-     * Get all the user fields as an array
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->_data;
-    }
-
-    public function __set($name, $value)
-    {
-        $this->_updates->$name = $value;
-    }
-
-    public function __get($name)
-    {
-        if (isset($this->_data[$name])) {
-            return $this->_data[$name];
-        } else {
-            if ($this->_updates->$name) {
-                return $this->_updates->$name;
-            }
-        }
-
-        $trace = debug_backtrace();
-        trigger_error(
-            'Undefined property via __get(): ' . $name .
-            ' in ' . $trace[0]['file'] .
-            ' on line ' . $trace[0]['line'],
-            E_USER_NOTICE);
-
-        return null;
     }
 }

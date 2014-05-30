@@ -7,6 +7,7 @@ namespace ptejada\uFlex;
  * Note: Either start() or login() must be called at least once on your code per User instance
  *
  * @package ptejada\uFlex
+ * @author  Pablo Tejada <pablo@ptejada.com>
  */
 class User extends UserBase
 {
@@ -16,7 +17,10 @@ class User extends UserBase
      * @var int
      */
     const VERSION = '1.0.0-RC1';
-
+    /** @var DB_Table - The database table object */
+    public $table;
+    /** @var  Session - The namespace session object */
+    public $session;
     /**
      * Holds a unique clone number of the instance clones
      *
@@ -24,19 +28,10 @@ class User extends UserBase
      * @ignore
      */
     protected $clone = 0;
-
     /** @var DB - The database connection */
     protected $db;
-
-    /** @var DB_Table - The database table object */
-    public $table;
-
     /** @var  Cookie - The cookie for autologin */
     protected $cookie;
-
-    /** @var  Session - The namespace session object */
-    public $session;
-
     /**
      * @var array Array of errors text. Could use overwritten for multilingual support
      */
@@ -225,15 +220,110 @@ class User extends UserBase
     }
 
     /**
+     * Starts and Configures the object
+     */
+    public function start($login = true)
+    {
+        if (!($this->db instanceof DB)) {
+            // Updating the predefine error logs
+            $this->log->addPredefinedError($this->errorList);
+
+            // Instantiate the Database object
+            if ($this->config->database->dsn) {
+                $this->db = new DB($this->config->database->dsn);
+            } else {
+                $this->db = new DB($this->config->database->host, $this->config->database->name);
+            }
+
+            // Configure the database object
+            $this->db->setUser($this->config->database->user);
+            $this->db->setPassword($this->config->database->password);
+
+            // Link logs
+            $this->db->log = $this->log;
+
+            //Instantiate the table DB object
+            $this->table = $this->db->getTable($this->config->userTableName);
+
+            // Instantiate and configure the cookie object
+            $this->cookie = new Cookie($this->config->cookieName);
+            $this->cookie->setHost($this->config->cookieHost);
+            $this->cookie->setPath($this->config->cookiePath);
+            $this->cookie->setLifetime($this->config->cookieTime);
+
+            // Instantiate the session
+            $this->session = new Session($this->config->userSession, $this->log);
+
+        }
+
+        // Link the session with the user data
+        if (is_null($this->session->data)) {
+            $this->session->data = $this->config->userDefaultData->toArray();
+        }
+        $this->_data =& $this->session->data->toArray();
+
+        if ($login) {
+            $this->login();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Logs user last login in database
+     *
+     * @ignore
+     */
+    protected function logLogin()
+    {
+        //Update last_login
+        $time = time();
+        $sql = "UPDATE _table_ SET LastLogin=:stamp WHERE ID=:id";
+        if ($this->table->runQuery($sql, array('stamp' => $time, 'id' => $this->ID))) {
+            $this->log->report('Last Login updated');
+        }
+    }
+
+    /**
+     * Logout the user
+     * Logs out the current user and deletes any autologin cookies
+     *
+     * @return void
+     */
+    function logout()
+    {
+        if (!$this->cookie->destroy()) {
+            $this->log->report('The Autologin cookie could not be deleted');
+        }
+
+        // Destroy the session
+        $this->session->destroy();
+
+        //Import default user object
+        $this->_data = $this->config->userDefaultData->toArray();
+
+        $this->log->report('User Logged out');
+    }
+
+    /**
+     * Check if a user currently signed-in
+     *
+     * @return bool
+     */
+    public function isSigned()
+    {
+        return (bool) $this->session->signed;
+    }
+
+    /**
      * Register A New User
      * Takes two parameters, the first being required
      *
      * @access public
      * @api
      *
-     * @param array $info       An associative array,
-     *                          the index being the field name(column in database)
-     *                          and the value its content(value)
+     * @param array $info       An associative array, the index being the field name(column in database)and the value
+     *                          its content(value)
      * @param bool  $activation Default is false, if true the user will need required further steps to activate account
      *                          Otherwise the account will be activated if registration succeeds
      *
@@ -485,15 +575,13 @@ class User extends UserBase
      * @api
      *
      * @param string $hash    hash returned by the pass_reset() method
-     * @param array  $newPass An array with indexes 'password' and 'password2'
-     *                        Example:
+     * @param array  $newPass An array with indexes 'password' and 'password2' Example:
      *                        array(
-     *                        [password] => pass123
-     *                        [password2] => pass123
+     *                          [password] => pass123
+     *                          [password2] => pass123
      *                        )
      *
-     * @return bool Returns true on a successful password change.
-     *                Returns false on error
+     * @return bool Returns true on a successful password change. Returns false on error
      */
     public function newPassword($hash, $newPass)
     {
@@ -531,56 +619,6 @@ class User extends UserBase
     }
 
     /**
-     * Starts and Configures the object
-     */
-    public function start($login = true)
-    {
-        if (!($this->db instanceof DB)) {
-            // Updating the predefine error logs
-            $this->log->addPredefinedError($this->errorList);
-
-            // Instantiate the Database object
-            if ($this->config->database->dsn) {
-                $this->db = new DB($this->config->database->dsn);
-            } else {
-                $this->db = new DB($this->config->database->host, $this->config->database->name);
-            }
-
-            // Configure the database object
-            $this->db->setUser($this->config->database->user);
-            $this->db->setPassword($this->config->database->password);
-
-            // Link logs
-            $this->db->log = $this->log;
-
-            //Instantiate the table DB object
-            $this->table = $this->db->getTable($this->config->userTableName);
-
-            // Instantiate and configure the cookie object
-            $this->cookie = new Cookie($this->config->cookieName);
-            $this->cookie->setHost($this->config->cookieHost);
-            $this->cookie->setPath($this->config->cookiePath);
-            $this->cookie->setLifetime($this->config->cookieTime);
-
-            // Instantiate the session
-            $this->session = new Session($this->config->userSession, $this->log);
-
-        }
-
-        // Link the session with the user data
-        if (is_null($this->session->data)) {
-            $this->session->data = $this->config->userDefaultData->toArray();
-        }
-        $this->_data =& $this->session->data->toArray();
-
-        if ($login) {
-            $this->login();
-        }
-
-        return $this;
-    }
-
-    /**
      * User factory
      * Returns a clone of the User instance which allows simple user managing
      * capabilities such as updating a user field, resetting its password and so on.
@@ -611,48 +649,12 @@ class User extends UserBase
     }
 
     /**
-     * Logout the user
-     * Logs out the current user and deletes any autologin cookies
-     *
-     * @return void
+     * Destroys the session if the instance is a clone
      */
-    function logout()
+    public function __destruct()
     {
-        if (!$this->cookie->destroy()) {
-            $this->log->report('The Autologin cookie could not be deleted');
-        }
-
-        // Destroy the session
-        $this->session->destroy();
-
-        //Import default user object
-        $this->_data = $this->config->userDefaultData->toArray();
-
-        $this->log->report('User Logged out');
-    }
-
-    /**
-     * Check if a user currently signed-in
-     *
-     * @return bool
-     */
-    public function isSigned()
-    {
-        return (bool) $this->session->signed;
-    }
-
-    /**
-     * Logs user last login in database
-     *
-     * @ignore
-     */
-    protected function logLogin()
-    {
-        //Update last_login
-        $time = time();
-        $sql = "UPDATE _table_ SET LastLogin=:stamp WHERE ID=:id";
-        if ($this->table->runQuery($sql, array('stamp' => $time, 'id' => $this->ID))) {
-            $this->log->report('Last Login updated');
+        if ($this->clone > 0) {
+            $this->session->destroy();
         }
     }
 
@@ -681,12 +683,5 @@ class User extends UserBase
         $this->session->data = $this->config->userDefaultData->toArray();
         //Link the new session namespace to the internal data array
         $this->_data =& $this->session->data->toArray();
-    }
-
-    public function __destruct()
-    {
-        if ($this->clone > 0) {
-            $this->session->destroy();
-        }
     }
 }

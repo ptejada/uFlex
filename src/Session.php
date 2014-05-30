@@ -9,12 +9,14 @@ namespace ptejada\uFlex;
  * which is refer as a namespace
  *
  * @package ptejada\uFlex
+ * @author Pablo Tejada <pablo@ptejada.com>
  */
 class Session extends LinkedCollection
 {
     /** @var  Log - Log errors and report */
     public $log;
 
+    /** @var null|string */
     protected $namespace;
 
     /**
@@ -23,9 +25,9 @@ class Session extends LinkedCollection
      * @param string $namespace - Session namespace to manage
      * @param   Log  $log
      */
-    public function __construct($namespace = null, Log $log=null)
+    public function __construct($namespace = null, Log $log = null)
     {
-        $this->log = $log instanceof Log ? $log :  new Log('Session');
+        $this->log = $log instanceof Log ? $log : new Log('Session');
         $this->namespace = $namespace;
 
         // Starts the session if it has not been started yet
