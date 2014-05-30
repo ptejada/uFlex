@@ -17,7 +17,7 @@ class Log
     /** @var string - Stores the current selected channel */
     protected $currentChannel = '_main';
 
-    /** @var array */
+    /** @var array The console to store all logs */
     protected $console = array(
         'errors'  => array(),
         'reports' => array(),

@@ -26,6 +26,8 @@ class DB
     private $connection;
 
     /**
+     * Initializes the Database object
+     *
      * @param string $hostOrDSN - The domain/IP of the DB or the PDO DSN string
      * @param string $dbName    - The name of the database
      */
@@ -56,6 +58,8 @@ class DB
     }
 
     /**
+     * Set the database username
+     *
      * @param string $user
      */
     public function setUser($user)
@@ -64,6 +68,8 @@ class DB
     }
 
     /**
+     * Set the database user password
+     *
      * @param string $password
      */
     public function setPassword($password)
@@ -72,6 +78,7 @@ class DB
     }
 
     /**
+     * Set the name of the Database to connect to
      * @param string $dbName
      */
     public function setDbName($dbName)

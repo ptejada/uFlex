@@ -16,7 +16,7 @@ class Session extends LinkedCollection
     /** @var  Log - Log errors and report */
     public $log;
 
-    /** @var null|string */
+    /** @var null|string Session index to manage */
     protected $namespace;
 
     /**

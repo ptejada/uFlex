@@ -17,6 +17,12 @@ class DB_Table
     /** @var DB - The DB connection session */
     private $db;
 
+    /**
+     * Initializes a database table object
+     *
+     * @param DB     $db
+     * @param string $table
+     */
     public function __construct(DB $db, $table)
     {
         $this->db = $db;

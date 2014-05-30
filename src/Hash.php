@@ -28,6 +28,9 @@ class Hash
         // @formatter:on
     );
 
+    /**
+     * Initializes the hash object
+     */
     public function __construct()
     {
         $this->log = new Log();

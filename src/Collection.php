@@ -10,9 +10,13 @@ namespace ptejada\uFlex;
  */
 class Collection
 {
-    /** @var array */
+    /** @var array The underlying original array */
     protected $_data;
 
+    /**
+     * Copies an arrays to handle it as an object
+     * @param array $info
+     */
     public function __construct(array $info = array())
     {
         $this->_data = $info;
