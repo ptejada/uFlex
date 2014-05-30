@@ -221,6 +221,10 @@ class User extends UserBase
 
     /**
      * Starts and Configures the object
+     *
+     * @param bool $login Flag whether to attempt to login or not
+     *
+     * @return $this
      */
     public function start($login = true)
     {
