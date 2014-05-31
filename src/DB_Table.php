@@ -61,7 +61,7 @@ class DB_Table
      *
      * @param array $arguments -  field and value pair set to look up user for
      *
-     * @return bool|\StdClass
+     * @return bool|Collection
      */
     public function getRow($arguments)
     {
@@ -96,7 +96,7 @@ class DB_Table
                 $this->log->report("SQL Statement: {$query}");
 
                 // When fetched return an object
-                $stmt->setFetchMode(\PDO::FETCH_OBJ);
+                $stmt->setFetchMode(\PDO::FETCH_INTO, new Collection());
 
                 // If arguments were passed execute the statement
                 if ($args) {

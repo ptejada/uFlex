@@ -191,6 +191,26 @@ class UserBase
     }
 
     /**
+     * Check if the data is a Collection if an array convert it to a Collection
+     *
+     * @param $data
+     *
+     * @return Collection
+     */
+    protected function toCollection($data)
+    {
+        if (is_array($data)) {
+            return new Collection($data);
+        } else {
+            if (!($data instanceof Collection)) {
+                // Invalid input type, return empty collection
+                $data = new Collection();
+            }
+        }
+        return $data;
+    }
+
+    /**
      * Validates All fields in _updates queue
      */
     protected function validateAll()

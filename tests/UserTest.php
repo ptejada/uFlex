@@ -9,6 +9,7 @@
 namespace tests;
 
 
+use ptejada\uFlex\Collection;
 use ptejada\uFlex\User;
 
 class UserTest extends \PHPUnit_Framework_TestCase {
@@ -159,6 +160,27 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($this->user->Email);
     }
 
+    public function testRegisterNewAccountWithCollection()
+    {
+        $userInfo = new Collection($this->getUserInfo());
+
+        // backup the clear text password
+        $password = $userInfo->Password;
+
+        $success = $this->user->register($userInfo);
+
+        $this->assertEquals($success, !$this->user->log->hasError());
+        $this->assertTrue($success);
+
+        $this->assertFalse($this->user->isSigned());
+        $this->user->login($userInfo->Username, $password);
+        $this->assertTrue($this->user->isSigned());
+
+        $this->assertNotEmpty($this->user->Username);
+        $this->assertNotEmpty($this->user->Password);
+        $this->assertNotEmpty($this->user->Email);
+    }
+
     public function testUserUpdate()
     {
         $this->user->login('pablo', 1234);
@@ -168,6 +190,40 @@ class UserTest extends \PHPUnit_Framework_TestCase {
 
         $newEmail = 'jose@live.com';
         $this->user->update(array('Email'=>$newEmail));
+
+        $this->assertTrue($this->user->session->update);
+        $this->assertEquals($newEmail, $this->user->Email);
+        $this->assertNotEmpty($this->user->Username);
+    }
+
+    public function testUserUpdateWithCollection()
+    {
+        $this->user->login('pablo', 1234);
+
+        $this->assertFalse($this->user->log->hasError());
+        $this->assertEmpty($this->user->session->update);
+
+        $updates = new Collection();
+        $updates->Email = 'jose_c@live.com';
+        $this->user->update($updates);
+
+        $this->assertTrue($this->user->session->update);
+        $this->assertEquals($updates->Email, $this->user->Email);
+        $this->assertNotEmpty($this->user->Username);
+    }
+
+    public function testUserUpdateWithProperties()
+    {
+        $this->user->login('pablo', 1234);
+
+        $this->assertFalse($this->user->log->hasError());
+        $this->assertEmpty($this->user->session->update);
+
+        $newEmail = 'jose_p@live.com';
+        $this->user->Email = $newEmail;
+
+        $this->assertNotEquals($newEmail, $this->user->Email);
+        $this->user->update();
 
         $this->assertTrue($this->user->session->update);
         $this->assertEquals($newEmail, $this->user->Email);

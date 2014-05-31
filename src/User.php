@@ -16,7 +16,7 @@ class User extends UserBase
      *
      * @var int
      */
-    const VERSION = '1.0.0-RC1';
+    const VERSION = '1.0.0-RC2';
     /** @var DB_Table - The database table object */
     public $table;
     /** @var  Session - The namespace session object */
@@ -86,9 +86,9 @@ class User extends UserBase
                 $this->log->report('Updating Session from database');
 
                 //Get User From database because its info has change during current session
-                $update = (array) $this->table->getRow(array('ID' => $this->ID, 'Activated' => 1));
+                $update = $this->table->getRow(array('ID' => $this->ID, 'Activated' => 1));
                 if ($update) {
-                    $this->session->data->update($update);
+                    $this->session->data->update($update->toArray());
 
                     //Update last_login
                     $this->logLogin();
@@ -141,7 +141,6 @@ class User extends UserBase
 
         //Query Database for user
         $userFile = $this->table->getRow(Array($getBy => $identifier));
-        $userFileArray = (array) $userFile;
 
         if ($userFile && !$this->isSigned()) {
             if (isset($partial)) {
@@ -149,7 +148,7 @@ class User extends UserBase
                 $this->session->signed = strpos($userFile->Password, $partial) >= 0;
             } else {
                 // Fully match the user password to authenticate
-                $this->_updates = new Collection($userFileArray);
+                $this->_updates = $userFile;
                 if (strlen($userFile->Password) === 40) {
                     /*
                      * Try new password algorithm
@@ -168,6 +167,9 @@ class User extends UserBase
                             true
                         ) === $userFile->Password;
                 }
+
+                // Clear the updates stack
+                $this->_updates = new Collection();
             }
         } else {
             if (!$this->isSigned() && $password) {
@@ -194,7 +196,7 @@ class User extends UserBase
                 return false;
             }
 
-            $this->session->data->update($userFileArray);
+            $this->session->data->update($userFile->toArray());
 
             //If auto Remember User
             if ($autoLogin) {
@@ -326,16 +328,16 @@ class User extends UserBase
      * @access public
      * @api
      *
-     * @param array $info       An associative array, the index being the field name(column in database)and the value
-     *                          its content(value)
-     * @param bool  $activation Default is false, if true the user will need required further steps to activate account
-     *                          Otherwise the account will be activated if registration succeeds
+     * @param array|Collection $info       An associative array, the index being the field name(column in database)and the value
+     *                                     its content(value)
+     * @param bool             $activation Default is false, if true the user will need required further steps to activate account
+     *                                     Otherwise the account will be activated if registration succeeds
      *
-     * @return array|bool Returns activation hash if second parameter $activation is true
+     * @return string|bool Returns activation hash if second parameter $activation is true
      *                        Returns true if second parameter $activation is false
      *                        Returns false on Error
      */
-    public function register(array $info, $activation = false)
+    public function register($info, $activation = false)
     {
         $this->log->channel('registration'); //Index for Errors and Reports
 
@@ -351,7 +353,7 @@ class User extends UserBase
         }
 
         //Saves Registration Data in Class
-        $this->_updates = $info = new Collection($info);
+        $this->_updates = $info = $this->toCollection($info);
 
         //Validate All Fields
         if (!$this->validateAll()) {
@@ -440,19 +442,19 @@ class User extends UserBase
      *
      * @api
      *
-     * @param array $updates An associative array,
-     *                       the index being the field name(column in database)
-     *                       and the value its content(value)
+     * @param array|Collection $updates An associative array,
+     *                                  the index being the field name(column in database)
+     *                                  and the value its content(value)
      *
      * @return bool Returns true on success anf false on error
      */
-    public function update(array $updates = null)
+    public function update($updates = null)
     {
         $this->log->channel('update');
 
         if (!is_null($updates)) {
             //Saves Updates Data in Class
-            $this->_updates = $updates = new Collection($updates);
+            $this->_updates = $updates = $this->toCollection($updates);
         } else {
             if ($this->_updates instanceof Collection && !$this->_updates->isEmpty()) {
                 // Use the updates from the queue
@@ -520,6 +522,9 @@ class User extends UserBase
             // Update the current object with the updated information
             $this->_data = array_merge($this->_data, $updates->toArray());
 
+            // Clear the updates stack
+            $this->_updates = new Collection();
+
             return true;
         } else {
             $this->log->error(2);
@@ -578,12 +583,12 @@ class User extends UserBase
      * @access public
      * @api
      *
-     * @param string $hash    hash returned by the pass_reset() method
-     * @param array  $newPass An array with indexes 'password' and 'password2' Example:
-     *                        array(
+     * @param string $hash      hash returned by the pass_reset() method
+     * @param array  $newPass   An array with indexes 'password' and 'password2' Example:
+     *                          array(
      *                          [password] => pass123
      *                          [password2] => pass123
-     *                        )
+     *                          )
      *
      * @return bool Returns true on a successful password change. Returns false on error
      */
@@ -599,7 +604,7 @@ class User extends UserBase
                 return false;
             } //There are validations error
 
-            $this->_updates = new Collection((array) $user);
+            $this->_updates = $user;
 
             // Generate the password hash
             $pass = $this->hash->generateUserPassword($this, $newPass['Password']);
@@ -642,7 +647,7 @@ class User extends UserBase
             $user->log->report('Fetching user from database');
             $data = $user->table->getRow(array('ID' => $id));
             if ($data) {
-                $user->_data = (array) $data;
+                $user->_data = $data->toArray();
 
                 $user->log->report('User imported to object');
                 return $user;

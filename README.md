@@ -46,7 +46,7 @@ If using composer then the just include the `vendor/autoload.php` in your applic
 been included.
 
 Overall version 1.0 takes a more object oriented approach and follows conventions more closely.
-For more information check out the [[API Changes]]
+For more information check out the [API Changes]
 
 Configuring
 ====================================
@@ -175,4 +175,4 @@ the `User` class and add your methods or modifications without having to modify 
 ```
 
 
-[API Changes]: https://github.com/ptejada/iD/blob/master/app/iD/models/Auth.php
+[API Changes]: http://ptejada.com/projects/uFlex/documentation_api_changes

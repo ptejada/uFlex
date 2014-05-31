@@ -54,7 +54,7 @@ class DBTableTest extends \PHPUnit_Framework_TestCase {
         // Get a record
         $user = $table->getRow(array('ID'=>1));
 
-        $this->assertInstanceOf('StdClass', $user, 'Retrieve a record from the table');
+        $this->assertInstanceOf('ptejada\uFlex\Collection', $user, 'Retrieve a record from the table');
 
         // Both console log should be equal
         $this->assertEquals($db->log->getFullConsole(), $table->log->getFullConsole());
