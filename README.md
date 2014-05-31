@@ -39,6 +39,9 @@ For more information:
 Upgrading from previous version...
 ====================================
 
+Before updating you will need to run a SQL upgrade script. Make sure you backup your database before running
+the upgrade script. Refer to the DB directory <https://github.com/ptejada/uFlex/tree/master/db>
+
 If not using Composer instead of including a PHP class you will include the `autoload.php` script in
 your application which will auto include the library classes as required.
 
