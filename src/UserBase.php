@@ -221,9 +221,9 @@ class UserBase
             if (!is_null($this->_updates->$field2)) {
                 // Compared the two double fields
                 if ($val != $this->_updates->$field2) {
-                    $this->log->formError($field, ucfirst($field) . "s did not match");
+                    $this->log->formError($field, ucfirst($field) . 's did not match');
                 } else {
-                    $this->log->report(ucfirst($field) . "s matched");
+                    $this->log->report(ucfirst($field) . 's matched');
                 }
             }
 
@@ -262,7 +262,7 @@ class UserBase
 
         if (!$value) {
             if (is_null($value)) {
-                $this->log->report("missing index $name from the POST array");
+                $this->log->report("Missing index $name from the input");
             }
             if (strlen($value) == $min) {
                 $this->log->report("$Name is blank and optional - skipped");

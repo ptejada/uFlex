@@ -53,6 +53,15 @@ class Collection
     }
 
     /**
+     * Reduces the collection to only include allowed fields
+     * Every argument passed to this function is considered a field
+     */
+    public function filter()
+    {
+        $this->_data = array_intersect_key($this->toArray(), array_flip(func_get_args()));
+    }
+
+    /**
      * Get a value of an entry in the collection
      * Useful to get deep array elements without manually dealing with errors
      * During the process

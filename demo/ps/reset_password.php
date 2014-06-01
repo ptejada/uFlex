@@ -19,7 +19,7 @@
 			//You would send an email to $res['Email'] with the URL+HASH $res['hash'] to enter the new Password
 			//In this demo we will just redirect the user directly
 			
-			$url = "account/update/password?c=" . $res->Confirmation;
+			$url = 'account/update/password?c=' . $res->Confirmation;
 			$confirmMessage = "Use the link below to change your password <a href='{$url}'>Change Password</a>";
 
 		}else{

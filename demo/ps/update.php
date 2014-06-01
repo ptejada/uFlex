@@ -1,8 +1,8 @@
 <?php
-	include("../core/config.php");
-	include("../core/validations.php");
+	include('../core/config.php');
+	include('../core/validations.php');
 	
-	//Proccess Update
+	//Process Update
 	if(count($_POST)){
         /*
         * Covert POST into a Collection object
@@ -44,7 +44,7 @@
 
 		echo json_encode(array(
 			'error'    => $user->log->getErrors(),
-			'confirm'  => "Account Updated!",
+			'confirm'  => 'Account Updated!',
 			'form'    => $user->log->getFormErrors(),
 		));
 	}

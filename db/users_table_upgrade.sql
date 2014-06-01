@@ -4,7 +4,7 @@
 --  Note: if your users table was other than `users` update the line below --
 RENAME TABLE `users` TO `Users`;
 -- --
-ALTER IGNORE TABLE `Users` CHANGE `user_id` `ID` int( 7 ) unsigned NOT NULL;
+ALTER IGNORE TABLE `Users` CHANGE `user_id` `ID` int( 7 ) unsigned NOT NULL AUTO_INCREMENT;
 ALTER IGNORE TABLE `Users` CHANGE `username` `Username` varchar ( 15 ) NOT NULL;
 ALTER IGNORE TABLE `Users` CHANGE `password` `Password` char ( 40 ) NOT NULL;
 ALTER IGNORE TABLE `Users` CHANGE `email` `Email` varchar ( 100 ) NOT NULL;

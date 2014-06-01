@@ -150,5 +150,26 @@ class CollectionTest extends \PHPUnit_Framework_TestCase {
         $list->set('two.three.four.five', array(1,1,1,1,1));
         $this->assertEquals(array(1,1,1,1,1), $list->two->three->four->five->toArray());
     }
+
+    public function testFilter()
+    {
+        $list = new Collection(array(
+            'one' => 1,
+            'two' => 2,
+            'three' => 3,
+            'four' => 4,
+        ));
+
+        $this->assertNotNull($list->one);
+        $this->assertNotNull($list->four);
+
+        $list->filter('two', 'three');
+
+        $this->assertNull($list->one);
+        $this->assertNull($list->four);
+
+        $this->assertNotNull($list->two);
+        $this->assertNotNull($list->three);
+    }
 }
  

@@ -59,6 +59,8 @@ class User extends UserBase
         13 => 'Failed to save confirmation request',
         14 => 'You need to reset your password to login',
         15 => 'Can not register a new user, as user is already logged in.',
+        16 => 'This Email is already in use',
+        17 => 'This Username is not available',
     );
 
     /**
@@ -374,14 +376,14 @@ class User extends UserBase
 
         //Check for Email in database
         if ($info->Email) {
-            if ($this->table->isUnique('Email', $info->Email, 'This Email is Already in Use')) {
+            if ($this->table->isUnique('Email', $info->Email, 16)) {
                 return false;
             }
         }
 
         //Check for Username in database
         if ($info->Username) {
-            if ($this->table->isUnique('Username', $info->Username, 'This Username is not available')) {
+            if ($this->table->isUnique('Username', $info->Username, 17)) {
                 return false;
             }
         }

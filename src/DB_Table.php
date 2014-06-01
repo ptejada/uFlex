@@ -48,7 +48,7 @@ class DB_Table
 
         if ($row) {
             $this->log->report("There was a match for $field = $val");
-            $this->log->formError($field, $customError | "The {$field} {$val} exists in database");
+            $this->log->formError($field, $customError ? $customError : "The {$field} {$val} exists in database");
             return true;
         } else {
             $this->log->report("No Match for $field = $val");

@@ -1,6 +1,6 @@
 <?php
-include("../core/config.php");
-include("../core/validations.php");
+include('../core/config.php');
+include('../core/validations.php');
 
 //Process Registration
 if (count($_POST)) {
@@ -10,24 +10,22 @@ if (count($_POST)) {
      */
     $input = new \ptejada\uFlex\Collection($_POST);
 
-    //Register User
-    $user->register(
-        array(
-            'Username'   => (string) $input->Username,
-            'first_name' => (string) $input->first_name,
-            'last_name'  => (string) $input->last_name,
-            'Email'      => (string) $input->Email,
-            'Password'   => (string) $input->Password,
-            'Password2'  => (string) $input->Password2,
-            'website'    => (string) $input->website,
-            'GroupID'   => (string) $input->GroupID,
-        )
-    );
+    /*
+     * If the form fields names match your DB columns then you can reduce the collection
+     * to only those expected fields using the filter() function
+     */
+    $input->filter('Username', 'first_name', 'last_name', 'Email', 'Password', 'Password2', 'website', 'GroupID');
+
+    /*
+     * Register the user
+     * The register method takes either an array or a Collection
+     */
+    $user->register($input);
 
     echo json_encode(
         array(
             'error'   => $user->log->getErrors(),
-            'confirm' => "User Registered Successfully. You may login now!",
+            'confirm' => 'User Registered Successfully. You may login now!',
             'form'    => $user->log->getFormErrors(),
         )
     );

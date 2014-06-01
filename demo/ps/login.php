@@ -1,6 +1,6 @@
 <?php
 
-include("../core/config.php");
+include('../core/config.php');
 
 //Process Login
 if(count($_POST)){

@@ -1,5 +1,5 @@
 <?php
-include("../core/config.php");
+include('../core/config.php');
 
 //Process Password change
 if (count($_POST)) {
@@ -29,13 +29,13 @@ if (count($_POST)) {
                 'Password2' => $input->Password2,
             )
         );
-        $redirectPage = "account";
+        $redirectPage = 'account';
     }
 
     echo json_encode(
         array(
             'error'   => $user->log->getAllReports(),
-            'confirm' => "Password Changed",
+            'confirm' => 'Password Changed',
             'form'    => $user->log->getFormErrors(),
         )
     );
