@@ -1,4 +1,4 @@
-uFlex 1.0
+uFlex 1.0.0
 =========================
 
 A simple all-in-one PHP user Authentication library.
