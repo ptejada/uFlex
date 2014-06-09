@@ -195,6 +195,8 @@ class User extends UserBase
                         $this->log->error(14);
                     }
                 }
+                // Remove the signed flag
+                $this->session->signed = 0;
                 return false;
             }
 
@@ -394,10 +396,7 @@ class User extends UserBase
         }
 
         //User Activation
-        if ($activation) {
-            //Add Validation Hash
-            $info->Confirmation = $this->hash->generate();
-        } else {
+        if (!$activation) {
             //Activates user upon registration
             $info->Activated = 1;
         }
@@ -424,8 +423,13 @@ class User extends UserBase
         //Enter New user to Database
         if ($this->table->runQuery($sql, $data)) {
             $this->log->report('New User has been registered');
-            $info->ID = $this->table->getLastInsertedID();
+            // Update the new ID internally
+            $this->_data['ID'] = $info->ID = $this->table->getLastInsertedID();
             if ($activation) {
+                // Generate a user specific hash
+                $info->Confirmation = $this->hash->generate($info->ID);
+                // Update the newly created user with the confirmation hash
+                $this->update(array('Confirmation' => $info->Confirmation));
                 // Return the confirmation hash
                 return $info->Confirmation;
             } else {
@@ -630,6 +634,65 @@ class User extends UserBase
     }
 
     /**
+     * Destroys the session if the instance is a clone
+     */
+    public function __destruct()
+    {
+        if ($this->clone > 0) {
+            $this->session->destroy();
+        }
+    }
+
+    /**
+     * Activates Account with a hash
+     * Takes Only and Only the URL parameter of a confirmation page
+     * which would be the hash returned by the register() method
+     *
+     * @access public
+     * @api
+     *
+     * @param string $hash Hash returned in the register method
+     *
+     * @return bool Returns true account activation and false on failure
+     */
+    public function activate($hash)
+    {
+        $this->log->channel('activation');
+
+        $info = $this->hash->examine($hash);
+
+        if ($info && is_array($info)) {
+            list($uid, $partial) = $info;
+
+            $user = $this->manageUser($uid);
+
+            if ($user) {
+                if ($user->Confirmation === $hash) {
+
+                    $user->Activated = 1;
+                    $user->Confirmation = '';
+
+                    // Updates the flag on the database
+                    if ($user->update()) {
+                        $this->log->report('Account has been Activated');
+                        return true;
+                    }
+                } else {
+                    $this->log->report('The activation hash does not match the DB record');
+                }
+            } else {
+                $this->log->report("Unable to find user with ID $uid to activate");
+            }
+        }
+
+        /*
+         * Execution will end up here if something goes wrong
+         */
+        $this->log->error(3);
+        return false;
+    }
+
+    /**
      * User factory
      * Returns a clone of the User instance which allows simple user managing
      * capabilities such as updating a user field, resetting its password and so on.
@@ -657,16 +720,6 @@ class User extends UserBase
         }
 
         return false;
-    }
-
-    /**
-     * Destroys the session if the instance is a clone
-     */
-    public function __destruct()
-    {
-        if ($this->clone > 0) {
-            $this->session->destroy();
-        }
     }
 
     /**
