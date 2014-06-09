@@ -93,7 +93,7 @@ file to provide a pre-configured User instance to any PHP script in your project
 
 Alternatively you could create your own class which configures and start the the `User` object for you. Ex:
 
-```
+```php
 <?php
     
     class MyUser extends ptejada\uFlex\User {
