@@ -31,15 +31,14 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         // Creates the table
         $this->user->table->runQuery("
             CREATE TABLE IF NOT EXISTS _table_ (
-              `ID` int(7),
+              `ID` INTEGER PRIMARY KEY AUTOINCREMENT,
               `Username` varchar(15) NOT NULL,
               `Password` char(40) ,
               `Email` varchar(35) ,
               `Activated` tinyint(1) NOT NULL DEFAULT '0',
               `Confirmation` char(40),
               `RegDate` int(11) ,
-              `LastLogin` int(11) NOT NULL DEFAULT '0',
-              PRIMARY KEY (`ID`)
+              `LastLogin` int(11) NOT NULL DEFAULT '0'
             )
         ");
 
@@ -181,6 +180,41 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($this->user->Email);
     }
 
+    public function testActivate()
+    {
+        $userInfo = new Collection($this->getUserInfo());
+
+        // backup the clear text password
+        $password = $userInfo->Password;
+
+        $activationHash = $this->user->register($userInfo, true);
+
+        $this->assertInternalType('string',$activationHash);
+        $this->assertEquals(40, strlen($activationHash));
+
+        $this->assertFalse($this->user->log->hasError());
+
+        /*
+         * Try to login, but the account should be deactivated
+         */
+        $this->user->login($userInfo->Username, $password);
+        $this->assertFalse($this->user->isSigned());
+        $this->assertTrue($this->user->log->hasError());
+
+        /*
+         * Activate the account
+         */
+        $success = $this->user->activate($activationHash);
+        $this->assertTrue($success);
+
+        /*
+         * Try to login, should be success now that the account is activated
+         */
+        $this->user->login($userInfo->Username, $password);
+        $this->assertTrue($this->user->isSigned());
+        $this->assertFalse($this->user->log->hasError());
+    }
+
     public function testUserUpdate()
     {
         $this->user->login('pablo', 1234);
@@ -297,13 +331,15 @@ class UserTest extends \PHPUnit_Framework_TestCase {
 
     public function testManageUser()
     {
-        $this->user->register($this->getUserInfo(5));
+        $this->user->register($this->getUserInfo());
+        // Save user ID
+        $UID = $this->user->ID;
 
         $this->user->login('pablo', 1234);
         $this->assertFalse($this->user->log->hasError());
         $this->assertTrue($this->user->isSigned());
 
-        $user = $this->user->manageUser(5);
+        $user = $this->user->manageUser($UID);
         $this->assertInstanceOf('\ptejada\uFlex\User', $user);
 
         $this->assertNotEquals('jose', $user->Username);
@@ -312,7 +348,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('jose', $user->Username);
 
         // Reload the user from the DB to confirm update
-        $user = $this->user->manageUser(5);
+        $user = $this->user->manageUser($UID);
         $this->assertEquals('jose', $user->Username);
 
         // confirm the main user was not affected
@@ -321,11 +357,12 @@ class UserTest extends \PHPUnit_Framework_TestCase {
 
     protected function getUserInfo($id=0)
     {
+        $id = $id ? $id : rand();
         return array(
-            'ID' => $id ? $id : rand(),
-            'Username' => 'user' . rand(),
+            //'ID' => $id,
+            'Username' => 'user' . $id,
             'Password' => substr(md5(rand()), 0, 7),
-            'Email'   => substr(md5(rand()), 0, 5) . '@' . substr(md5(rand()), 0, 8) . '.com',
+            'Email'   =>  'email' . $id . '@live.com',
         );
     }
 
