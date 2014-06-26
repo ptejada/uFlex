@@ -22,7 +22,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase {
     {
         // Manage the whole session
         $session = new Session();
-        $this->assertEquals(array(), $session->toArray());
+        $this->assertEquals(array('_ip'=>null), $session->toArray());
         $this->assertFalse($session->log->hasError());
 
         //Manage namespace on the SESSION

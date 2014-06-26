@@ -20,7 +20,7 @@ class Hash
      * @access protected
      * @ignore
      */
-    protected $encoder = array(
+    static protected $encoder = array(
         // @formatter:off
         'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
         'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
@@ -65,9 +65,9 @@ class Hash
      *
      * @return string encoded integer string
      */
-    protected function encode($number)
+    static protected function encode($number)
     {
-        $k = $this->encoder;
+        $k = self::$encoder;
         preg_match_all("/[1-9][0-9]|[0-9]/", $number, $a);
         $n = '';
         $o = count($k);
@@ -89,10 +89,10 @@ class Hash
      *
      * @return string
      */
-    public function generate($uid = 0, $hash = false)
+    static public function generate($uid = 0, $hash = false)
     {
         if ($uid) {
-            $e_uid = $this->encode($uid);
+            $e_uid = self::encode($uid);
             $e_uid_length = strlen($e_uid);
             $e_uid_length = str_pad($e_uid_length, 2, 0, STR_PAD_LEFT);
             $e_uid_pos = rand(10, 32 - $e_uid_length - 1);
@@ -119,23 +119,28 @@ class Hash
      *
      * @return array
      */
-    function examine($hash)
+    static public function examine($hash)
     {
-        if (strlen($hash) != 40 || !preg_match("/^[0-9]{4}/", $hash)) {
-            $this->log->error(11);
-            return false;
+        if (strlen($hash) == 40 && preg_match("/^[0-9]{4}/", $hash)) {
+
+            $e_uid_pos = substr($hash, 0, 2);
+            $e_uid_length = substr($hash, 2, 2);
+            $e_uid = substr($hash, $e_uid_pos, $e_uid_length);
+
+            $uid = self::decode($e_uid);
+
+            preg_match('/^([0-9]{4})(.{2,' . ($e_uid_pos - 4) . '})(' . $e_uid . ')/', $hash, $excerpt);
+            $partial = $excerpt[2];
+
+            return array($uid, $partial);
         }
-
-        $e_uid_pos = substr($hash, 0, 2);
-        $e_uid_length = substr($hash, 2, 2);
-        $e_uid = substr($hash, $e_uid_pos, $e_uid_length);
-
-        $uid = $this->decode($e_uid);
-
-        preg_match("/^([0-9]{4})(.{2," . ($e_uid_pos - 4) . "})(" . $e_uid . ")/", $hash, $excerpt);
-        $partial = $excerpt[2];
-
-        return array($uid, $partial);
+        else
+        {
+            /*
+             * The hash is not valid
+             */
+            return array(false, false);
+        }
     }
 
     /**
@@ -145,9 +150,9 @@ class Hash
      *
      * @return int
      */
-    protected function decode($number)
+    static public function decode($number)
     {
-        $k = $this->encoder;
+        $k = self::$encoder;
         preg_match_all('/[1][a-zA-Z]|[2-9]|[a-zA-Z]|[0]/', $number, $a);
         $n = '';
         $o = count($k);
