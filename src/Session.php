@@ -33,7 +33,6 @@ class Session extends LinkedCollection
         // Starts the session if it has not been started yet
         if (!isset($_SESSION) && !headers_sent()) {
             session_start();
-            session_id(Hash::generate());
             $this->log->report('Session is been started...');
         } elseif (isset($_SESSION)) {
             $this->log->report('Session has already been started');
