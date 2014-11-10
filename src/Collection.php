@@ -131,6 +131,20 @@ class Collection
     }
 
     /**
+     * Return the number of items in the collection
+     *
+     * @return int
+     */
+    public function count()
+    {
+        if (!$this->isEmpty()) {
+            return count($this->_data);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * Magic getter for all first child properties
      *
      * @param string $name

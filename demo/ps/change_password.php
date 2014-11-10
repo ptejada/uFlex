@@ -34,7 +34,7 @@ if (count($_POST)) {
 
     echo json_encode(
         array(
-            'error'   => $user->log->getAllReports(),
+            'error'   => $user->log->getAllErrors(),
             'confirm' => 'Password Changed',
             'form'    => $user->log->getFormErrors(),
         )

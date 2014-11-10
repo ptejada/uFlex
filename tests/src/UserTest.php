@@ -159,6 +159,24 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($this->user->Email);
     }
 
+    public function testRegisterNewAccountFailure()
+    {
+        $userInfo = $this->getUserInfo();
+
+        unset($userInfo['Email']);
+
+        $success = $this->user->register($userInfo);
+
+        $this->assertEquals($success, !$this->user->log->hasError());
+        $this->assertFalse($success);
+
+        $userInfo['email'] = 'test' . rand() . '@test.com';
+        $success = $this->user->register($userInfo);
+
+        $this->assertEquals($success, !$this->user->log->hasError());
+        $this->assertFalse($success);
+    }
+
     public function testRegisterNewAccountWithCollection()
     {
         $userInfo = new Collection($this->getUserInfo());
@@ -224,6 +242,8 @@ class UserTest extends \PHPUnit_Framework_TestCase {
 
         $newEmail = 'jose@live.com';
         $this->user->update(array('Email'=>$newEmail));
+
+        $this->assertFalse($this->user->log->hasError());
 
         $this->assertTrue($this->user->session->update);
         $this->assertEquals($newEmail, $this->user->Email);

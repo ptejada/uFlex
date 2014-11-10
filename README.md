@@ -1,4 +1,4 @@
-uFlex 1.0.0
+uFlex 1.0.x
 =========================
 
 A simple all-in-one PHP user Authentication library.
@@ -16,7 +16,7 @@ For more information:
 * See the methods documentation here <http://ptejada.com/projects/uFlex/documentation/>
 * For more detailed documentation check generated PHPDoc <http://ptejada.com/docs/uFlex/namespaces/ptejada.uFlex.html>
 
-Upgrading from previous version...
+Upgrading from 0.9x versions...
 ====================================
 
 Before updating you will need to run a SQL upgrade script. Make sure you backup your database before running
@@ -25,7 +25,7 @@ the upgrade script. Refer to the DB directory <https://github.com/ptejada/uFlex/
 If not using Composer instead of including a PHP class you will include the `autoload.php` script in
 your application which will auto include the library classes as required.
 
-If using composer then the just include the `vendor/autoload.php` in your application if is not already
+If using composer then just include the `vendor/autoload.php` in your application if it has not already
 been included.
 
 Overall version 1.0 takes a more object oriented approach and follows conventions more closely.
@@ -34,7 +34,7 @@ For more information check out the [API Changes]
 Getting Started
 =========================
 
-* [Including it in your project](#includding-it-in-your-project)
+* [Including it in your project](#including-it-in-your-project)
 * [Configuring the User object](#configuring-the-user-object)
 * [Understanding Collections](#understanding-collections)
 * [Using the Session](#using-the-session)

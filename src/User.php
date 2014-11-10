@@ -14,9 +14,9 @@ class User extends UserBase
     /**
      * Class Version
      *
-     * @var int
+     * @var string
      */
-    const VERSION = '1.0.2';
+    const VERSION = '1.0.3';
     /** @var DB_Table - The database table object */
     public $table;
     /** @var  Session - The namespace session object */
@@ -360,7 +360,7 @@ class User extends UserBase
         $this->_updates = $info = $this->toCollection($info);
 
         //Validate All Fields
-        if (!$this->validateAll()) {
+        if (!$this->validateAll(true)) {
             return false;
         } //There are validations error
 

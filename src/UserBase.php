@@ -212,15 +212,31 @@ class UserBase
 
     /**
      * Validates All fields in _updates queue
+     *
+     * @param bool $includeAllRules - Will also run rules not validated
+     *
+     * @return bool
      */
-    protected function validateAll()
+    protected function validateAll($includeAllRules = false)
     {
-        foreach ($this->_updates->toArray() as $field => $val) {
+        if ($includeAllRules) {
+            /*
+             * Include fields that might not have been included
+             */
+            $fieldData = new Collection(array_fill_keys(array_keys($this->_validations->toArray()), null));
+            $fieldData->update($this->_updates->toArray());
+        }
+        else
+        {
+            $fieldData = clone $this->_updates;
+        }
+
+        foreach ($fieldData->toArray() as $field => $val) {
             //Match double fields
             $field2 = $field . '2';
-            if (!is_null($this->_updates->$field2)) {
+            if (!is_null($fieldData->$field2)) {
                 // Compared the two double fields
-                if ($val != $this->_updates->$field2) {
+                if ($val != $fieldData->$field2) {
                     $this->log->formError($field, ucfirst($field) . 's did not match');
                 } else {
                     $this->log->report(ucfirst($field) . 's matched');
@@ -228,7 +244,9 @@ class UserBase
             }
 
             // Trim white spaces at end and start
-            $this->_updates->$field = trim($val);
+            if ($this->_updates->$field) {
+                $this->_updates->$field = trim($val);
+            }
 
             // Check if a validation rule exists for the field
             if ($validation = $this->_validations->$field) {
