@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<database name="uFlex">
+	<table_data name="Users">
+	<row>
+		<field name="ID">1</field>
+		<field name="Username">Pablo</field>
+		<field name="Password">18609a032b2504973748587e8c428334</field>
+		<field name="Email">pablo@ptejada.com</field>
+		<field name="Activated">1</field>
+		<field name="Confirmation"></field>
+		<field name="RegDate">1361145707</field>
+		<field name="LastLogin">0</field>
+		<field name="GroupID">1</field>
+	</row>
+	</table_data>
+</database>
+</mysqldump>

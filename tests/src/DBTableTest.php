@@ -10,14 +10,15 @@ namespace tests;
 
 use ptejada\uFlex\DB;
 
-class DBTableTest extends \PHPUnit_Framework_TestCase {
+class DBTableTest extends Tests_DatabaseTestCase {
 
     /** @var  DB */
     protected static $db;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-       self::$db = new DB('sqlite::memory:');
+        self::$db = new DB($this->getPDO());
+        parent::setUp();
     }
 
     public function testFull()
@@ -28,24 +29,7 @@ class DBTableTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('ptejada\uFlex\DB_Table', $table, 'Should be an instance of DBTable');
         $this->assertInstanceOf('ptejada\uFlex\Log', $table->log);
 
-        // Creates the table
-        $table->runQuery("
-            CREATE TABLE IF NOT EXISTS _table_ (
-              `ID` int(7),
-              `Username` varchar(15) NOT NULL,
-              `Password` varchar(35) ,
-              `Email` varchar(35) ,
-              `Activated` tinyint(1) NOT NULL DEFAULT '0',
-              `Confirmation` varchar(35) ,
-              `RegDate` int(11) ,
-              `LastLogin` int(11) NOT NULL DEFAULT '0',
-              `first_name` varchar(50) ,
-              `last_name` varchar(50) ,
-              PRIMARY KEY (`ID`)
-            )
-        ");
-
-        for($i=1; $i<5; $i++)
+        for($i=2; $i<5; $i++)
         {
             $table->runQuery("INSERT INTO _table_(ID, Username) VALUES($i, 'user$i')");
             $this->assertEquals($i, $table->getLastInsertedID(), 'Confirms last inserted record ID');

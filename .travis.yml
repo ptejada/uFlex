@@ -6,5 +6,6 @@ php:
 
 before_script:
   - composer update
+  - mysql -e 'CREATE DATABASE uFlex_UT;'
 
 script: phpunit -c tests/phpunit.xml.dist

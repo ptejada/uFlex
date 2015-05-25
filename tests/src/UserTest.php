@@ -12,7 +12,7 @@ namespace tests;
 use ptejada\uFlex\Collection;
 use ptejada\uFlex\User;
 
-class UserTest extends \PHPUnit_Framework_TestCase {
+class UserTest extends Tests_DatabaseTestCase {
     /** @var User  */
     public $user;
 
@@ -24,29 +24,9 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $_COOKIE = array();
 
         $this->user = new User();
-        $this->user->config->database->dsn = 'sqlite::memory:';
+        $this->user->config->pdo = $this->getConnection();
 
         $this->user->start();
-
-        // Creates the table
-        $this->user->table->runQuery("
-            CREATE TABLE IF NOT EXISTS _table_ (
-              `ID` INTEGER PRIMARY KEY AUTOINCREMENT,
-              `Username` varchar(15) NOT NULL,
-              `Password` char(40) ,
-              `Email` varchar(35) ,
-              `Activated` tinyint(1) NOT NULL DEFAULT '0',
-              `Confirmation` char(40),
-              `RegDate` int(11) ,
-              `LastLogin` int(11) NOT NULL DEFAULT '0'
-            )
-        ");
-
-        //Create user
-        $this->user->table->runQuery('
-            INSERT INTO _table_(`ID`, `Username`, `Password`, `Email`, `Activated`, `RegDate`)
-            VALUES (1,"pablo","18609a032b2504973748587e8c428334","pablo@live.com",1,1361145707)
-        ');
     }
 
     public function testDefaultInitialization()
@@ -294,12 +274,12 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($result);
         $this->assertTrue($this->user->log->hasError());
 
-        $result = $this->user->resetPassword('pablo@live.com');
+        $result = $this->user->resetPassword('pablo@ptejada.com');
         $this->assertInstanceOf('ptejada\uFlex\Collection',$result);
         $this->assertFalse($this->user->log->hasError());
 
         $this->assertEquals('pablo', $result->Username);
-        $this->assertEquals('pablo@live.com', $result->Email);
+        $this->assertEquals('pablo@ptejada.com', $result->Email);
         $this->assertEquals(1, $result->ID);
         $this->assertEquals(40, strlen($result->Confirmation));
 
@@ -314,7 +294,7 @@ class UserTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($this->user->log->hasError());
         $this->assertFalse($this->user->isSigned());
 
-        $result = $this->user->resetPassword('pablo@live.com');
+        $result = $this->user->resetPassword('pablo@ptejada.com');
         $this->assertInstanceOf('ptejada\uFlex\Collection',$result);
         $this->assertFalse($this->user->log->hasError());
 

@@ -28,14 +28,19 @@ class DB
     /**
      * Initializes the Database object
      *
-     * @param string $hostOrDSN - The domain/IP of the DB or the PDO DSN string
+     * @param string $hostOrDSN|\PDO - The domain/IP of the DB, the PDO DSN string or PDO connection
      * @param string $dbName    - The name of the database
      */
     public function __construct($hostOrDSN = '', $dbName = '')
     {
         if (!$dbName) {
-            // add full DSN string
-            $this->dsn = $hostOrDSN;
+            if ($hostOrDSN instanceof \PDO) {
+                // Saves the PDO connection
+                $this->setConnection($hostOrDSN);
+            } else {
+                // add full DSN string
+                $this->dsn = $hostOrDSN;
+            }
         } else {
             // Add the default DB credentials for MySQL
             $this->host = $hostOrDSN;
@@ -143,5 +148,14 @@ class DB
         }
 
         return $this->dsn;
+    }
+
+    /**
+     * Set the connection
+     * @param \PDO $connection
+     */
+    public function setConnection(\PDO $connection)
+    {
+        $this->connection = $connection;
     }
 }

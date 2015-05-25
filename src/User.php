@@ -239,15 +239,20 @@ class User extends UserBase
             $this->log->addPredefinedError($this->errorList);
 
             // Instantiate the Database object
-            if ($this->config->database->dsn) {
-                $this->db = new DB($this->config->database->dsn);
-            } else {
-                $this->db = new DB($this->config->database->host, $this->config->database->name);
-            }
+            if ($this->config->pdo instanceof \PDO) {
+                // Uses an existing PDO connection
+                $this->db = new DB($this->config->pdo);
+            }else {
+                if ($this->config->database->dsn) {
+                    $this->db = new DB($this->config->database->dsn);
+                } else {
+                    $this->db = new DB($this->config->database->host, $this->config->database->name);
+                }
 
-            // Configure the database object
-            $this->db->setUser($this->config->database->user);
-            $this->db->setPassword($this->config->database->password);
+                // Configure the database object
+                $this->db->setUser($this->config->database->user);
+                $this->db->setPassword($this->config->database->password);
+            }
 
             // Link logs
             $this->db->log = $this->log;

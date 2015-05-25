@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="../autoload.php"
+<phpunit bootstrap="bootstrap.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="false"
          convertWarningsToExceptions="true"
          stopOnFailure="false"
          syntaxCheck="true">
+    <php>
+        <var name="DB_DSN" value="mysql:dbname=uFlex_UT;host=localhost" />
+        <var name="DB_USER" value="root" />
+        <var name="DB_PASSWD" value="" />
+        <var name="DB_DBNAME" value="uFlex_UT" />
+    </php>
     <testsuites>
         <testsuite name="uFlex Test Suite">
             <directory>./src</directory>
