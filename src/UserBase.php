@@ -8,7 +8,7 @@ namespace ptejada\uFlex;
  * @package ptejada\uFlex
  * @author  Pablo Tejada <pablo@ptejada.com>
  */
-class UserBase
+abstract class UserBase
 {
     /** @var  Log - Log errors and report */
     public $log;
@@ -31,6 +31,7 @@ class UserBase
             'user'     => '',
             'password' => '',
             'dsn'      => '',
+            'pdo'      => null,
         )
     );
     /** @var  Hash - Use to generate hashes */

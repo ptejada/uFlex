@@ -16,7 +16,7 @@ class User extends UserBase
      *
      * @var string
      */
-    const VERSION = '1.0.3';
+    const VERSION = '1.0.4';
     /** @var DB_Table - The database table object */
     public $table;
     /** @var  Session - The namespace session object */
@@ -151,24 +151,22 @@ class User extends UserBase
             } else {
                 // Fully match the user password to authenticate
                 $this->_updates = $userFile;
-                if (strlen($userFile->Password) === 40) {
-                    /*
-                     * Try new password algorithm
-                     */
-                    $this->session->signed = $this->hash->generateUserPassword(
-                            $this,
-                            $password
-                        ) === $userFile->Password;
-                } else {
-                    /*
-                     * Try legacy password algorithm
-                     */
-                    $this->session->signed = $this->hash->generateUserPassword(
-                            $this,
-                            $password,
-                            true
-                        ) === $userFile->Password;
-                }
+
+                /*
+                 * Determine whether to use the old or new algorithm
+                 */
+                $aType = strlen($userFile->Password) !== 40;
+
+                /*
+                 * Encode the password with the hashing algorithm
+                 */
+                $generated = $this->session->signed = $this->hash->generateUserPassword($this, $password, $aType);
+
+                /*
+                 * Compared the generated hash with the stored one
+                 * If it matches then the user will be logged in
+                 */
+                $this->session->signed = $generated === $userFile->Password;
 
                 // Clear the updates stack
                 $this->_updates = new Collection();
@@ -239,10 +237,10 @@ class User extends UserBase
             $this->log->addPredefinedError($this->errorList);
 
             // Instantiate the Database object
-            if ($this->config->pdo instanceof \PDO) {
+            if ($this->config->database->pdo instanceof \PDO) {
                 // Uses an existing PDO connection
-                $this->db = new DB($this->config->pdo);
-            }else {
+                $this->db = new DB($this->config->database->pdo);
+            } else {
                 if ($this->config->database->dsn) {
                     $this->db = new DB($this->config->database->dsn);
                 } else {
@@ -353,8 +351,8 @@ class User extends UserBase
         /*
          * Prevent a signed user from registering a new user
          * NOTE: If a signed user needs to register a new user
-         * clone the signed user object a register the new user
-         * with the clone.
+         * use the User::manageUser() function to create a new user
+         * object which then can then be use to register a new user
          */
         if ($this->isSigned()) {
             $this->log->error(15);
@@ -575,12 +573,14 @@ class User extends UserBase
 
             $this->table->runQuery('UPDATE _table_ SET Confirmation=:Confirmation WHERE ID=:ID', $data);
 
-            return new Collection(array(
-                'Email'        => $email,
-                'Username'     => $user->Username,
-                'ID'           => $user->ID,
-                'Confirmation' => $data['Confirmation']
-            ));
+            return new Collection(
+                array(
+                    'Email'        => $email,
+                    'Username'     => $user->Username,
+                    'ID'           => $user->ID,
+                    'Confirmation' => $data['Confirmation']
+                )
+            );
         } else {
             $this->log->error(4);
             return false;

@@ -24,9 +24,11 @@ class UserTest extends Tests_DatabaseTestCase {
         $_COOKIE = array();
 
         $this->user = new User();
-        $this->user->config->pdo = $this->getConnection();
+        $this->user->config->database->pdo = $this->getPDO();
 
         $this->user->start();
+
+        parent::setUp();
     }
 
     public function testDefaultInitialization()
@@ -355,6 +357,44 @@ class UserTest extends Tests_DatabaseTestCase {
         $this->assertEquals('pablo', $this->user->Username);
     }
 
+    public function testSettersAndGetters()
+    {
+        $user = new User(array(
+            'Username' => 'Pablo',
+            'Password' => 'password',
+            'RegDate' => 1396148789,
+        ));
+
+        $this->assertEquals('Pablo', $user->Username);
+        $this->assertEquals('password', $user->Password);
+        $this->assertEquals(1396148789, $user->RegDate);
+
+        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config);
+        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config->userDefaultData);
+        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config->database);
+
+        $user->config->userDefaultData->update(array(
+            'Username' => 'Anonimo'
+        ));
+
+        $this->assertEquals('Anonimo', $user->config->userDefaultData->Username);
+
+    }
+
+    public function testValidations()
+    {
+        $user = new User(array(
+            'Username' => 'Pablo',
+            'Password' => 'password',
+            'RegDate' => 1396148789,
+        ));
+
+        $user->Username = 'PabloTejada';
+        $user->addValidation('Username','1-5');
+
+        $this->assertFalse($user->log->hasError());
+    }
+
     protected function getUserInfo($id=0)
     {
         $id = $id ? $id : rand();
@@ -373,4 +413,3 @@ class UserTest extends Tests_DatabaseTestCase {
 
 
 }
- 

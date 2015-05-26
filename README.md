@@ -8,6 +8,7 @@ on Travis-CI for **PHP 5.4.x** and **PHP 5.5.x**.
 The single class file `class.uFlex.php` code can be found on the [Legacy Branch](https://github.com/ptejada/uFlex/tree/legacy)
 
 [![Build Status](https://travis-ci.org/ptejada/uFlex.svg?branch=1.0-DEV)](https://travis-ci.org/ptejada/uFlex)
+[![Stories in Ready](https://badge.waffle.io/ptejada/uflex.svg?label=ready&title=Ready)](http://waffle.io/ptejada/uflex)
 
 For more information:
 
@@ -62,9 +63,8 @@ in your project.
 ## Configuring the User object
 
 When the `User` class is instantiated not much happens, the session is not initialized nor a DB connection is established.
-This is to allow the class to be configured. Once the configured the `start()` method must be call in order for the user
-authentication process
-to start. For Example:
+This is to allow the class to be configured. Once configured the `start()` method must be call in order for the user
+authentication process to start. For Example:
 
 ```php
 <?php
@@ -73,11 +73,14 @@ to start. For Example:
     //Instantiate the User object
     $user = new ptejada\uFlex\User();
 
-    //Add database credentials
+    // Add database credentials
     $user->config->database->host = 'localhost';
     $user->config->database->user = 'test';
     $user->config->database->password = 'test';
     $user->config->database->name = 'uflex_test'; //Database name
+
+    // OR if in your project you already have a PDO connection
+    // $user->config->database->pdo = $existingPDO;
 
     /*
      * You can update any customizable property of the class before starting the object
@@ -89,7 +92,7 @@ to start. For Example:
 ?>
 ```
 It is preferable that a configuration file like the one above is created per project. This way you can use the configuration
-file to provide a pre-configured User instance to any PHP script in your project.
+file to provide a pre-configured `User` instance to any PHP script in your project.
 
 Alternatively you could create your own class which configures and start the the `User` object for you. Ex:
 
@@ -135,6 +138,7 @@ Below is an excerpt from the PHP class file which lists the customizable `config
         'user'     => '',
         'password' => '',
         'dsn'      => '',
+        'pdo'      => '',
     )
 ```
 
