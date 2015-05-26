@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/ptejada/uflex.png?label=ready&title=Ready)](https://waffle.io/ptejada/uflex)
 uFlex 1.0.x
 =========================
 
