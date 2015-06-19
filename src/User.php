@@ -708,23 +708,22 @@ class User extends UserBase
      *
      * @return bool|User Returns false if user does not exists in database
      */
-    public function manageUser($id = 0)
+    public function manageUser($id = null)
     {
         $user = clone $this;
         $user->log->channel('Cloning');
 
-        if ($id > 0) {
+        if (is_numeric($id) && $id) {
             $user->log->report('Fetching user from database');
             $data = $user->table->getRow(array('ID' => $id));
             if ($data) {
                 $user->_data = $data->toArray();
 
                 $user->log->report('User imported to object');
-                return $user;
             }
         }
 
-        return false;
+        return $user;
     }
 
     /**
