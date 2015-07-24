@@ -7,7 +7,7 @@
          stopOnFailure="false"
          syntaxCheck="true">
     <php>
-        <var name="DB_DSN" value="mysql:dbname=uFlex_UT;host=localhost" />
+        <var name="DB_DSN" value="mysql:dbname=uflex_ut;host=localhost" />
         <var name="DB_USER" value="root" />
         <var name="DB_PASSWD" value="" />
         <var name="DB_DBNAME" value="uflex_ut" />
