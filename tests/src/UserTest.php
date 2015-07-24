@@ -357,6 +357,26 @@ class UserTest extends Tests_DatabaseTestCase {
         $this->assertEquals('pablo', $this->user->Username);
     }
 
+    public function testNewManageUserLogin()
+    {
+        $this->user->login('pablo',1234);
+        $this->assertTrue($this->user->isSigned());
+
+        $newUserInfo = $this->getUserInfo();
+        $newUser = $this->user->manageUser();
+
+        $this->assertFalse($newUser->isSigned());
+        $this->assertTrue($newUser->register($newUserInfo));
+
+        $this->user->logout();
+        $this->assertFalse($this->user->isSigned());
+
+        $this->user->login($newUserInfo['Username'], $newUserInfo['Password']);
+        $this->assertTrue($this->user->isSigned());
+        $this->assertEquals($this->user->Username, $newUserInfo['Username']);
+    }
+
+
     public function testManageEmptyUser()
     {
         $this->assertFalse($this->user->isSigned());
