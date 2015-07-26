@@ -183,14 +183,14 @@ class User extends UserBase
             if ($userFile->Activated == 0) {
                 if ($userFile->LastLogin == 0) {
                     //Account has not been activated
-                    $this->log->error(8);
+                    $this->log->formError('Password',$this->errorList[8]);
                 } else {
                     if (!$userFile->Confirmation) {
                         //Account has been deactivated
-                        $this->log->error(9);
+                        $this->log->formError('Password',$this->errorList[9]);
                     } else {
                         //Account deactivated due to a password reset or reactivation request
-                        $this->log->error(14);
+                        $this->log->formError('Password',$this->errorList[14]);
                     }
                 }
                 // Remove the signed flag
