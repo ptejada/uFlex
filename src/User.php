@@ -16,7 +16,7 @@ class User extends UserBase
      *
      * @var string
      */
-    const VERSION = '1.0.4';
+    const VERSION = '1.0.5';
     /** @var DB_Table - The database table object */
     public $table;
     /** @var  Session - The namespace session object */
