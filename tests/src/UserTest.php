@@ -10,6 +10,7 @@ namespace tests;
 
 
 use ptejada\uFlex\Collection;
+use ptejada\uFlex\Hash;
 use ptejada\uFlex\User;
 
 class UserTest extends Tests_DatabaseTestCase {
@@ -202,6 +203,12 @@ class UserTest extends Tests_DatabaseTestCase {
         $this->assertTrue($this->user->log->hasError());
 
         /*
+         * Try activation failure
+         */
+        $success = $this->user->activate(Hash::generate());
+        $this->assertFalse($success);
+
+        /*
          * Activate the account
          */
         $success = $this->user->activate($activationHash);
@@ -288,7 +295,25 @@ class UserTest extends Tests_DatabaseTestCase {
         // Confirm confirmation was saved on the on DB
         $user = $this->user->table->getRow(array('ID'=>1));
         $this->assertEquals($user->Confirmation, $result->Confirmation);
+
+        $newPassword = 'newPassWord#2';
+
+        $success = $this->user->newPassword(
+            Hash::generate(),
+            array('Password' => $newPassword, 'Password2' => $newPassword)
+        );
+
+        $this->assertFalse($success);
+
+        $success = $this->user->newPassword(
+            $result->Confirmation,
+            array('Password' => $newPassword, 'Password2' => $newPassword)
+        );
+
+        $this->assertTrue($success);
     }
+
+
 
     public function testNewPassword()
     {

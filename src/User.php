@@ -16,7 +16,7 @@ class User extends UserBase
      *
      * @var string
      */
-    const VERSION = '1.0.5';
+    const VERSION = '1.0.6';
     /** @var DB_Table - The database table object */
     public $table;
     /** @var  Session - The namespace session object */
@@ -517,7 +517,7 @@ class User extends UserBase
         $set = implode(', ', $set);
 
         //Prepare User Update Query
-        $sql = 'UPDATE _table_ SET ' . $set . ' WHERE ID=:id';
+        $sql = "UPDATE _table_ SET {$set}  WHERE ID=:id";
         $data['id'] = $this->ID;
 
         //Check for Changes
@@ -671,7 +671,7 @@ class User extends UserBase
 
             $user = $this->manageUser($uid);
 
-            if ($user) {
+            if ($user->ID) {
                 if ($user->Confirmation === $hash) {
 
                     $user->Activated = 1;
