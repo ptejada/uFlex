@@ -90,7 +90,7 @@ class User extends UserBase
                 //Get User From database because its info has change during current session
                 $update = $this->table->getRow(array('ID' => $this->ID, 'Activated' => 1));
                 if ($update) {
-                    $this->session->data->update($update->toArray());
+                    $this->session->data = $update->toArray();
 
                     //Update last_login
                     $this->logLogin();
