@@ -11,7 +11,7 @@ $(document).ready(function () {
             form.find('.error').remove();
             form.find('.has-error').removeClass('has-error');
 
-            if (response.error && response.error.length) {
+            if (response.form && ! $.isEmptyObject(response.form)) {
                 // Display errors
                 for (var name in response.form) {
                     if (response.form.hasOwnProperty(name)) {
