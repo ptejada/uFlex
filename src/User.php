@@ -583,6 +583,7 @@ class User extends UserBase
             );
         } else {
             $this->log->error(4);
+            $this->log->formError('Email', $this->errorList[4]);
             return false;
         }
     }
