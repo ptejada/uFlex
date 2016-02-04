@@ -287,7 +287,7 @@ class User extends UserBase
      *
      * @ignore
      */
-    protected function logLogin()
+    public function logLogin()
     {
         //Update last_login
         $time = time();
