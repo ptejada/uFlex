@@ -30,8 +30,6 @@
 		echo json_encode(array(
 			'error'    => $user->log->getErrors(),
 			'confirm'  => $confirmMessage,
-			'form'    => array(
-				'Email' => $errorMessage
-			)
+			'form'     => $user->log->getFormErrors(),
 		));
 	}
