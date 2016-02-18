@@ -9,7 +9,7 @@ namespace ptejada\uFlex;
  * @package ptejada\uFlex
  * @author  Pablo Tejada <pablo@ptejada.com>
  */
-class User extends UserBase
+class User extends AbstractUser
 {
     /**
      * Class Version

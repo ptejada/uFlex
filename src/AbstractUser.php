@@ -8,7 +8,7 @@ namespace ptejada\uFlex;
  * @package ptejada\uFlex
  * @author  Pablo Tejada <pablo@ptejada.com>
  */
-abstract class UserBase
+abstract class AbstractUser
 {
     /** @var  Log - Log errors and report */
     public $log;
