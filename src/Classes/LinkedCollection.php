@@ -1,6 +1,6 @@
 <?php
 
-namespace ptejada\uFlex;
+namespace ptejada\uFlex\Classes;
 
 /**
  * A Collection which references a existing array

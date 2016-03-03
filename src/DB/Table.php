@@ -1,6 +1,9 @@
 <?php
 
-namespace ptejada\uFlex;
+namespace ptejada\uFlex\DB;
+
+use ptejada\uFlex\Classes\Collection;
+use ptejada\uFlex\Log;
 
 /**
  * Class DB_Table
@@ -8,22 +11,22 @@ namespace ptejada\uFlex;
  * @package ptejada\uFlex
  * @author  Pablo Tejada <pablo@ptejada.com>
  */
-class DB_Table
+class Table
 {
     /** @var  Log - Log errors and report */
     public $log;
     /** @var string - The table name */
     private $tableName = '';
-    /** @var DB - The DB connection session */
+    /** @var Connection - The DB connection session */
     private $db;
 
     /**
      * Initializes a database table object
      *
-     * @param DB     $db
-     * @param string $table
+     * @param Connection $db
+     * @param string     $table
      */
-    public function __construct(DB $db, $table)
+    public function __construct(Connection $db, $table)
     {
         $this->db = $db;
         $this->log = $db->log;

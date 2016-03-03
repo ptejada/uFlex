@@ -171,7 +171,7 @@ Here is the same code using a `Collection`:
 
 ```php
 <?php
-    $data = ptejada\uFlex\Collection(array(
+    $data = ptejada\uFlex\Classes\Collection(array(
         'name' => 'pablo',
     ));
 

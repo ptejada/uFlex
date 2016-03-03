@@ -2,6 +2,12 @@
 
 namespace ptejada\uFlex;
 
+use ptejada\uFlex\Classes\Collection;
+use ptejada\uFlex\Classes\Cookie;
+use ptejada\uFlex\Classes\Session;
+use ptejada\uFlex\DB\Connection;
+use ptejada\uFlex\DB\Table;
+
 /**
  * All in one user object use to authenticating, registering new users and other user actions
  * Note: Either start() or login() must be called at least once on your code per User instance
@@ -17,7 +23,7 @@ class User extends AbstractUser
      * @var string
      */
     const VERSION = '1.0.6';
-    /** @var DB_Table - The database table object */
+    /** @var Table - The database table object */
     public $table;
     /** @var  Session - The namespace session object */
     public $session;
@@ -28,7 +34,7 @@ class User extends AbstractUser
      * @ignore
      */
     protected $clone = 0;
-    /** @var DB - The database connection */
+    /** @var Connection - The database connection */
     protected $db;
     /** @var  Cookie - The cookie for autologin */
     protected $cookie;
@@ -232,19 +238,19 @@ class User extends AbstractUser
      */
     public function start($login = true)
     {
-        if (!($this->db instanceof DB)) {
+        if (!($this->db instanceof Connection)) {
             // Updating the predefine error logs
             $this->log->addPredefinedError($this->errorList);
 
             // Instantiate the Database object
             if ($this->config->database->pdo instanceof \PDO) {
                 // Uses an existing PDO connection
-                $this->db = new DB($this->config->database->pdo);
+                $this->db = new Connection($this->config->database->pdo);
             } else {
                 if ($this->config->database->dsn) {
-                    $this->db = new DB($this->config->database->dsn);
+                    $this->db = new Connection($this->config->database->dsn);
                 } else {
-                    $this->db = new DB($this->config->database->host, $this->config->database->name);
+                    $this->db = new Connection($this->config->database->host, $this->config->database->name);
                 }
 
                 // Configure the database object

@@ -2,6 +2,8 @@
 
 namespace ptejada\uFlex;
 
+use ptejada\uFlex\Classes\Collection;
+
 /**
  * Class UserBase
  *
@@ -209,114 +211,5 @@ abstract class AbstractUser
             }
         }
         return $data;
-    }
-
-    /**
-     * Validates All fields in _updates queue
-     *
-     * @param bool $includeAllRules - Will also run rules not validated
-     *
-     * @return bool
-     */
-    protected function validateAll($includeAllRules = false)
-    {
-        if ($includeAllRules) {
-            /*
-             * Include fields that might not have been included
-             */
-            $fieldData = new Collection(array_fill_keys(array_keys($this->_validations->toArray()), null));
-            $fieldData->update($this->_updates->toArray());
-        }
-        else
-        {
-            $fieldData = clone $this->_updates;
-        }
-
-        foreach ($fieldData->toArray() as $field => $val) {
-            //Match double fields
-            $field2 = $field . '2';
-            if (!is_null($fieldData->$field2)) {
-                // Compared the two double fields
-                if ($val != $fieldData->$field2) {
-                    $this->log->formError($field, ucfirst($field) . 's did not match');
-                } else {
-                    $this->log->report(ucfirst($field) . 's matched');
-                }
-            }
-
-            // Trim white spaces at end and start
-            if ($this->_updates->$field) {
-                $this->_updates->$field = trim($val);
-            }
-
-            // Check if a validation rule exists for the field
-            if ($validation = $this->_validations->$field) {
-                $this->validate($field, $validation->limit, $validation->regEx);
-            }
-        }
-        return !$this->log->hasError();
-    }
-
-    /**
-     * Validates a field in tmp_data
-     *
-     * @param string      $name  field name
-     * @param string      $limit valid value length range, Ex: '0-10'
-     * @param bool|string $regEx regular expression to test the field against
-     *
-     * @return bool
-     */
-    protected function validate($name, $limit, $regEx = false)
-    {
-        $Name = ucfirst($name);
-        $value = $this->_updates->$name;
-        $length = explode('-', $limit);
-        $min = intval($length[0]);
-        $max = intval($length[1]);
-
-        if (!$max and !$min) {
-            $this->log->error("Invalid second parameter for the $name validation");
-            return false;
-        }
-
-        if (!$value) {
-            if (is_null($value)) {
-                $this->log->report("Missing index $name from the input");
-            }
-            if (strlen($value) == $min) {
-                $this->log->report("$Name is blank and optional - skipped");
-                return true;
-            }
-            $this->log->formError($name, "$Name is required.");
-            return false;
-        }
-
-        // Validate the value maximum length
-        if (strlen($value) > $max) {
-            $this->log->formError($name, "The $Name is larger than $max characters.");
-            return false;
-        }
-
-        // Validate the value minimum length
-        if (strlen($value) < $min) {
-            $this->log->formError($name, "The $Name is too short. It should at least be $min characters long");
-            return false;
-        }
-
-        // Validate the value pattern
-        if ($regEx) {
-            preg_match($regEx, $value, $match);
-            if (preg_match($regEx, $value, $match) === 0) {
-                $this->log->formError($name, "The $Name \"{$value}\" is not valid");
-                return false;
-            }
-        }
-
-        /*
-         * If the execution reaches this point then the field value
-         * is considered to be valid
-         */
-        $this->log->report("The $name is Valid");
-        return true;
     }
 }

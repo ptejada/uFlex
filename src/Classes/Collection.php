@@ -1,6 +1,6 @@
 <?php
 
-namespace ptejada\uFlex;
+namespace ptejada\uFlex\Classes;
 
 /**
  * An object oriented representation an associative array

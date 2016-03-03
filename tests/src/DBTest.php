@@ -8,16 +8,16 @@
 
 namespace tests;
 
-use ptejada\uFlex\DB;
+use ptejada\uFlex\Connection;
 
 class DBTest extends \PHPUnit_Framework_TestCase {
 
-    /** @var  DB */
+    /** @var  Connection */
     protected static $db;
 
     public function testConnection()
     {
-        $db = new DB('sqlite::memory:');
+        $db = new Connection('sqlite::memory:');
 
         $this->assertInstanceOf('PDO', $db->getConnection(), 'Successfully connects to DB');
         $this->assertFalse($db->log->hasError(), 'There should be no error');
@@ -39,11 +39,10 @@ class DBTest extends \PHPUnit_Framework_TestCase {
 
     public function testGetTable()
     {
-        $db = new DB('sqlite::memory:');
+        $db = new Connection('sqlite::memory:');
         $table = $db->getTable('Users');
 
         $this->assertInstanceOf('ptejada\uFlex\DB_TAble', $table, 'Should be an instance of DBTable');
     }
 
 }
- 

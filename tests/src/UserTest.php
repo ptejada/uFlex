@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use ptejada\uFlex\Collection;
+use ptejada\uFlex\Classes\Collection;
 use ptejada\uFlex\Hash;
 use ptejada\uFlex\User;
 
@@ -284,7 +284,7 @@ class UserTest extends Tests_DatabaseTestCase {
         $this->assertTrue($this->user->log->hasError());
 
         $result = $this->user->resetPassword('pablo@ptejada.com');
-        $this->assertInstanceOf('ptejada\uFlex\Collection',$result);
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Collection',$result);
         $this->assertFalse($this->user->log->hasError());
 
         $this->assertEquals('pablo', $result->Username);
@@ -322,7 +322,7 @@ class UserTest extends Tests_DatabaseTestCase {
         $this->assertFalse($this->user->isSigned());
 
         $result = $this->user->resetPassword('pablo@ptejada.com');
-        $this->assertInstanceOf('ptejada\uFlex\Collection',$result);
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Collection',$result);
         $this->assertFalse($this->user->log->hasError());
 
         $newPassword = array(
@@ -427,9 +427,9 @@ class UserTest extends Tests_DatabaseTestCase {
         $this->assertEquals('password', $user->Password);
         $this->assertEquals(1396148789, $user->RegDate);
 
-        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config);
-        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config->userDefaultData);
-        $this->assertInstanceOf('ptejada\uFlex\Collection', $user->config->database);
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Collection', $user->config);
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Collection', $user->config->userDefaultData);
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Collection', $user->config->database);
 
         $user->config->userDefaultData->update(array(
             'Username' => 'Anonimo'

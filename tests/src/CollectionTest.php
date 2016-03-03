@@ -9,7 +9,7 @@
 namespace tests;
 
 
-use ptejada\uFlex\Collection;
+use ptejada\uFlex\Classes\Collection;
 
 class CollectionTest extends \PHPUnit_Framework_TestCase {
 
@@ -172,4 +172,3 @@ class CollectionTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotNull($list->three);
     }
 }
- 

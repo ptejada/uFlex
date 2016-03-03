@@ -8,16 +8,16 @@
 
 namespace tests;
 
-use ptejada\uFlex\DB;
+use ptejada\uFlex\Connection;
 
 class DBTableTest extends Tests_DatabaseTestCase {
 
-    /** @var  DB */
+    /** @var  Connection */
     protected static $db;
 
     public function setUp()
     {
-        self::$db = new DB($this->getPDO());
+        self::$db = new Connection($this->getPDO());
         parent::setUp();
     }
 
@@ -38,11 +38,10 @@ class DBTableTest extends Tests_DatabaseTestCase {
         // Get a record
         $user = $table->getRow(array('ID'=>1));
 
-        $this->assertInstanceOf('ptejada\uFlex\Collection', $user, 'Retrieve a record from the table');
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Collection', $user, 'Retrieve a record from the table');
 
         // Both console log should be equal
         $this->assertEquals($db->log->getFullConsole(), $table->log->getFullConsole());
     }
 
 }
- 

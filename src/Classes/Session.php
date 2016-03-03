@@ -1,6 +1,6 @@
 <?php
 
-namespace ptejada\uFlex;
+namespace ptejada\uFlex\Classes;
 
 /**
  * Class to handle the PHP session

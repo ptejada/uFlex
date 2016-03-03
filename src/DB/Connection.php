@@ -1,6 +1,8 @@
 <?php
 
-namespace ptejada\uFlex;
+namespace ptejada\uFlex\DB;
+
+use ptejada\uFlex\Log;
 
 /**
  * Database Connection Manager
@@ -8,7 +10,7 @@ namespace ptejada\uFlex;
  * @package ptejada\uFlex
  * @author  Pablo Tejada <pablo@ptejada.com>
  */
-class DB
+class Connection
 {
     /** @var  Log - Log errors and report */
     public $log;
@@ -52,14 +54,16 @@ class DB
 
     /**
      * Get table object
+
      *
-     * @param $tableName
+*@param $tableName
+
      *
-     * @return DB_Table
+*@return Table
      */
     public function getTable($tableName)
     {
-        return new DB_Table($this, $tableName);
+        return new Table($this, $tableName);
     }
 
     /**
