@@ -1,6 +1,6 @@
 <?php
 
-namespace ptejada\uFlex\Classes;
+namespace ptejada\uFlex\Service;
 
 /**
  * Class handles a single cookie
@@ -11,9 +11,6 @@ namespace ptejada\uFlex\Classes;
  */
 class Cookie
 {
-    /** @var  Log - Log errors and report */
-    public $log;
-
     /** @var  string The name of the cookie */
     private $name;
     /** @var  string The content of the cookie */
@@ -34,7 +31,7 @@ class Cookie
      * @param string $path     _(optional)_ The URL path of the cookie
      * @param null   $host     _(optional)_ The host for which the host belongs to
      */
-    public function __construct($name, $value = '', $lifetime = 15, $path = '/', $host = null)
+    public function __construct($name=null, $value = '', $lifetime = 15, $path = '/', $host = null)
     {
         $this->name = $name;
 
@@ -49,6 +46,22 @@ class Cookie
         } else {
             $this->setHost($host);
         }
+    }
+
+    /**
+     * Creates a new cookie
+     *
+     * @param string $name     The name of the cookie
+     * @param string $value    _(optional)_ The content of the cookie
+     * @param int    $lifetime _(optional)_ The lifetime in days of the cookie
+     * @param string $path     _(optional)_ The URL path of the cookie
+     * @param null   $host     _(optional)_ The host for which the host belongs to
+     *
+     * @return Cookie
+     */
+    public static function newCookie($name, $value = '', $lifetime = 15, $path = '/', $host = null)
+    {
+        return new self($name, $value, $lifetime, $path, $host);
     }
 
     /**

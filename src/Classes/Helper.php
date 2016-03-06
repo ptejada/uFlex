@@ -9,12 +9,12 @@
 namespace ptejada\uFlex\Classes;
 
 /**
- * Class Utility includes function meant to be used across classes *
+ * Class Helper includes function meant to be used across classes
  * All public methods must be declared statically
  *
  * @package ptejada\uFlex
  */
-class Utility
+class Helper
 {
     protected function __construct()
     {

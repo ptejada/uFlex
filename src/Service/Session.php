@@ -1,6 +1,10 @@
 <?php
 
-namespace ptejada\uFlex\Classes;
+namespace ptejada\uFlex\Service;
+
+use ptejada\uFlex\Classes\Collection;
+use ptejada\uFlex\Classes\LinkedCollection;
+use ptejada\uFlex\Config;
 
 /**
  * Class to handle the PHP session
@@ -23,43 +27,80 @@ class Session extends LinkedCollection
      * Initialize a session handler by namespace
      *
      * @param string $namespace - Session namespace to manage
-     * @param   Log  $log
      */
-    public function __construct($namespace = null, Log $log = null)
+    public function __construct($namespace = null)
     {
-        $this->log = $log instanceof Log ? $log : new Log('Session');
         $this->namespace = $namespace;
+        $this->init();
+    }
+
+    /**
+     * Initializes the session.
+     * Should validate the session too.
+     * @throws \Exception If the session can not be initialized
+     */
+    protected function init()
+    {
+        $log = Config::getLog();
 
         // Starts the session if it has not been started yet
-        if (!isset($_SESSION) && !headers_sent()) {
-            session_start();
-            $this->log->report('Session is been started...');
-        } elseif (isset($_SESSION)) {
-            $this->log->report('Session has already been started');
+        if ($this->isSessionStarted()) {
+            $log->log('Session has already been started');
         } else {
-            $this->log->error('Session could not be started');
+            if (!headers_sent()) {
+                session_start();
+                $log->log('Session is been started...');
+            } else {
+                $log->error('Failed to initialize the session');
+                throw new \Exception('Failed to start the session because request output has already started');
+            }
         }
 
-        if (is_null($namespace)) {
+        if (is_null($this->namespace)) {
             // Manage the whole session
             parent::__construct($_SESSION);
         } else {
-            if (!isset($_SESSION[$namespace])) {
+            if (!isset($_SESSION[$this->namespace])) {
                 // Initialize the session namespace if does not exists yet
-                $_SESSION[$namespace] = array();
+                $_SESSION[$this->namespace] = array();
             }
 
             // Link the SESSION namespace to the local $data variable
-            parent::__construct($_SESSION[$namespace]);
+            parent::__construct($_SESSION[$this->namespace]);
         }
-        
+
         $this->validate();
+    }
+
+    /**
+     * Creates new session namespace
+     *
+     * @param string $namespace
+     *
+     * @return Session
+     */
+    public static function newSession($namespace = null)
+    {
+        return new self($namespace);
+    }
+
+    protected function isSessionStarted()
+    {
+        if ( php_sapi_name() !== 'cli' ) {
+            if ( version_compare(phpversion(), '5.4.0', '>=') ) {
+                return session_status() === PHP_SESSION_ACTIVE ? true : false;
+            } else {
+                return $this->getID() == '' ? false : true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Validates the session
      */
-    private function validate()
+    protected function validate()
     {
         /*
          * Get the correct IP
@@ -79,6 +120,9 @@ class Session extends LinkedCollection
                  * then the IP of the current request
                  */
                 $this->destroy();
+                $log = Config::getLog()->section('Session');
+                $log->error("The session[{$this->namespace}]' was destroyed because of IP mismatch.");
+                $log->debug("Current session IP {$this->_ip} did not not matched new IP {$ip}.");
             }
         } else {
             /*
@@ -99,7 +143,7 @@ class Session extends LinkedCollection
     }
 
     /**
-     * Empty the session namespace
+     * Clears the session or namespace
      */
     public function destroy()
     {
