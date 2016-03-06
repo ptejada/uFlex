@@ -1,6 +1,6 @@
 uFlex 2.0.x
 =========================
-[![Build Status](https://travis-ci.org/ptejada/uFlex.svg?branch=1.0-DEV)](https://travis-ci.org/ptejada/uFlex) [![Code Climate](https://codeclimate.com/github/ptejada/uFlex/badges/gpa.svg)](https://codeclimate.com/github/ptejada/uFlex) [![Stories in Ready](https://badge.waffle.io/ptejada/uflex.svg?label=ready&title=Ready)](http://waffle.io/ptejada/uflex)
+[![Build Status](https://travis-ci.org/ptejada/uFlex.svg?branch=2.0.x-dev)](https://travis-ci.org/ptejada/uFlex) [![Code Climate](https://codeclimate.com/github/ptejada/uFlex/badges/gpa.svg)](https://codeclimate.com/github/ptejada/uFlex) [![Stories in Ready](https://badge.waffle.io/ptejada/uflex.svg?label=ready&title=Ready)](http://waffle.io/ptejada/uflex)
 A simple all-in-one PHP user Authentication library.
 This library is developed, maintained and tested in a **PHP 5.3.x** environment. The UnitTest also runs
 on Travis-CI for **PHP 5.4.x** and **PHP 5.5.x**.
