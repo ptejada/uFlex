@@ -1,9 +1,9 @@
 <?php
 
-namespace ptejada\uFlex\DB;
+namespace ptejada\uFlex\Classes;
 
-use ptejada\uFlex\Classes\Collection;
 use ptejada\uFlex\Log;
+use ptejada\uFlex\Service\Connection;
 
 /**
  * Class DB_Table

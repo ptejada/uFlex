@@ -307,7 +307,7 @@ class Collection implements \Iterator, \ArrayAccess
      */
     public function __set($name, $value)
     {
-        $this->_data[$name] = $value;
+        $this->_data[$name] = $value instanceof Collection ? $value->toArray() : $value;
     }
 
     /**

@@ -6,12 +6,9 @@
  * Time: 8:58 PM
  */
 
-namespace ptejada\uFlex\Validation;
+namespace ptejada\uFlex\Exception;
 
-
-use Exception;
-
-class ValidationException extends \Exception
+class ValidationException extends UFlexException
 {
     /** Error code if input is shorter than expected */
     const ERROR_MINIMUM = 1;
@@ -31,9 +28,9 @@ class ValidationException extends \Exception
      * @param int            $code The error code
      * @param string         $fieldName The name field with the error
      * @param string         $message The error message
-     * @param Exception|null $previous Any previous exception
+     * @param \Exception|null $previous Any previous exception
      */
-    public function __construct($code, $fieldName, $message = null, Exception $previous = null)
+    public function __construct($code, $fieldName, $message = null, \Exception $previous = null)
     {
         if (is_null($message)) {
             // Generic message if one is not included

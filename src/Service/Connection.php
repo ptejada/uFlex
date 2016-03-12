@@ -1,8 +1,8 @@
 <?php
 
-namespace ptejada\uFlex\DB;
+namespace ptejada\uFlex\Service;
 
-use ptejada\uFlex\Log;
+use ptejada\uFlex\Classes\Table;
 
 /**
  * Database Connection Manager

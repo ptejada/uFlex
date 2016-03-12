@@ -6,12 +6,11 @@
  * Time: 9:20 PM
  */
 
-namespace ptejada\uFlex\Error;
+namespace ptejada\uFlex\Exception;
 
 
-use Exception;
 
-class ErrorException extends \Exception
+class ErrorException extends UFlexException
 {
     const ERROR_REGISTRATION_FAILURE         = 1;
     const ERROR_UPDATE_FAILURE               = 2;
@@ -31,7 +30,7 @@ class ErrorException extends \Exception
     const ERROR_EMAIL_IN_USE                 = 16;
     const ERROR_USERNAME_IN_USE              = 17;
 
-    public function __construct($code, Exception $previous = null)
+    public function __construct($code, \Exception $previous = null)
     {
         $message = ErrorService::getInstance()->getErrorMessage($code);
 

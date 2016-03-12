@@ -6,11 +6,11 @@
  * Time: 8:57 PM
  */
 
-namespace ptejada\uFlex\Validation;
+namespace ptejada\uFlex\Service\Validation;
 
 
 use ptejada\uFlex\Classes\Collection;
-use ptejada\uFlex\Utility;
+use ptejada\uFlex\Classes\Helper;
 
 class Validator
 {
@@ -21,8 +21,8 @@ class Validator
 
     public function __construct($data = array(), $schema = array())
     {
-        $this->schema = Utility::getCollection($data);
-        $this->data   = Utility::getCollection($data);
+        $this->schema = Helper::getCollection($data);
+        $this->data   = Helper::getCollection($data);
     }
 
     /**
@@ -126,5 +126,23 @@ class Validator
         } else {
             throw new \Exception("Missing validation rules for '{$fieldName}'.");
         }
+    }
+
+    /**
+     * Set the schema
+     * @param Collection $schema
+     */
+    public function setSchema($schema)
+    {
+        $this->schema = $schema;
+    }
+
+    /**
+     * Set the data to validate
+     * @param Collection $data
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
     }
 }

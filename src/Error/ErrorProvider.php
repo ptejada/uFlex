@@ -8,6 +8,8 @@
 
 namespace ptejada\uFlex\Error;
 
+use ptejada\uFlex\Exception\ErrorException;
+
 /**
  * Class ErrorProvider
  *
