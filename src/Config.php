@@ -11,8 +11,10 @@ namespace ptejada\uFlex;
 use ptejada\uFlex\Classes\Registry;
 use ptejada\uFlex\Service\Authenticator;
 use ptejada\uFlex\Service\Connection;
+use ptejada\uFlex\Service\Cookie;
 use ptejada\uFlex\Service\Log;
 use ptejada\uFlex\Service\Session;
+use ptejada\uFlex\Service\UserManager;
 use ptejada\uFlex\Service\Validation\Validator;
 
 /**
@@ -22,6 +24,8 @@ use ptejada\uFlex\Service\Validation\Validator;
  */
 class Config
 {
+    const VERSION = '2.0.0';
+
     private function __construct()
     {
         //
@@ -98,6 +102,41 @@ class Config
     public static function getValidator()
     {
         return Registry::getInstance()->service(Registry::SERVICE_VALIDATOR);
+    }
+
+    /**
+     * Get the user manager
+     *
+     * @return UserManager
+     */
+    public static function getManager()
+    {
+        return Registry::getInstance()->service(Registry::SERVICE_MANAGER);
+    }
+
+    /**
+     * @return Cookie
+     */
+    public static function getCookie()
+    {
+        return Registry::getInstance()->service(Registry::SERVICE_COOKIE);
+    }
+
+    public static function registerCookie($serviceClass)
+    {
+        Registry::getInstance()->registerService(Registry::SERVICE_COOKIE, $serviceClass);
+    }
+
+    /**
+     * Register a new class to handle the user management
+     *
+     * @param string $managerClass New user management class
+     *
+     * @throws \Exception
+     */
+    public static function registerManager($managerClass)
+    {
+        Registry::getInstance()->registerService(Registry::SERVICE_CONNECTION, $managerClass);
     }
 
     /**

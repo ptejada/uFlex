@@ -18,6 +18,7 @@ class Registry extends AbstractSingleton
     const SERVICE_SESSION    = 'session';
     const SERVICE_CONNECTION = 'connection';
     const SERVICE_VALIDATOR  = 'validator';
+    const SERVICE_MANAGER    = 'manager';
     const SERVICE_AUTH       = 'auth';
 
     /** @var Collection */
@@ -33,9 +34,44 @@ class Registry extends AbstractSingleton
         $this->registerService(self::SERVICE_SESSION, 'ptejada\uFlex\Service\Session');
         $this->registerService(self::SERVICE_CONNECTION, 'ptejada\uFlex\Service\Connection');
         $this->registerService(self::SERVICE_VALIDATOR, 'ptejada\uFlex\Service\Validator');
+        $this->registerService(self::SERVICE_MANAGER, 'ptejada\uFlex\Service\UserManager');
 
         $this->registerService(self::SERVICE_AUTH, 'ptejada\uFlex\Service\Authenticator');
         $this->registerService(self::SERVICE_AUTH, 'ptejada\uFlex\Service\UpgradeAuthenticator');
+
+        // Default options
+        $this->book->option = array(
+            // @formatter:off
+            'cookie' => array(
+                'time' => '30',
+                'name' => 'auto',
+                'path' => '/',
+                'host' => false,
+            ),
+
+            'session' => array(
+                'name' => 'userData',
+            ),
+
+            'user' => array(
+                'table'   => 'Users',
+                'default' => array(
+                    'Username' => 'Guess',
+                    'ID'       => 0,
+                    'Password' => 0,
+                ),
+            ),
+
+            'connection' => array(
+                'host'     => 'localhost',
+                'name'     => '',
+                'user'     => '',
+                'password' => '',
+                'dsn'      => '',
+                'pdo'      => null,
+            ),
+            // @formatter:on
+        );
     }
 
     /**

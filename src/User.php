@@ -3,10 +3,10 @@
 namespace ptejada\uFlex;
 
 use ptejada\uFlex\Classes\Collection;
-use ptejada\uFlex\Classes\Cookie;
-use ptejada\uFlex\Classes\Session;
-use ptejada\uFlex\DB\Connection;
-use ptejada\uFlex\DB\Table;
+use ptejada\uFlex\Classes\Helper;
+use ptejada\uFlex\Classes\Table;
+use ptejada\uFlex\Service\Cookie;
+use ptejada\uFlex\Service\Session;
 
 /**
  * All in one user object use to authenticating, registering new users and other user actions
@@ -22,76 +22,70 @@ class User extends AbstractUser
      *
      * @var string
      */
-    const VERSION = '1.0.6';
+    const VERSION = '2.0.0';
     /** @var Table - The database table object */
     public $table;
     /** @var  Session - The namespace session object */
     public $session;
-    /**
-     * Holds a unique clone number of the instance clones
-     *
-     * @var int
-     * @ignore
-     */
-    protected $clone = 0;
-    /** @var Connection - The database connection */
-    protected $db;
     /** @var  Cookie - The cookie for autologin */
     protected $cookie;
-    /**
-     * @var array Array of errors text. Could use overwritten for multilingual support
-     */
-    protected $errorList = array(
-        //Database Error while calling register functions
-        1  => 'New User Registration Failed',
-        //Database Error while calling update functions
-        2  => 'The Changes Could not be made',
-        //Database Error while calling activate function
-        3  => 'Account could not be activated',
-        //When calling pass_reset and the given email doesn't exist in database
-        4  => 'We don\'t have an account with this email',
-        //When calling new_pass, the confirmation hash did not match the one in database
-        5  => 'Password could not be changed. The request can\'t be validated',
-        6  => 'Logging with cookies failed',
-        7  => 'No Username or Password provided',
-        8  => 'Your Account has not been Activated. Check your Email for instructions',
-        9  => 'Your account has been deactivated. Please contact Administrator',
-        10 => 'Wrong Username or Password',
-        //When calling check_hash with invalid hash
-        11 => 'Confirmation hash is invalid',
-        //Calling check_hash hash failed database match test
-        12 => 'Your identification could not be confirmed',
-        //When saving hash to database fails
-        13 => 'Failed to save confirmation request',
-        14 => 'You need to reset your password to login',
-        15 => 'Can not register a new user, as user is already logged in.',
-        16 => 'This Email is already in use',
-        17 => 'This Username is not available',
-    );
+    /** @var  self */
+    protected static $instance;
 
-    /**
-     * Restore the a user session or Login a with given credentials.
-     *
-     * @api
-     *
-     * @param string $identifier - Username or Email
-     * @param string $password   - Clear text password
-     * @param bool   $autoLogin  - Flag whether to remember the user
-     *
-     * @return bool
-     */
-    public function login($identifier = '', $password = '', $autoLogin = false)
+    public function __construct()
     {
-        $this->log->channel('login');
+        parent::__construct();
 
-        // Start the class if is not been start yet
-        $this->start(false);
+        if (!(static::$instance instanceof self)) {
+            static::$instance = $this;
+        }
 
+        //Get the table DB object
+        $this->table = Config::getConnection()->getTable(Config::get('user.table'));
+
+        // Create and configure the auto login Cookie
+        $cookieInfo   = Config::get('cookie');
+        $this->cookie = Config::getCookie()->newCookie($cookieInfo->name);
+        $this->cookie->setHost($cookieInfo->host);
+        $this->cookie->setPath($cookieInfo->path);
+        $this->cookie->setLifetime($cookieInfo->time);
+        
+        // Create and configure the user session
+        $this->session = Config::getSession()->newSession(Config::get('session.name'));
+
+        // Link the session with the user data
+        if (is_null($this->session->data)) {
+            $this->session->data = Config::get('user.default')->toArray();
+        }
+        
+        $this->data =& $this->session->data->toArray();
+        
+        // Attempts to resume previous session
+        $this->resume();
+    }
+
+    /**
+     * @return User
+     */
+    public static function getInstance()
+    {
+        if (static::$instance instanceof self) {
+            return static::$instance;
+        } else {
+            return static::$instance = new self();
+        }
+    }
+
+    /**
+     * Resumes an existing user session
+     */
+    protected function resume()
+    {
         //Session Login
         if ($this->session->signed) {
-            $this->log->report('User Is signed in from session');
+            $this->log->debug('User Is signed in from session');
             if ($this->session->update) {
-                $this->log->report('Updating Session from database');
+                $this->log->debug('Updating Session from database');
 
                 //Get User From database because its info has change during current session
                 $update = $this->table->getRow(array('ID' => $this->ID, 'Activated' => 1));
@@ -112,71 +106,70 @@ class User extends AbstractUser
         }
 
         //Cookies Login
-        if (($confirmation = $this->cookie->getValue()) && !$identifier && !$password) {
-            $this->log->report('Attempting Login with cookies');
-            list($uid, $partial) = $this->hash->examine($confirmation);
+        if ($confirmation = $this->cookie->getValue()) {
+            $this->log->debug('Attempting Login with cookies');
+            // TODO: implement Cookie auto login feature
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Restore the a user session or Login a with given credentials.
+     *
+     * @api
+     *
+     * @param string $identifier - Username or Email
+     * @param string $password   - Clear text password
+     * @param bool   $autoLogin  - Flag whether to remember the user
+     *
+     * @return bool
+     */
+    public function login($identifier = '', $password = '', $autoLogin = false)
+    {
+        $this->log->channel('login');
 
-            if ($uid && $partial) {
-                $autoLogin = true;
-                $getBy = 'ID';
-                $identifier = $uid;
-            } else {
-                $this->log->error(6);
-                $this->logout();
-                return false;
-            }
-        } else {
-            //Credentials Login
-            if ($identifier && $password) {
-                if (preg_match($this->_validations->Email->regEx, $identifier)) {
-                    //Login using email
-                    $getBy = 'Email';
-                } else {
-                    //Login using Username
-                    $getBy = 'Username';
-                }
-
-                $this->log->report('Credentials received');
-            } else {
-                if ($identifier && !$password) {
-                    $this->log->error(7);
-                }
-                return false;
-            }
+        if ($this->resume()) {
+            return true;
         }
 
-        $this->log->report('Querying Database to authenticate user');
+       
+        //Credentials Login
+        if ($identifier && $password) {
+            if (preg_match(Config::getValidator()->getFieldRules('Email')->pattern, $identifier)) {
+                //Login using email
+                $getBy = 'Email';
+            } else {
+                //Login using Username
+                $getBy = 'Username';
+            }
+
+            $this->log->debug('Credentials received');
+        } else {
+            if ($identifier && !$password) {
+                // TODO: Throw exception
+                $this->log->error(7);
+            }
+            return false;
+        }
+
+        $this->log->debug('Querying Database to authenticate user');
 
         //Query Database for user
-        $userFile = $this->table->getRow(Array($getBy => $identifier));
+        $userFile = $this->table->getRow(array($getBy => $identifier));
 
         if ($userFile && !$this->isSigned()) {
-            if (isset($partial)) {
-                // Partially match the user password to authenticate
-                $this->session->signed = strpos($userFile->Password, $partial) >= 0;
-            } else {
-                // Fully match the user password to authenticate
-                $this->_updates = $userFile;
+            // Update the user data
+            $this->dataUpdates = $userFile; // TODO: Why?
 
-                /*
-                 * Determine whether to use the old or new algorithm
-                 */
-                $aType = strlen($userFile->Password) !== 40;
+            /*
+             * Compared the generated hash with the stored one
+             * If it matches then the user will be logged in
+             */
+            $this->session->signed = Config::getAuth()->verifyPassword($password, $userFile->Password, $this);
 
-                /*
-                 * Encode the password with the hashing algorithm
-                 */
-                $generated = $this->session->signed = $this->hash->generateUserPassword($this, $password, $aType);
-
-                /*
-                 * Compared the generated hash with the stored one
-                 * If it matches then the user will be logged in
-                 */
-                $this->session->signed = $generated === $userFile->Password;
-
-                // Clear the updates stack
-                $this->_updates = new Collection();
-            }
+            // Clear the updates stack
+            $this->dataUpdates = new Collection(); // TODO: Why?
         } else {
             if (!$this->isSigned() && $password) {
                 $this->log->formError('Password', $this->errorList[10]);
@@ -208,8 +201,8 @@ class User extends AbstractUser
 
             //If auto Remember User
             if ($autoLogin) {
-                // TODO: The way the autologin cookie works needs to be improved
-                $this->cookie->setValue($this->hash->generate($this->ID, $this->Password));
+                // TODO: Implement the auto login cookie
+                $this->cookie->setValue('SomethingUnique');
                 $this->cookie->add();
             }
 
@@ -217,7 +210,7 @@ class User extends AbstractUser
             $this->logLogin();
 
             //Done
-            $this->log->report('User Logged in Successfully');
+            $this->log->debug('User Logged in Successfully');
             return true;
         } else {
             if ($password) {
@@ -227,65 +220,6 @@ class User extends AbstractUser
             }
             return false;
         }
-    }
-
-    /**
-     * Starts and Configures the object
-     *
-     * @param bool $login Flag whether to attempt to login or not
-     *
-     * @return $this
-     */
-    public function start($login = true)
-    {
-        if (!($this->db instanceof Connection)) {
-            // Updating the predefine error logs
-            $this->log->addPredefinedError($this->errorList);
-
-            // Instantiate the Database object
-            if ($this->config->database->pdo instanceof \PDO) {
-                // Uses an existing PDO connection
-                $this->db = new Connection($this->config->database->pdo);
-            } else {
-                if ($this->config->database->dsn) {
-                    $this->db = new Connection($this->config->database->dsn);
-                } else {
-                    $this->db = new Connection($this->config->database->host, $this->config->database->name);
-                }
-
-                // Configure the database object
-                $this->db->setUser($this->config->database->user);
-                $this->db->setPassword($this->config->database->password);
-            }
-
-            // Link logs
-            $this->db->log = $this->log;
-
-            //Instantiate the table DB object
-            $this->table = $this->db->getTable($this->config->userTableName);
-
-            // Instantiate and configure the cookie object
-            $this->cookie = new Cookie($this->config->cookieName);
-            $this->cookie->setHost($this->config->cookieHost);
-            $this->cookie->setPath($this->config->cookiePath);
-            $this->cookie->setLifetime($this->config->cookieTime);
-
-            // Instantiate the session
-            $this->session = new Session($this->config->userSession, $this->log);
-
-        }
-
-        // Link the session with the user data
-        if (is_null($this->session->data)) {
-            $this->session->data = $this->config->userDefaultData->toArray();
-        }
-        $this->_data =& $this->session->data->toArray();
-
-        if ($login) {
-            $this->login();
-        }
-
-        return $this;
     }
 
     /**
@@ -299,7 +233,7 @@ class User extends AbstractUser
         $time = time();
         $sql = "UPDATE _table_ SET LastLogin=:stamp WHERE ID=:id";
         if ($this->table->runQuery($sql, array('stamp' => $time, 'id' => $this->ID))) {
-            $this->log->report('Last Login updated');
+            $this->log->debug('Last Login updated');
         }
     }
 
@@ -312,16 +246,16 @@ class User extends AbstractUser
     function logout()
     {
         if (!$this->cookie->destroy()) {
-            $this->log->report('The Autologin cookie could not be deleted');
+            $this->log->debug('The Autologin cookie could not be deleted');
         }
 
         // Destroy the session
         $this->session->destroy();
 
         //Import default user object
-        $this->_data = $this->config->userDefaultData->toArray();
+        $this->data = $this->config->userDefaultData->toArray();
 
-        $this->log->report('User Logged out');
+        $this->log->debug('User Logged out');
     }
 
     /**
@@ -366,12 +300,9 @@ class User extends AbstractUser
         }
 
         //Saves Registration Data in Class
-        $this->_updates = $info = $this->toCollection($info);
-
-        //Validate All Fields
-        if (!$this->validateAll(true)) {
-            return false;
-        } //There are validations error
+        $this->dataUpdates = $info = Helper::getCollection($info);
+        
+        Config::getValidator()->validateAll($info);
 
         //Set Registration Date
         $info->RegDate = time();
@@ -382,7 +313,7 @@ class User extends AbstractUser
 
         //Hash Password
         if ($info->Password) {
-            $info->Password = $this->hash->generateUserPassword($this, $info->Password);
+            $info->Password = Config::getAuth()->hashPassword($info->Password);
         }
 
         //Check for Email in database
@@ -414,6 +345,7 @@ class User extends AbstractUser
         $data = array();
         $into = array();
         foreach ($info->toArray() as $index => $val) {
+            // TODO: Skip all match fields from the validation
             if (!preg_match("/2$/", $index)) { //Skips double fields
                 $into[] = $index;
                 //For the statement
@@ -431,10 +363,11 @@ class User extends AbstractUser
 
         //Enter New user to Database
         if ($this->table->runQuery($sql, $data)) {
-            $this->log->report('New User has been registered');
+            $this->log->debug('New User has been registered');
             // Update the new ID internally
-            $this->_data['ID'] = $info->ID = $this->table->getLastInsertedID();
+            $this->data['ID'] = $info->ID = $this->table->getLastInsertedID();
             if ($activation) {
+                // TODO: Handle the confirmation in the initial insertion and use UserTokens for the confirmation
                 // Generate a user specific hash
                 $info->Confirmation = $this->hash->generate($info->ID);
                 // Update the newly created user with the confirmation hash
@@ -468,12 +401,12 @@ class User extends AbstractUser
         $this->log->channel('update');
 
         if (!is_null($updates)) {
-            //Saves Updates Data in Class
-            $this->_updates = $updates = $this->toCollection($updates);
+            //Save Updates Data in Class
+            $this->dataUpdates = $updates = Helper::getCollection($updates);
         } else {
-            if ($this->_updates instanceof Collection && !$this->_updates->isEmpty()) {
+            if ($this->dataUpdates instanceof Collection && !$this->dataUpdates->isEmpty()) {
                 // Use the updates from the queue
-                $updates = $this->_updates;
+                $updates = $this->dataUpdates;
             } else {
                 // No updates
                 return false;
@@ -481,10 +414,7 @@ class User extends AbstractUser
         }
 
         //Validate All Fields
-        if (!$this->validateAll()) {
-            //There are validations error
-            return false;
-        }
+        Config::getValidator()->validateAll($updates);
 
         /*
          * Built in actions for special fields
@@ -492,7 +422,7 @@ class User extends AbstractUser
 
         //Hash Password
         if ($updates->Password) {
-            $updates->Password = $this->hash->generateUserPassword($this, $updates->Password);
+            $updates->Password = Config::getAuth()->hashPassword($updates->Password);
         }
 
         //Check for Email in database
@@ -513,6 +443,7 @@ class User extends AbstractUser
         $data = array();
         $set = array();
         foreach ($updates->toArray() as $index => $val) {
+            // TODO: Skip confirmation fields from the the validation scheme
             if (!preg_match('/2$/', $index)) { //Skips double fields
                 $set[] = "{$index}=:{$index}";
                 //For the statement
@@ -524,21 +455,21 @@ class User extends AbstractUser
 
         //Prepare User Update Query
         $sql = "UPDATE _table_ SET {$set}  WHERE ID=:id";
-        $data['id'] = $this->ID;
+        $data['ID'] = $this->ID;
 
         //Check for Changes
         if ($this->table->runQuery($sql, $data)) {
-            $this->log->report('Information Updated');
+            $this->log->debug('Information Updated');
 
             if ($this->clone === 0) {
                 $this->session->update = true;
             }
 
             // Update the current object with the updated information
-            $this->_data = array_merge($this->_data, $updates->toArray());
+            $this->data = array_merge($this->data, $updates->toArray());
 
             // Clear the updates stack
-            $this->_updates = new Collection();
+            $this->dataUpdates = new Collection();
 
             return true;
         } else {
@@ -574,6 +505,7 @@ class User extends AbstractUser
 
             $data = array(
                 'ID'           => $user->ID,
+                // TODO: Use a UserToken
                 'Confirmation' => $this->hash->generate($user->ID),
             );
 
@@ -616,12 +548,12 @@ class User extends AbstractUser
         list($uid, $partial) = $this->hash->examine($hash);
 
         if ($uid && $user = $this->table->getRow(array('ID' => $uid, 'Confirmation' => $hash))) {
-            $this->_updates = new Collection($newPass);
+            $this->dataUpdates = new Collection($newPass);
             if (!$this->validateAll()) {
                 return false;
             } //There are validations error
 
-            $this->_updates = $user;
+            $this->dataUpdates = $user;
 
             // Generate the password hash
             $pass = $this->hash->generateUserPassword($this, $newPass['Password']);
@@ -634,7 +566,7 @@ class User extends AbstractUser
             );
 
             if ($this->table->runQuery($sql, $data)) {
-                $this->log->report('Password has been changed');
+                $this->log->debug('Password has been changed');
                 return true;
             }
         }
@@ -642,16 +574,6 @@ class User extends AbstractUser
         //Error
         $this->log->error(5);
         return false;
-    }
-
-    /**
-     * Destroys the session if the instance is a clone
-     */
-    public function __destruct()
-    {
-        if ($this->clone > 0) {
-            $this->session->destroy();
-        }
     }
 
     /**
@@ -685,14 +607,14 @@ class User extends AbstractUser
 
                     // Updates the flag on the database
                     if ($user->update()) {
-                        $this->log->report('Account has been Activated');
+                        $this->log->debug('Account has been Activated');
                         return true;
                     }
                 } else {
-                    $this->log->report('The activation hash does not match the DB record');
+                    $this->log->debug('The activation hash does not match the DB record');
                 }
             } else {
-                $this->log->report("Unable to find user with ID $uid to activate");
+                $this->log->debug("Unable to find user with ID $uid to activate");
             }
         }
 
@@ -703,59 +625,8 @@ class User extends AbstractUser
         return false;
     }
 
-    /**
-     * User factory
-     * Returns a clone of the User instance which allows simple user managing
-     * capabilities such as updating a user field, resetting its password and so on.
-     *
-     * @api
-     *
-     * @param int $id
-     *
-     * @return bool|User Returns false if user does not exists in database
-     */
-    public function manageUser($id = null)
+    public function manageUser($id)
     {
-        $user = clone $this;
-        $user->log->channel('Cloning');
-
-        if (is_numeric($id) && $id) {
-            $user->log->report('Fetching user from database');
-            $data = $user->table->getRow(array('ID' => $id));
-            if ($data) {
-                $user->_data = $data->toArray();
-
-                $user->log->report('User imported to object');
-            }
-        }
-
-        return $user;
-    }
-
-    /**
-     * Magic method to handle object cloning
-     *
-     * @ignore
-     */
-    protected function __clone()
-    {
-        $this->clone++;
-
-        // Copy the configuration
-        $this->config = new Collection($this->config->toArray());
-
-        $this->config->cookieName .= '_c' . $this->clone;
-        $this->config->userSession .= '_c' . $this->clone;
-
-        $this->session = new Session($this->config->userSession);
-        $this->cookie = new Cookie($this->config->cookieName);
-
-        $this->_updates = new Collection();
-        $this->log = $this->log->newChildLog('UserClone' . $this->clone);
-
-        //Import default user object to session
-        $this->session->data = $this->config->userDefaultData->toArray();
-        //Link the new session namespace to the internal data array
-        $this->_data =& $this->session->data->toArray();
+        return Config::getManager()->getUser($id);
     }
 }

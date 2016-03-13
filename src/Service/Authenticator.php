@@ -8,6 +8,8 @@
 
 namespace ptejada\uFlex\Service;
 
+use ptejada\uFlex\User;
+
 
 /**
  * Class Authenticator handles user password authentication
@@ -30,12 +32,14 @@ class Authenticator
 
     /**
      * Verifies that a password matches a hash
+     *
      * @param string $password A clear text password
-     * @param string $hash A hash as returned by
+     * @param string $hash     A hash as returned by
+     * @param User   $user
      *
      * @return bool
      */
-    public function verifyPassword($password, $hash)
+    public function verifyPassword($password, $hash, User $user = null)
     {
         return password_verify($password, $hash);
     }

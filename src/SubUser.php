@@ -10,12 +10,12 @@ use ptejada\uFlex\Classes\Collection;
  * @package ptejada\uFlex
  * @author  Pablo Tejada <pablo@ptejada.com>
  */
-abstract class AbstractUser
+class SubUser extends AbstractUser
 {
     /** @var array - The user information object */
-    protected $data;
+    protected $_data;
     /** @var Collection - Updates for the user information object */
-    protected $dataUpdates;
+    protected $_updates;
 
     /**
      * Initializes the the User object
@@ -25,10 +25,10 @@ abstract class AbstractUser
     public function __construct(array $userData = array())
     {
         // Hydrate the model with user information
-        $this->data = $userData;
+        $this->_data = $userData;
 
-        // Initializes the dataUpdates collection
-        $this->dataUpdates = new Collection();
+        // Initializes the updates collection
+        $this->_updates = new Collection();
     }
 
     /**
@@ -52,11 +52,11 @@ abstract class AbstractUser
      */
     public function __get($name)
     {
-        if (isset($this->data[$name])) {
-            return $this->data[$name];
+        if (isset($this->_data[$name])) {
+            return $this->_data[$name];
         } else {
-            if ($this->_dataUpdates->$name) {
-                return $this->dataUpdates->$name;
+            if ($this->_updates->$name) {
+                return $this->_updates->$name;
             }
         }
 
@@ -70,14 +70,14 @@ abstract class AbstractUser
     }
 
     /**
-     * Queues any dataUpdates to user properties
+     * Queues any updates to user properties
      *
      * @param $name
      * @param $value
      */
     public function __set($name, $value)
     {
-        $this->dataUpdates->$name = $value;
+        $this->_updates->$name = $value;
     }
 
     /**
@@ -87,14 +87,6 @@ abstract class AbstractUser
      */
     public function toArray()
     {
-        return $this->data;
-    }
-
-    /**
-     * @ignore
-     */
-    protected function __clone()
-    {
-        // Prevents user cloning
+        return $this->_data;
     }
 }

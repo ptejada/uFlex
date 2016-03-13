@@ -3,6 +3,7 @@
 namespace ptejada\uFlex\Service;
 
 use ptejada\uFlex\Classes\Table;
+use ptejada\uFlex\Config;
 
 /**
  * Database Connection Manager
@@ -25,7 +26,7 @@ class Connection
     /** @var string - Alternative DSN string */
     private $dsn = '';
     /** @var \PDO - The DB connection session */
-    private $connection;
+    private $pdo;
 
     /**
      * Initializes the Database object
@@ -35,31 +36,40 @@ class Connection
      */
     public function __construct($hostOrDSN = '', $dbName = '')
     {
-        if (!$dbName) {
-            if ($hostOrDSN instanceof \PDO) {
-                // Saves the PDO connection
-                $this->setConnection($hostOrDSN);
-            } else {
-                // add full DSN string
-                $this->dsn = $hostOrDSN;
-            }
+        if (empty($hostOrDSN) && empty($dbName)) {
+            $options = Config::get('connection');
+
+            $this->host     = $options->host;
+            $this->name     = $options->name;
+            $this->user     = $options->user;
+            $this->password = $options->password;
+            $this->dsn      = $options->dsn;
+            $this->pdo      = $options->pdo;
         } else {
-            // Add the default DB credentials for MySQL
-            $this->host = $hostOrDSN;
-            $this->dbName = $dbName;
+            if (!$dbName) {
+                if ($hostOrDSN instanceof \PDO) {
+                    // Saves the PDO connection
+                    $this->setConnection($hostOrDSN);
+                } else {
+                    // add full DSN string
+                    $this->dsn = $hostOrDSN;
+                }
+            } else {
+                // Add the default DB credentials for MySQL
+                $this->host = $hostOrDSN;
+                $this->dbName = $dbName;
+            }
         }
 
-        $this->log = new Log('DB');
+        $this->log = Config::getLog();
     }
 
     /**
      * Get table object
-
      *
-*@param $tableName
-
+     * @param $tableName
      *
-*@return Table
+     * @return Table
      */
     public function getTable($tableName)
     {
@@ -118,22 +128,22 @@ class Connection
         }
 
         // Use cached connection if already connected to server
-        if ($this->connection instanceof \PDO) {
-            return $this->connection;
+        if ($this->pdo instanceof \PDO) {
+            return $this->pdo;
         }
 
         $this->log->report('Connecting to database...');
 
         try{
-            $this->connection = new \PDO($this->generateDSN(), $this->user, $this->password);
+            $this->pdo = new \PDO($this->generateDSN(), $this->user, $this->password);
             $this->log->report('Connected to database.');
         } catch ( \PDOException $e ){
             $this->log->error('Failed to connect to database, [SQLSTATE] ' . $e->getCode());
         }
 
         // Check is the connection to server succeed
-        if ($this->connection instanceof \PDO) {
-            return $this->connection;
+        if ($this->pdo instanceof \PDO) {
+            return $this->pdo;
         } else {
             // There was an error connecting to the DB server
             return false;
@@ -156,10 +166,11 @@ class Connection
 
     /**
      * Set the connection
-     * @param \PDO $connection
+     *
+*@param \PDO $pdo
      */
-    public function setConnection(\PDO $connection)
+    public function setConnection(\PDO $pdo)
     {
-        $this->connection = $connection;
+        $this->pdo = $pdo;
     }
 }

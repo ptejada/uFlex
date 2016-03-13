@@ -10,7 +10,6 @@ namespace ptejada\uFlex\Service\Validation;
 
 
 use ptejada\uFlex\Classes\Collection;
-use ptejada\uFlex\Classes\Helper;
 
 class Validator
 {
@@ -19,10 +18,28 @@ class Validator
     /** @var Collection The data to be validated */
     protected $data;
 
-    public function __construct($data = array(), $schema = array())
+    public function __construct()
     {
-        $this->schema = Helper::getCollection($data);
-        $this->data   = Helper::getCollection($data);
+        $this->data   = new Collection();
+        $this->schema = new Collection(
+            array(
+                'Username' => array(
+                    'min' => 3,
+                    'max' => 15,
+                    'pattern' => '/^([a-zA-Z0-9_])+$/',
+                ),
+                'Password' => array(
+                    'min' => 3,
+                    'max' => 15,
+                    'pattern' => '',
+                ),
+                'Email'    => array(
+                    'min' => 4,
+                    'max' => 45,
+                    'pattern' => '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,63})$/i',
+                ),
+            )
+        );
     }
 
     /**
@@ -76,8 +93,9 @@ class Validator
      *
      * @throws ValidationException
      */
-    public function validateAll()
+    public function validateAll( $data = null )
     {
+
         foreach ($this->data as $fieldName => $fieldValue) {
             $this->validate($fieldName, $fieldValue);
         }
@@ -108,7 +126,7 @@ class Validator
      * @return Collection The validation rules
      * @throws \Exception
      */
-    protected function getFieldRules($fieldName)
+    public function getFieldRules($fieldName)
     {
         $rules = $this->schema->get($fieldName);
         if ($rules && $rules instanceof Collection) {
