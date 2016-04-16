@@ -14,9 +14,11 @@ class LinkedCollection extends Collection
      * Takes the reference of an array
      *
      * @param array $info
+     * @param bool  $autoEscape
      */
-    public function __construct(array &$info = array())
+    public function __construct(array &$info = array(), $autoEscape=false)
     {
         $this->_data =& $info;
+        $this->_autoEscape = $autoEscape;
     }
 }

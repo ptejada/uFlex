@@ -82,6 +82,45 @@ class Log
         $this->addEntry(self::LEVEL_DEBUG, $message);
     }
 
+    /**
+     * Check if there ara any errors
+     * @return bool
+     */
+    public function hasError()
+    {
+        return ! empty($this->console[self::LEVEL_ERROR]);
+    }
+
+    /**
+     * Check if it there are any debugging reports
+     * @return bool
+     */
+    public function hasReports()
+    {
+        return ! empty($this->console[self::LEVEL_DEBUG]);
+    }
+
+    /**
+     * Get logged debugging information
+     * @return string[][]
+     */
+    public function getReports()
+    {
+        return $this->hasReports() ? $this->console[self::LEVEL_DEBUG] : array();
+    }
+
+    /**
+     * Get logged errors
+     * @return string[][]
+     */
+    public function getErrors()
+    {
+        return $this->hasError() ? $this->console[self::LEVEL_ERROR] : array();
+    }
+
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return print_r($this->console, true);

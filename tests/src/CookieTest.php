@@ -9,7 +9,9 @@
 namespace tests;
 
 
-use ptejada\uFlex\Cookie;
+
+
+use ptejada\uFlex\Service\Cookie;
 
 class CookieTest extends \PHPUnit_Framework_TestCase {
 
@@ -27,4 +29,3 @@ class CookieTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(0, strpos($output, '<script>'));
     }
 }
- 

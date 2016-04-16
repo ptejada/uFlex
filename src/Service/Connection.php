@@ -13,7 +13,11 @@ use ptejada\uFlex\Config;
  */
 class Connection
 {
-    /** @var  Log - Log errors and report */
+    /**
+     * Log errors and report
+     * @deprecated
+     * @var  Log
+     */
     public $log;
     /** @var string - The server IP or host name */
     private $host = 'localhost';
@@ -123,22 +127,18 @@ class Connection
      */
     public function getConnection()
     {
-        if (!($this->log instanceof Log)) {
-            $this->log = new Log('DB');
-        }
-
         // Use cached connection if already connected to server
         if ($this->pdo instanceof \PDO) {
             return $this->pdo;
         }
 
-        $this->log->report('Connecting to database...');
+        $this->log->section('db')->debug('Connecting to database...');
 
         try{
             $this->pdo = new \PDO($this->generateDSN(), $this->user, $this->password);
-            $this->log->report('Connected to database.');
+            $this->log->section('db')->debug('Connected to database.');
         } catch ( \PDOException $e ){
-            $this->log->error('Failed to connect to database, [SQLSTATE] ' . $e->getCode());
+            $this->log->section('db')->error('Failed to connect to database, [SQLSTATE] ' . $e->getCode());
         }
 
         // Check is the connection to server succeed

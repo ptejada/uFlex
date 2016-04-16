@@ -214,7 +214,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         );
 
         foreach ($list as $key => $value) {
-            $this->assertInstanceOf('IRIS\Classes\LinkedCollection', $value);
+            $this->assertInstanceOf('ptejada\uFlex\Classes\LinkedCollection', $value);
         }
     }
 
@@ -272,7 +272,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $path3 = 'one';
 
         $data = new Collection($raw);
-        $this->assertInstanceOf('\IRIS\Classes\Collection', $data->get($path));
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Collection', $data->get($path));
 
         $data->delete($path);
         $this->assertNull($data->get($path));
@@ -335,6 +335,6 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $data->expand($raw, '|');
 
         $this->assertEquals($expected, $data->toArray());
-        $this->assertInstanceOf('\IRIS\Classes\Collection', $data->get('one|two|three'));
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Collection', $data->get('one|two|three'));
     }
 }

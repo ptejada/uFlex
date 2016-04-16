@@ -8,9 +8,9 @@
 
 namespace tests;
 
-use ptejada\uFlex\Connection;
+use ptejada\uFlex\Service\Connection;
 
-class DBTest extends \PHPUnit_Framework_TestCase {
+class ConnectionTest extends \PHPUnit_Framework_TestCase {
 
     /** @var  Connection */
     protected static $db;
@@ -22,27 +22,25 @@ class DBTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('PDO', $db->getConnection(), 'Successfully connects to DB');
         $this->assertFalse($db->log->hasError(), 'There should be no error');
         $this->assertNotEmpty($db->log->getReports(), 'There should some report entries');
-        $this->assertEquals(3, count($db->log->getReports()), 'Expect exactly 3 report after connection');
+        $this->assertEquals(2, count($db->log->getReports()), 'Expect exactly 2 report after connection');
     }
 
-    /*
     public function testConnectionFails()
     {
-        $db = new DB('localhost','test','root','');
+        $db = new Connection('localhost','test','root','');
 
         $this->assertNotInstanceOf('PDO', $db->getConnection(), 'Fails to connects to DB');
         $this->assertTrue($db->log->hasError(), 'There should be errors');
         $this->assertNotEmpty($db->log->getErrors(), 'There should some report entries');
-        $this->assertEquals(3, count($db->log->getReports()), 'Expect exactly 3 reports after connection fails');
+        $this->assertNotEmpty($db->log->getReports(), 'Expect some reports after connection fails');
     }
-    */
 
     public function testGetTable()
     {
         $db = new Connection('sqlite::memory:');
         $table = $db->getTable('Users');
 
-        $this->assertInstanceOf('ptejada\uFlex\DB_TAble', $table, 'Should be an instance of DBTable');
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Table', $table, 'Should be an instance of DBTable');
     }
 
 }
