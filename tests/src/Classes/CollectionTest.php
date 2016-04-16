@@ -6,7 +6,7 @@
  * Time: 11:40 AM
  */
 
-namespace tests;
+namespace tests\ptejada\uFlex\Classes;
 
 
 use ptejada\uFlex\Classes\Collection;

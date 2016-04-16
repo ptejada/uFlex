@@ -2,6 +2,7 @@
 namespace tests;
 
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
+use ptejada\uFlex\Config;
 
 abstract class Tests_DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
@@ -29,6 +30,7 @@ abstract class Tests_DatabaseTestCase extends \PHPUnit_Extensions_Database_TestC
         if ($this->conn === null) {
             if (self::$pdo == null) {
                 self::$pdo = new \PDO( $GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'] );
+                Config::set('connection.pdo', self::$pdo);
             }
             $this->conn = $this->createDefaultDBConnection(self::$pdo, $GLOBALS['DB_DBNAME']);
         }

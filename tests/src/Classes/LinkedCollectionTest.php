@@ -6,10 +6,10 @@
  * Time: 3:13 PM
  */
 
-namespace tests;
+namespace tests\ptejada\uFlex\Classes;
 
 
-use ptejada\uFlex\LinkedCollection;
+use ptejada\uFlex\Classes\LinkedCollection;
 
 class LinkedCollectionTest extends \PHPUnit_Framework_TestCase {
 
@@ -38,4 +38,3 @@ class LinkedCollectionTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($arrayList, $list->toArray());
     }
 }
- 

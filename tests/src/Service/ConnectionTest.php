@@ -6,7 +6,7 @@
  * Time: 10:54 PM
  */
 
-namespace tests;
+namespace tests\ptejada\uFlex\Service;
 
 use ptejada\uFlex\Service\Connection;
 

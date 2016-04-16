@@ -123,7 +123,7 @@ class Connection
      * Gets the connecting to the database
      * Check if the database connection exists if not connects to the database
      *
-     * @return \PDO | bool
+     * @return \PDO
      */
     public function getConnection()
     {
@@ -137,16 +137,10 @@ class Connection
         try{
             $this->pdo = new \PDO($this->generateDSN(), $this->user, $this->password);
             $this->log->section('db')->debug('Connected to database.');
+            return $this->pdo;        
         } catch ( \PDOException $e ){
             $this->log->section('db')->error('Failed to connect to database, [SQLSTATE] ' . $e->getCode());
-        }
-
-        // Check is the connection to server succeed
-        if ($this->pdo instanceof \PDO) {
-            return $this->pdo;
-        } else {
-            // There was an error connecting to the DB server
-            return false;
+            // TODO: Throw exception
         }
     }
 

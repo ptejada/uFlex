@@ -6,28 +6,19 @@
  * Time: 10:54 PM
  */
 
-namespace tests;
+namespace tests\ptejada\uFlex\Classes;
 
-use ptejada\uFlex\Connection;
+use ptejada\uFlex\Config;
+use tests\Tests_DatabaseTestCase;
 
-class DBTableTest extends Tests_DatabaseTestCase {
-
-    /** @var  Connection */
-    protected static $db;
-
-    public function setUp()
-    {
-        self::$db = new Connection($this->getPDO());
-        parent::setUp();
-    }
+class TableTest extends Tests_DatabaseTestCase {
 
     public function testFull()
     {
-        $db = self::$db;
-        $table = $db->getTable('Users');
+        $table = Config::getConnection()->getTable('Users');
 
-        $this->assertInstanceOf('ptejada\uFlex\DB_Table', $table, 'Should be an instance of DBTable');
-        $this->assertInstanceOf('ptejada\uFlex\Log', $table->log);
+        $this->assertInstanceOf('ptejada\uFlex\Classes\Table', $table, 'Should be an instance of DBTable');
+        $this->assertInstanceOf('ptejada\uFlex\Service\Log', $table->log);
 
         for($i=2; $i<5; $i++)
         {
@@ -41,7 +32,7 @@ class DBTableTest extends Tests_DatabaseTestCase {
         $this->assertInstanceOf('ptejada\uFlex\Classes\Collection', $user, 'Retrieve a record from the table');
 
         // Both console log should be equal
-        $this->assertEquals($db->log->getFullConsole(), $table->log->getFullConsole());
+        $this->assertEquals(Config::getConnection()->log->getReports(), $table->log->getReports());
     }
 
 }

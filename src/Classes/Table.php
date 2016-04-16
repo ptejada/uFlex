@@ -2,8 +2,8 @@
 
 namespace ptejada\uFlex\Classes;
 
-use ptejada\uFlex\Log;
 use ptejada\uFlex\Service\Connection;
+use ptejada\uFlex\Service\Log;
 
 /**
  * Class DB_Table
@@ -13,7 +13,11 @@ use ptejada\uFlex\Service\Connection;
  */
 class Table
 {
-    /** @var  Log - Log errors and report */
+    /**
+     * Log errors and report
+     * @deprecated
+     * @var Log
+     */
     public $log;
     /** @var string - The table name */
     private $tableName = '';
@@ -50,11 +54,12 @@ class Table
         $row = $this->getRow(array($field => $val));
 
         if ($row) {
-            $this->log->report("There was a match for $field = $val");
+            $this->log->debug("There was a match for $field = $val");
+            // TODO: Throw exception?
             $this->log->formError($field, $customError ? $customError : "The {$field} {$val} exists in database");
             return true;
         } else {
-            $this->log->report("No Match for $field = $val");
+            $this->log->debug("No Match for $field = $val");
             return false;
         }
     }
@@ -96,14 +101,14 @@ class Table
             //Prepare the statement
             if ($stmt = $connection->prepare($query)) {
                 //Log the SQL Query first
-                $this->log->report("SQL Statement: {$query}");
+                $this->log->debug("SQL Statement: {$query}");
 
                 // When fetched return an object
                 $stmt->setFetchMode(\PDO::FETCH_INTO, new Collection());
 
                 // If arguments were passed execute the statement
                 if ($args) {
-                    $this->log->report("SQL Data Sent: [" . implode(', ', $args) . "]");
+                    $this->log->debug("SQL Data Sent: [" . implode(', ', $args) . "]");
                     $stmt->execute($args);
                 }
 
@@ -203,11 +208,11 @@ class Table
 
         if ($rows > 0) {
             //Good, Rows where affected
-            $this->log->report("$rows row(s) where Affected");
+            $this->log->debug("$rows row(s) where Affected");
             return true;
         } else {
             //Bad, No Rows where Affected
-            $this->log->report('No rows were Affected');
+            $this->log->debug('No rows were Affected');
             return false;
         }
     }

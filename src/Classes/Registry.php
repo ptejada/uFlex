@@ -29,7 +29,7 @@ class Registry extends AbstractSingleton
         $this->book = new Collection();
 
         // Register default services
-        $this->registerService(self::SERVICE_LOG, 'ptejada\uFlex\Log');
+        $this->registerService(self::SERVICE_LOG, 'ptejada\uFlex\Service\Log');
         $this->registerService(self::SERVICE_COOKIE, 'ptejada\uFlex\Service\Cookie');
         $this->registerService(self::SERVICE_SESSION, 'ptejada\uFlex\Service\Session');
         $this->registerService(self::SERVICE_CONNECTION, 'ptejada\uFlex\Service\Connection');
@@ -107,7 +107,7 @@ class Registry extends AbstractSingleton
      */
     public function registerService($serviceName, $serviceClass)
     {
-        if (class_exists($serviceClass)) {
+        if (!class_exists($serviceClass)) {
             throw new \Exception("Can not register service '{$serviceName}', class does not exist: {$serviceClass}");
         }
 
@@ -115,7 +115,7 @@ class Registry extends AbstractSingleton
         // If a class has already been registered then it must inherit the known parent
         $expectedParent = $this->book->get($classPath);
 
-        if ($expectedParent && !is_subclass_of($classPath, $expectedParent)) {
+        if ($expectedParent && !is_subclass_of($serviceClass, $expectedParent)) {
             throw new \Exception("Class '{$classPath}' is expected to inherit from '{$expectedParent}'.");
         }
 
@@ -135,11 +135,14 @@ class Registry extends AbstractSingleton
      */
     public function service($serviceName)
     {
-        $instance = $this->book->get($this->getInstancePath($serviceName));
+        $instancePath = $this->getInstancePath($serviceName);
+        $instance = $this->book->get($instancePath);
 
         if (!is_object($instance)) {
             $constructor = $this->book->get($this->getClassPath($serviceName));
             $instance    = new $constructor;
+            // Save service instance
+            $this->book->set($instancePath, $instance);
         }
 
         return $instance;

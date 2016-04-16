@@ -6,10 +6,7 @@
  * Time: 6:53 PM
  */
 
-namespace tests;
-
-
-
+namespace tests\ptejada\uFlex\Service;
 
 use ptejada\uFlex\Service\Cookie;
 
