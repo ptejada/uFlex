@@ -6,10 +6,10 @@
  * Time: 5:58 PM
  */
 
-namespace tests;
+namespace tests\ptejada\uFlex\Service;
 
 
-use ptejada\uFlex\Session;
+use ptejada\uFlex\Service\Session;
 
 class SessionTest extends \PHPUnit_Framework_TestCase {
 
@@ -18,6 +18,10 @@ class SessionTest extends \PHPUnit_Framework_TestCase {
         // Initializes the global session array
         $_SESSION = array();
     }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testInitialization()
     {
         // Manage the whole session
@@ -32,6 +36,9 @@ class SessionTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($session->log->hasError());
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSettersAndGetters()
     {
         $session = new Session('test');
@@ -46,6 +53,4 @@ class SessionTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals($_SESSION['test']['list'], $session->list->toArray());
     }
-
 }
- 

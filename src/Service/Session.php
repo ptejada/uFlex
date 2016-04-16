@@ -17,7 +17,11 @@ use ptejada\uFlex\Config;
  */
 class Session extends LinkedCollection
 {
-    /** @var  Log - Log errors and report */
+    /**
+     * Log errors and report
+     * @var  Log
+     * @deprecated
+     */
     public $log;
 
     /** @var null|string Session index to manage */
@@ -31,6 +35,7 @@ class Session extends LinkedCollection
     public function __construct($namespace = null)
     {
         $this->namespace = $namespace;
+        $this->log = Config::getLog();
         $this->init();
     }
 
@@ -92,9 +97,9 @@ class Session extends LinkedCollection
             } else {
                 return $this->getID() == '' ? false : true;
             }
+        } else {
+            return $this->getID() != '';
         }
-
-        return false;
     }
 
     /**
