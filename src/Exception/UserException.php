@@ -10,7 +10,7 @@ namespace ptejada\uFlex\Exception;
 
 
 
-class ErrorException extends UFlexException
+class UserException extends SystemException
 {
     const ERROR_REGISTRATION_FAILURE         = 1;
     const ERROR_UPDATE_FAILURE               = 2;

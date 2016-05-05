@@ -19,7 +19,7 @@ class LogTest extends \PHPUnit_Framework_TestCase {
     protected function setUp()
     {
         parent::setUp();
-        $this->log = Config::getLog();
+        $this->log = new Log();
     }
 
     public function testDefaultSection()

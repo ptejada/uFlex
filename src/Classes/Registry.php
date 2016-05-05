@@ -10,6 +10,7 @@ namespace ptejada\uFlex\Classes;
 
 
 use ptejada\uFlex\AbstractSingleton;
+use ptejada\uFlex\Exception\InternalException;
 
 class Registry extends AbstractSingleton
 {
@@ -108,7 +109,7 @@ class Registry extends AbstractSingleton
     public function registerService($serviceName, $serviceClass)
     {
         if (!class_exists($serviceClass)) {
-            throw new \Exception("Can not register service '{$serviceName}', class does not exist: {$serviceClass}");
+            throw new InternalException("Can not register service '{$serviceName}', class does not exist: {$serviceClass}");
         }
 
         $classPath = $this->getClassPath($serviceName);
@@ -116,7 +117,7 @@ class Registry extends AbstractSingleton
         $expectedParent = $this->book->get($classPath);
 
         if ($expectedParent && !is_subclass_of($serviceClass, $expectedParent)) {
-            throw new \Exception("Class '{$classPath}' is expected to inherit from '{$expectedParent}'.");
+            throw new InternalException("Class '{$classPath}' is expected to inherit from '{$expectedParent}'.");
         }
 
         // Registers the service constructor

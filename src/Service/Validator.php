@@ -6,10 +6,12 @@
  * Time: 8:57 PM
  */
 
-namespace ptejada\uFlex\Service\Validation;
-
+namespace ptejada\uFlex\Service;
 
 use ptejada\uFlex\Classes\Collection;
+use ptejada\uFlex\Classes\Helper;
+use ptejada\uFlex\Exception\InternalException;
+use ptejada\uFlex\Exception\ValidationException;
 
 class Validator
 {
@@ -24,7 +26,7 @@ class Validator
         $this->schema = new Collection(
             array(
                 'Username' => array(
-                    'min' => 3,
+                    'min' => 4,
                     'max' => 15,
                     'pattern' => '/^([a-zA-Z0-9_])+$/',
                 ),
@@ -56,21 +58,21 @@ class Validator
         $rule       = $this->getFieldRules($fieldName);
 
         $valueLength = strlen($fieldValue);
-        if ($valueLength < $rule->min) {
+        if ($rule->min && $valueLength < $rule->min) {
             throw new ValidationException(
                 ValidationException::ERROR_MINIMUM, $fieldName,
                 "The value '{$fieldValue}' is shorter than {$rule->min} characters."
             );
         }
 
-        if ($valueLength > $rule->max) {
+        if ($rule->max && $valueLength > $rule->max) {
             throw new ValidationException(
                 ValidationException::ERROR_MAXIMUM, $fieldName,
                 "The value '{$fieldValue}' is longer than {$rule->max} characters."
             );
         }
 
-        if (!preg_match($rule->pattern, $value)) {
+        if ($rule->pattern && !preg_match($rule->pattern, $value)) {
             throw new ValidationException(
                 ValidationException::ERROR_PATTERN, $fieldName,
                 "The value '{$fieldValue}' did not matched the expected pattern."
@@ -82,7 +84,7 @@ class Validator
             if ($fieldValue != $this->getFieldValue($fieldToMatch)) {
                 throw new ValidationException(
                     ValidationException::ERROR_MISMATCH, $fieldName,
-                    "The value '{$fieldValue}' does not match the value for '{$fieldToMatch}'."
+                    "The value '{$fieldValue}' does not match the value from '{$fieldToMatch}'."
                 );
             }
         }
@@ -91,14 +93,19 @@ class Validator
     /**
      * Validate all the fields
      *
+     * @param array|Collection $data data to validate
+     *
      * @throws ValidationException
      */
-    public function validateAll( $data = null )
+    public function validateAll($data)
     {
-
-        foreach ($this->data as $fieldName => $fieldValue) {
+        $this->data = Helper::getCollection($data);
+        
+        foreach ($data as $fieldName => $fieldValue) {
             $this->validate($fieldName, $fieldValue);
         }
+        
+        $this->data = new Collection();
     }
 
     /**
@@ -139,10 +146,10 @@ class Validator
                 return $rules;
             } else {
                 // The field rules is missing some options
-                throw new \Exception("Validation rules for '{$fieldName}' missing options: " . implode(', ', $diff));
+                throw new InternalException("Validation rules for '{$fieldName}' missing options: " . implode(', ', $diff));
             }
         } else {
-            throw new \Exception("Missing validation rules for '{$fieldName}'.");
+            throw new InternalException("Missing validation rules for '{$fieldName}'.");
         }
     }
 
@@ -154,13 +161,42 @@ class Validator
     {
         $this->schema = $schema;
     }
+    
+    /**
+     * Add new set of rules for a field
+     *
+     * @param string $fieldName
+     * @param array  $rules List of validation rules. Supported array keys [min, max, pattern, match]
+     *
+     * @throws \Exception If a set rules already exists for the given field
+     */
+    public function addRule($fieldName, array $rules){
+        if ($this->schema->get($fieldName)) {
+            throw new InternalException("Validation rules already exist for field '{$fieldName}'");
+        }
+
+        $finalRules = array_merge(
+            array(
+                'min'     => '',
+                'max'     => '',
+                'pattern' => '',
+            ), $rules
+        );
+
+        $this->schema->set($fieldName, $finalRules);
+    }
 
     /**
-     * Set the data to validate
-     * @param Collection $data
+     * Add multiple field rules definition
+     * 
+     * @param array $fieldRules Multi dimensional array of fields and their rules
+     *
+     * @throws \Exception If a set rules already exists for the given field
      */
-    public function setData($data)
+    public function addRules(array $fieldRules)
     {
-        $this->data = $data;
+        foreach ($fieldRules as $fieldName => $rules){
+            $this->addRule($fieldName, $rules);
+        }
     }
 }

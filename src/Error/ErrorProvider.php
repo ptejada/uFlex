@@ -8,7 +8,7 @@
 
 namespace ptejada\uFlex\Error;
 
-use ptejada\uFlex\Exception\ErrorException;
+use ptejada\uFlex\Exception\UserException;
 
 /**
  * Class ErrorProvider
@@ -18,23 +18,23 @@ use ptejada\uFlex\Exception\ErrorException;
 class ErrorProvider
 {
     protected $errors = array(
-        ErrorException::ERROR_REGISTRATION_FAILURE         => 'New User Registration Failed.',
-        ErrorException::ERROR_UPDATE_FAILURE               => 'The Changes Could not be made',
-        ErrorException::ERROR_ACTIVATION_FAILURE           => 'Account could not be activated',
-        ErrorException::ERROR_UNKNOWN_EMAIL                => 'We don\'t have an account with this email',
-        ErrorException::ERROR_INVALID_PASSWORD_RESET_TOKEN => 'Password could not be changed. The request can\'t be validated',
-        ErrorException::ERROR_COOKIE_LOGIN_FAILURE         => 'Logging in with cookies failed',
-        ErrorException::ERROR_MISSING_LOGIN_CREDENTIALS    => 'No Username or Password provided',
-        ErrorException::ERROR_NOT_YET_ACTIVATED            => 'Your Account has not been Activated. Check your Email for instructions',
-        ErrorException::ERROR_NOT_ACTIVATED                => 'Your account has been deactivated. Please contact Administrator',
-        ErrorException::ERROR_INVALID_CREDENTIALS          => 'Wrong Username or Password',
-        ErrorException::ERROR_INVALID_CONFIRMATION_TOKEN   => 'Confirmation hash is invalid',
-        ErrorException::ERROR_EXPIRED_CONFIRMATION_TOKEN   => 'Your identification could not be confirmed',
-        ErrorException::ERROR_CONFIRMATION_TOKEN_NOT_SAVED => 'Failed to save confirmation request',
-        ErrorException::ERROR_PENDING_PASSWORD_RESET       => 'You need to reset your password to login',
-        ErrorException::ERROR_DOUBLE_REGISTRATION_FAILURE  => 'Can not register a new user, as user is already logged in.',
-        ErrorException::ERROR_EMAIL_IN_USE                 => 'This Email is already in use',
-        ErrorException::ERROR_USERNAME_IN_USE              => 'This Username is not available',
+        UserException::ERROR_REGISTRATION_FAILURE         => 'New User Registration Failed.',
+        UserException::ERROR_UPDATE_FAILURE               => 'The Changes Could not be made',
+        UserException::ERROR_ACTIVATION_FAILURE           => 'Account could not be activated',
+        UserException::ERROR_UNKNOWN_EMAIL                => 'We don\'t have an account with this email',
+        UserException::ERROR_INVALID_PASSWORD_RESET_TOKEN => 'Password could not be changed. The request can\'t be validated',
+        UserException::ERROR_COOKIE_LOGIN_FAILURE         => 'Logging in with cookies failed',
+        UserException::ERROR_MISSING_LOGIN_CREDENTIALS    => 'No Username or Password provided',
+        UserException::ERROR_NOT_YET_ACTIVATED            => 'Your Account has not been Activated. Check your Email for instructions',
+        UserException::ERROR_NOT_ACTIVATED                => 'Your account has been deactivated. Please contact Administrator',
+        UserException::ERROR_INVALID_CREDENTIALS          => 'Wrong Username or Password',
+        UserException::ERROR_INVALID_CONFIRMATION_TOKEN   => 'Confirmation hash is invalid',
+        UserException::ERROR_EXPIRED_CONFIRMATION_TOKEN   => 'Your identification could not be confirmed',
+        UserException::ERROR_CONFIRMATION_TOKEN_NOT_SAVED => 'Failed to save confirmation request',
+        UserException::ERROR_PENDING_PASSWORD_RESET       => 'You need to reset your password to login',
+        UserException::ERROR_DOUBLE_REGISTRATION_FAILURE  => 'Can not register a new user, as user is already logged in.',
+        UserException::ERROR_EMAIL_IN_USE                 => 'This Email is already in use',
+        UserException::ERROR_USERNAME_IN_USE              => 'This Username is not available',
     );
 
     /**

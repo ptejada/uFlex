@@ -5,6 +5,7 @@ namespace ptejada\uFlex\Service;
 use ptejada\uFlex\Classes\Collection;
 use ptejada\uFlex\Classes\LinkedCollection;
 use ptejada\uFlex\Config;
+use ptejada\uFlex\Exception\InternalException;
 
 /**
  * Class to handle the PHP session
@@ -57,7 +58,7 @@ class Session extends LinkedCollection
                 $log->log('Session is been started...');
             } else {
                 $log->error('Failed to initialize the session');
-                throw new \Exception('Failed to start the session because request output has already started');
+                throw new InternalException('Failed to start the session because request output has already started');
             }
         }
 

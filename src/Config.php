@@ -15,7 +15,7 @@ use ptejada\uFlex\Service\Cookie;
 use ptejada\uFlex\Service\Log;
 use ptejada\uFlex\Service\Session;
 use ptejada\uFlex\Service\UserManager;
-use ptejada\uFlex\Service\Validation\Validator;
+use ptejada\uFlex\Service\Validator;
 
 /**
  * Class Config to configure all settings

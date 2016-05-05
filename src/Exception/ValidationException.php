@@ -8,7 +8,7 @@
 
 namespace ptejada\uFlex\Exception;
 
-class ValidationException extends UFlexException
+class ValidationException extends SystemException
 {
     /** Error code if input is shorter than expected */
     const ERROR_MINIMUM = 1;

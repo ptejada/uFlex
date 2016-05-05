@@ -8,6 +8,8 @@
 
 namespace ptejada\uFlex\Classes;
 
+use ptejada\uFlex\Exception\InternalException;
+
 /**
  * Class Helper includes function meant to be used across classes
  * All public methods must be declared statically
@@ -39,7 +41,7 @@ class Helper
             } else {
                 $type = gettype($info);
                 $type = $type == 'object' ? get_class($info) : $type;
-                throw new \Exception("Unable to convert resource of type '{$type}'.");
+                throw new InternalException("Unable to convert resource of type '{$type}'.");
             }
         }
     }

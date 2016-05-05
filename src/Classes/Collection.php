@@ -2,6 +2,8 @@
 
 namespace ptejada\uFlex\Classes;
 
+use ptejada\uFlex\Exception\InternalException;
+
 /**
  * An object oriented representation an associative array
  *
@@ -431,7 +433,7 @@ class Collection implements \Iterator, \ArrayAccess
         if (strlen($separator) == 1) {
             $this->_separator = $separator;
         } else {
-            throw new \Exception('A separator must one character');
+            throw new InternalException('A separator must one character');
         }
     }
 
