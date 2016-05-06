@@ -46,12 +46,11 @@ class User extends AbstractUser
         // Create and configure the auto login Cookie
         $cookieInfo   = Config::get('cookie');
         $this->cookie = Config::getCookie()->newCookie($cookieInfo->name);
-        $this->cookie->setHost($cookieInfo->host);
-        $this->cookie->setPath($cookieInfo->path);
-        $this->cookie->setLifetime($cookieInfo->time);
+        $this->cookie->config($cookieInfo);
         
         // Create and configure the user session
-        $this->session = Config::getSession()->newSession(Config::get('session.name'));
+        $sInfo = Config::get('session'); 
+        $this->session = Config::getSession()->newSession($sInfo->name, $sInfo->lifespan);
 
         // Link the session with the user data
         if (is_null($this->session->data)) {

@@ -2,6 +2,8 @@
 
 namespace ptejada\uFlex\Service;
 
+use ptejada\uFlex\Classes\Collection;
+
 /**
  * Class handles a single cookie
  * Reads and writes the value of a cookie
@@ -21,6 +23,8 @@ class Cookie
     private $path;
     /** @var  string The host for which the host belongs to */
     private $host;
+    private $httponly = true;
+    private $secure = false;
 
     /**
      * Initializes a cookie
@@ -95,6 +99,19 @@ class Cookie
     }
 
     /**
+     * Configure multiple options for cookie
+     * @param Collection $options
+     */
+    public function config(Collection $options)
+    {
+        foreach ($options as $name => $value){
+            if (property_exists($this, $name)) {
+                $this->$name = $value;
+            }
+        }
+    }
+
+    /**
      * Sends the cookie to the browser
      *
      * @return bool
@@ -108,7 +125,9 @@ class Cookie
                 $this->value,
                 round(time() + 60 * 60 * 24 * $this->lifetime),
                 $this->path,
-                $this->host
+                $this->host,
+                $this->secure,
+                $this->httponly
             );
         } else {
             //Headers have been sent use JavaScript to set the cookie

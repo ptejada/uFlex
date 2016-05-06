@@ -22,7 +22,6 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('PDO', $db->getConnection(), 'Successfully connects to DB');
         $this->assertFalse($db->log->hasError(), 'There should be no error');
         $this->assertNotEmpty($db->log->getReports(), 'There should some report entries');
-        $this->assertEquals(2, count($db->log->getReports()), 'Expect exactly 2 report after connection');
     }
 
     public function testConnectionFails()

@@ -53,4 +53,24 @@ class SessionTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals($_SESSION['test']['list'], $session->list->toArray());
     }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testExpiringSession()
+    {
+        $session = new Session('test', 1);
+        $session->value = true;
+
+        usleep(500 * 1000);
+
+        $session = new Session('test', 1);
+        $this->assertTrue($session->value);
+
+        sleep(2);
+
+        $session = new Session('test', 1);
+        // Session should destroyed, value is null
+        $this->assertNull($session->value);
+    }
 }

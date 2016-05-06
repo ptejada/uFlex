@@ -13,6 +13,11 @@ use ptejada\uFlex\Classes\Collection;
 use ptejada\uFlex\Hash;
 use ptejada\uFlex\User;
 
+/**
+ * Class UserTest
+ * @requires OS WIN32
+ * @package tests
+ */
 class UserTest extends Tests_DatabaseTestCase {
     /** @var User  */
     public $user;

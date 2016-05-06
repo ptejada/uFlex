@@ -44,14 +44,17 @@ class Registry extends AbstractSingleton
         $this->book->option = array(
             // @formatter:off
             'cookie' => array(
-                'time' => '30',
-                'name' => 'auto',
-                'path' => '/',
-                'host' => false,
+                'time'     => '30',
+                'name'     => 'auto',
+                'path'     => '/',
+                'host'     => false,
+                'secure'   => false,
+                'httponly' => true,
             ),
 
             'session' => array(
-                'name' => 'userData',
+                'name'     => 'userData',
+                'lifespan' => 60 * 60 * 3,
             ),
 
             'user' => array(

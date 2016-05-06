@@ -27,15 +27,20 @@ class Session extends LinkedCollection
 
     /** @var null|string Session index to manage */
     protected $namespace;
+    protected $lifespan = 0;
 
     /**
      * Initialize a session handler by namespace
      *
      * @param string $namespace - Session namespace to manage
+     * @param int    $lifespan How long should the session live for in seconds
+     *
+     * @throws InternalException
      */
-    public function __construct($namespace = null)
+    public function __construct($namespace = null, $lifespan = 0)
     {
         $this->namespace = $namespace;
+        $this->lifespan = (int) $lifespan;
         $this->log = Config::getLog();
         $this->init();
     }
@@ -82,12 +87,13 @@ class Session extends LinkedCollection
      * Creates new session namespace
      *
      * @param string $namespace
+     * @param int    $lifespan How long should the session live for in seconds
      *
      * @return Session
      */
-    public static function newSession($namespace = null)
+    public static function newSession($namespace = null, $lifespan = 0)
     {
-        return new self($namespace);
+        return new self($namespace, $lifespan);
     }
 
     protected function isSessionStarted()
@@ -129,6 +135,7 @@ class Session extends LinkedCollection
                 $log = Config::getLog()->section('Session');
                 $log->error("The session[{$this->namespace}]' was destroyed because of IP mismatch.");
                 $log->debug("Current session IP {$this->_ip} did not not matched new IP {$ip}.");
+                return false;
             }
         } else {
             /*
@@ -136,6 +143,26 @@ class Session extends LinkedCollection
              */
             $this->_ip = $ip;
         }
+
+        /*
+         * Only if the session auto expires
+         */
+        if ($this->lifespan) {
+            if (is_numeric($this->_time)) {
+                $gap = time() - $this->_time;
+                if ($gap > $this->lifespan ) {
+                    $this->destroy();
+                    $log = Config::getLog()->section('Session');
+                    $log->error("The session[{$this->namespace}]' was destroyed because the lifespan expired.");
+                    $log->debug("The session was attempted to be restored after {$gap} seconds.");
+                    return false;
+                }
+            }
+            // Sets or update the time
+            $this->_time = time();
+        }
+
+        return true;
     }
 
     /**
