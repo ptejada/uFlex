@@ -44,5 +44,14 @@ class DBTableTest extends Tests_DatabaseTestCase {
         $this->assertEquals($db->log->getFullConsole(), $table->log->getFullConsole());
     }
 
+    public function testMultiUpdateStmt()
+    {
+        $db = self::$db;
+        $table = $db->getTable('Users');
+
+        $time = time();
+        $sql = "UPDATE _table_ SET LastLogin=:stamp WHERE ID=:id";
+        $table->runQuery($sql, array('stamp' => $time, 'id' => 1));
+        $table->runQuery($sql, array('stamp' => $time, 'id' => 1));
+    }
 }
- 
