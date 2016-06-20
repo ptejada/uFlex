@@ -204,7 +204,6 @@ class Table
         }
 
         $rows = $stmt->rowCount();
-        $rows = ($rows > 0) ? $rows : count($stmt->fetchAll());
 
         if ($rows > 0) {
             //Good, Rows where affected

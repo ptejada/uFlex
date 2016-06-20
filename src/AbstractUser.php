@@ -55,7 +55,7 @@ abstract class AbstractUser
         if (isset($this->data[$name])) {
             return $this->data[$name];
         } else {
-            if ($this->_dataUpdates->$name) {
+            if ($this->dataUpdates->$name) {
                 return $this->dataUpdates->$name;
             }
         }

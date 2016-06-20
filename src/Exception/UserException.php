@@ -30,10 +30,8 @@ class UserException extends SystemException
     const ERROR_EMAIL_IN_USE                 = 16;
     const ERROR_USERNAME_IN_USE              = 17;
 
-    public function __construct($code, \Exception $previous = null)
+    public function __construct($message = "", $code = 0, \Exception $previous = null)
     {
-        $message = ErrorService::getInstance()->getErrorMessage($code);
-
         if ($previous) {
             parent::__construct($message, $code, $previous);
         } else {

@@ -6,7 +6,7 @@
  * Time: 10:35 PM
  */
 
-namespace ptejada\uFlex\Error;
+namespace ptejada\uFlex\Classes;
 
 use ptejada\uFlex\Exception\UserException;
 

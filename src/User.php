@@ -5,7 +5,9 @@ namespace ptejada\uFlex;
 use ptejada\uFlex\Classes\Collection;
 use ptejada\uFlex\Classes\Helper;
 use ptejada\uFlex\Classes\Table;
+use ptejada\uFlex\Exception\UserException;
 use ptejada\uFlex\Service\Cookie;
+use ptejada\uFlex\Service\Log;
 use ptejada\uFlex\Service\Session;
 
 /**
@@ -29,12 +31,19 @@ class User extends AbstractUser
     public $session;
     /** @var  Cookie - The cookie for autologin */
     protected $cookie;
+    /**
+     * @var  Log
+     * @deprecated
+     */
+    public $log;
     /** @var  self */
     protected static $instance;
 
     public function __construct()
     {
         parent::__construct();
+
+        $this->log = Config::getLog();
 
         if (!(static::$instance instanceof self)) {
             static::$instance = $this;
@@ -71,7 +80,7 @@ class User extends AbstractUser
         if (static::$instance instanceof self) {
             return static::$instance;
         } else {
-            return static::$instance = new self();
+            return static::$instance = new static();
         }
     }
 
@@ -87,9 +96,12 @@ class User extends AbstractUser
                 $this->log->debug('Updating Session from database');
 
                 //Get User From database because its info has change during current session
-                $update = $this->table->getRow(array('ID' => $this->ID, 'Activated' => 1));
+                $update = $this->table->getRow(
+                    array('ID' => $this->ID | $this->session->get('data.ID'), 'Activated' => 1)
+                );
                 if ($update) {
-                    $this->session->data = $update->toArray();
+                    $this->session->data = $update;
+                    $this->data =& $this->session->data->toArray();
 
                     //Update last_login
                     $this->logLogin();
@@ -126,7 +138,7 @@ class User extends AbstractUser
      */
     public function login($identifier = '', $password = '', $autoLogin = false)
     {
-        $this->log->channel('login');
+        $this->log->section('login');
 
         if ($this->resume()) {
             return true;
@@ -215,7 +227,8 @@ class User extends AbstractUser
             if ($password) {
                 // Removes the autologin cookie
                 $this->cookie->destroy();
-                $this->log->formError('Password', 10);
+
+                throw new UserException(UserException::ERROR_INVALID_CREDENTIALS);
             }
             return false;
         }
@@ -252,7 +265,7 @@ class User extends AbstractUser
         $this->session->destroy();
 
         //Import default user object
-        $this->data = $this->config->userDefaultData->toArray();
+        $this->data = Config::get('user.default')->toArray();
 
         $this->log->debug('User Logged out');
     }
@@ -285,7 +298,7 @@ class User extends AbstractUser
      */
     public function register($info, $activation = false)
     {
-        $this->log->channel('registration'); //Index for Errors and Reports
+        $this->log->section('registration'); //Index for Errors and Reports
 
         /*
          * Prevent a signed user from registering a new user
@@ -397,7 +410,7 @@ class User extends AbstractUser
      */
     public function update($updates = null)
     {
-        $this->log->channel('update');
+        $this->log->section('update');
 
         if (!is_null($updates)) {
             //Save Updates Data in Class
@@ -491,7 +504,7 @@ class User extends AbstractUser
      */
     public function resetPassword($email)
     {
-        $this->log->channel('resetPassword');
+        $this->log->section('resetPassword');
 
         $user = $this->table->getRow(array('Email' => $email));
 
@@ -542,7 +555,7 @@ class User extends AbstractUser
      */
     public function newPassword($hash, $newPass)
     {
-        $this->log->channel('newPassword');
+        $this->log->section('newPassword');
 
         list($uid, $partial) = $this->hash->examine($hash);
 
@@ -589,7 +602,7 @@ class User extends AbstractUser
      */
     public function activate($hash)
     {
-        $this->log->channel('activation');
+        $this->log->section('activation');
 
         $info = $this->hash->examine($hash);
 

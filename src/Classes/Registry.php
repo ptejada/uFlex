@@ -21,6 +21,7 @@ class Registry extends AbstractSingleton
     const SERVICE_VALIDATOR  = 'validator';
     const SERVICE_MANAGER    = 'manager';
     const SERVICE_AUTH       = 'auth';
+    const SERVICE_ERROR      = 'error';
 
     /** @var Collection */
     protected $book;
@@ -120,7 +121,7 @@ class Registry extends AbstractSingleton
         $expectedParent = $this->book->get($classPath);
 
         if ($expectedParent && !is_subclass_of($serviceClass, $expectedParent)) {
-            throw new InternalException("Class '{$classPath}' is expected to inherit from '{$expectedParent}'.");
+            throw new InternalException("Class '{$serviceClass}' is expected to inherit from '{$expectedParent}'.");
         }
 
         // Registers the service constructor

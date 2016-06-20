@@ -93,7 +93,7 @@ class Session extends LinkedCollection
      */
     public static function newSession($namespace = null, $lifespan = 0)
     {
-        return new self($namespace, $lifespan);
+        return new static($namespace, $lifespan);
     }
 
     protected function isSessionStarted()

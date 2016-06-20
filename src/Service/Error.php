@@ -6,25 +6,28 @@
  * Time: 10:08 PM *
  */
 
-namespace ptejada\uFlex\Error;
+namespace ptejada\uFlex\Service;
 
 use ptejada\uFlex\AbstractSingleton;
+use ptejada\uFlex\Classes\ErrorProvider;
+use ptejada\uFlex\Exception\InternalException;
 
 /**
  * Class ErrorService
- * @method static ErrorService getInstance()
+ * @method static Error getInstance()
+
  *
- * @package ptejada\uFlex\Error
+*@package ptejada\uFlex\Error
  */
-class ErrorService extends AbstractSingleton
+class Error extends AbstractSingleton
 {
+    /** @var ErrorProvider[] */
+    protected $providers = array();
+
     public function __construct(){
         // Initializes the first/default error provider
         $this->providers[] = new ErrorProvider();
     }
-
-    /** @var ErrorProvider[] */
-    protected $providers = array();
 
     public function getErrorMessage($errorID)
     {
@@ -35,8 +38,7 @@ class ErrorService extends AbstractSingleton
             }
         }
 
-        // TODO: Throw an exception
-        return null;
+        throw new InternalException("Unknown error[{$errorID}] without message");
     }
 
     /**
@@ -49,5 +51,17 @@ class ErrorService extends AbstractSingleton
          * Adds the new provider to the beginning of array so it has priority over existing error providers
          */
         array_unshift($this->providers, $provider);
+    }
+
+    /**
+     * Dynamically registers a new error message
+     * 
+     * @param int $errorCode The unique error code
+     * @param String $errorMessage The error message
+     */
+    public function registerError($errorCode, $errorMessage)
+    {
+        // Register an error in the most recent error provider
+        $this->providers[0]->registerError($errorCode, $errorMessage);
     }
 }

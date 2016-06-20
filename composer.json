@@ -19,6 +19,11 @@
             "ptejada\\uFlex\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\": "tests/"
+        }
+    },
     "require": {
         "php": ">=5.3.7",
         "ircmaxell/password-compat": "~1.0"
