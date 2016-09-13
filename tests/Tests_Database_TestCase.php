@@ -30,7 +30,7 @@ abstract class Tests_DatabaseTestCase extends \PHPUnit_Extensions_Database_TestC
         if ($this->conn === null) {
             if (self::$pdo == null) {
                 self::$pdo = new \PDO( $GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'] );
-                Config::set('connection.pdo', self::$pdo);
+                Config::getConnection()->setConnection(self::$pdo);
             }
             $this->conn = $this->createDefaultDBConnection(self::$pdo, $GLOBALS['DB_DBNAME']);
         }
@@ -45,7 +45,7 @@ abstract class Tests_DatabaseTestCase extends \PHPUnit_Extensions_Database_TestC
      */
     protected function getDataSet()
     {
-        $file = dirname(__FILE__) . "/fixtures/{$this->fixture}.xml";
-        return $this->createMySQLXMLDataSet($file);
+        $file = dirname(__FILE__) . "/fixtures/{$this->fixture}.yml";
+        return new \PHPUnit_Extensions_Database_DataSet_YamlDataSet($file);
     }
 }

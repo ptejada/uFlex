@@ -1,16 +1,24 @@
--- Upgrades the table from v1.0 to v1.1 --
+-- Upgrades the table from v1.2 to v1.3 --
 -- IMPORTANT: BackUp your Database before running this script --
+CREATE TABLE IF NOT EXISTS UserTokens (
+  ID INT PRIMARY KEY AUTO_INCREMENT,
+  UID INT(7) NOT NULL ,
+  Token VARCHAR(255) NOT NULL,
+  Type  TINYINT,
+  CreateTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+  ExpirationTime DATETIME NOT NULL
+) ENGINE=InnoDB;
 
---  Note: if your users table was other than `users` update the line below --
-RENAME TABLE `users` TO `Users`;
--- --
-ALTER IGNORE TABLE `Users` CHANGE `user_id` `ID` int( 7 ) unsigned NOT NULL AUTO_INCREMENT;
-ALTER IGNORE TABLE `Users` CHANGE `username` `Username` varchar ( 15 ) NOT NULL;
-ALTER IGNORE TABLE `Users` CHANGE `password` `Password` char ( 40 ) NOT NULL;
-ALTER IGNORE TABLE `Users` CHANGE `email` `Email` varchar ( 100 ) NOT NULL;
-ALTER IGNORE TABLE `Users` CHANGE `activated` `Activated` tinyint ( 1 ) unsigned NOT NULL DEFAULT 0;
-ALTER IGNORE TABLE `Users` CHANGE `confirmation` `Confirmation` char ( 40 ) NOT NULL;
-ALTER IGNORE TABLE `Users` CHANGE `reg_date` `RegDate` int ( 11 ) unsigned NOT NULL;
-ALTER IGNORE TABLE `Users` CHANGE `last_login` `LastLogin` int ( 11 ) unsigned NOT NULL DEFAULT 0;
-ALTER IGNORE TABLE `Users` CHANGE `group_id` `GroupID` tinyint unsigned NOT NULL DEFAULT 1;
-ALTER TABLE `Users` ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS UserLog (
+  ID INT PRIMARY KEY AUTO_INCREMENT,
+  UID INT(7) NOT NULL,
+  EventType TINYINT NOT NULL,
+  EventData VARCHAR(255) NOT NULL DEFAULT '',
+  EventTime TIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+
+-- TODO: Confirm the type for the confirmation tokens will be 1
+INSERT INTO UserTokens(UID, Token, Type, ExpirationTime)
+    SELECT ID, Confirmation, 1, NOW() + INTERVAL 3 DAY_SECOND
+    FROM Users;
