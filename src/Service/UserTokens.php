@@ -78,14 +78,16 @@ class UserTokens
     public function generate($uid, $tokenType, $lifespan = '24 hours')
     {
         $expTime = new \DateTime();
+        $createTime = $expTime->format('Y-m-d H:i:s');
         $expTime->modify('+ ' . trim($lifespan, '-+'));
         $stmt = $this->table->getStatement(
-            'INSERT INTO UserTokens(UID, Token, Type, ExpirationTime) VALUES(:uid, :token, :tType, :expTime)'
+            'INSERT INTO UserTokens(UID, Token, Type, CreateTime, ExpirationTime) VALUES(:uid, :token, :tType, :cTime, :expTime)'
         );
 
         $stmt->bindValue(':uid', $uid, \PDO::PARAM_INT);
         $stmt->bindValue(':tType', $tokenType, \PDO::PARAM_INT);
         $stmt->bindValue(':expTime', $expTime->format('Y-m-d H:i:s'), \PDO::PARAM_STR);
+        $stmt->bindValue(':cTime', $createTime, \PDO::PARAM_STR);
 
         do {
             // TODO: Limit the the amount of tries
