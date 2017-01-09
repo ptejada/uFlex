@@ -6,7 +6,7 @@ RENAME TABLE `users` TO `Users`;
 -- --
 ALTER IGNORE TABLE `Users` CHANGE `user_id` `ID` int( 7 ) unsigned NOT NULL AUTO_INCREMENT;
 ALTER IGNORE TABLE `Users` CHANGE `username` `Username` varchar ( 15 ) NOT NULL;
-ALTER IGNORE TABLE `Users` CHANGE `password` `Password` char ( 40 ) NOT NULL;
+ALTER IGNORE TABLE `Users` CHANGE `password` `Password` char ( 255 ) NOT NULL;
 ALTER IGNORE TABLE `Users` CHANGE `email` `Email` varchar ( 100 ) NOT NULL;
 ALTER IGNORE TABLE `Users` CHANGE `activated` `Activated` tinyint ( 1 ) unsigned NOT NULL DEFAULT 0;
 ALTER IGNORE TABLE `Users` CHANGE `confirmation` `Confirmation` char ( 40 ) NOT NULL;

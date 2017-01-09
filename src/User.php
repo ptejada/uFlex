@@ -153,20 +153,9 @@ class User extends UserBase
                 $this->_updates = $userFile;
 
                 /*
-                 * Determine whether to use the old or new algorithm
+                 * use PHP 5.5 password_verify to confirm the password is correct
                  */
-                $aType = strlen($userFile->Password) !== 40;
-
-                /*
-                 * Encode the password with the hashing algorithm
-                 */
-                $generated = $this->session->signed = $this->hash->generateUserPassword($this, $password, $aType);
-
-                /*
-                 * Compared the generated hash with the stored one
-                 * If it matches then the user will be logged in
-                 */
-                $this->session->signed = $generated === $userFile->Password;
+                $this->session->signed = password_verify($password, $userFile->Password);
 
                 // Clear the updates stack
                 $this->_updates = new Collection();
@@ -376,7 +365,7 @@ class User extends UserBase
 
         //Hash Password
         if ($info->Password) {
-            $info->Password = $this->hash->generateUserPassword($this, $info->Password);
+            $info->Password = $this->hash->generateUserPassword($info->Password);
         }
 
         //Check for Email in database
@@ -486,7 +475,7 @@ class User extends UserBase
 
         //Hash Password
         if ($updates->Password) {
-            $updates->Password = $this->hash->generateUserPassword($this, $updates->Password);
+            $updates->Password = $this->hash->generateUserPassword($updates->Password);
         }
 
         //Check for Email in database
@@ -618,7 +607,7 @@ class User extends UserBase
             $this->_updates = $user;
 
             // Generate the password hash
-            $pass = $this->hash->generateUserPassword($this, $newPass['Password']);
+            $pass = $this->hash->generateUserPassword($newPass['Password']);
 
             $sql = "UPDATE _table_ SET `Password`=:pass, Confirmation='', Activated=1 WHERE Confirmation=:confirmation AND ID=:id";
             $data = array(

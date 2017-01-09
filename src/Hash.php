@@ -45,17 +45,9 @@ class Hash
      *
      * @return string
      */
-    public function generateUserPassword(User $user, $password, $generateOld = false)
+    public function generateUserPassword($password)
     {
-        $registrationDate = $user->RegDate;
-
-        $pre = $this->encode($registrationDate);
-        $pos = substr($registrationDate, 5, 1);
-        $post = $this->encode($registrationDate * (substr($registrationDate, $pos, 1)));
-
-        $finalString = $pre . $password . $post;
-
-        return $generateOld ? md5($finalString) : sha1($finalString);
+        return password_hash($password, PASSWORD_DEFAULT);
     }
 
     /**
