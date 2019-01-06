@@ -47,11 +47,11 @@ abstract class UserBase
             'regEx' => '/^([a-zA-Z0-9_])+$/'
         ),
         'Password' => array(
-            'limit' => '3-15',
+            'limit' => '3-30',
             'regEx' => ''
         ),
         'Email'    => array(
-            'limit' => '4-45',
+            'limit' => '4-254',
             'regEx' => '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,63})$/i'
         )
     );
