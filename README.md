@@ -1,3 +1,7 @@
+Cancellation Notice
+---
+Future development has been canceled. I recommend using a framework with built-in user authentication and authorization like [Laravel](https://laravel.com/)
+
 uFlex 1.0.x
 =========================
 
